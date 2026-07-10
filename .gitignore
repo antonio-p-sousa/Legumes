@@ -1,0 +1,12 @@
+# Dados reais de clientes (exports Shopify com PII) — NUNCA committar.
+# Vivem apenas na pasta local/OneDrive; no repo só entram fixtures anonimizadas.
+Otimização encomendas/
+Otimizacao encomendas/
+*.xlsx
+*.csv
+!operacao-semanal/test/fixtures/*.csv
+
+# Office/Windows
+~$*
+Thumbs.db
+desktop.ini
