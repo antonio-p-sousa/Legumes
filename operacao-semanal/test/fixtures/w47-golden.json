@@ -1,0 +1,20 @@
+{
+  "orders": 185,
+  "lineItems": 1028,
+  "totalUnits": 1522,
+  "unitsByDia": {
+    "Segunda": 345,
+    "Quarta": 85,
+    "Terça": 1036,
+    "Quinta": 56
+  },
+  "ordersByDia": {
+    "Segunda": 41,
+    "Quarta": 11,
+    "Terça": 126,
+    "Quinta": 7
+  },
+  "ordersSemZona": 0,
+  "distinctProducts": 53,
+  "totalRevenue": 10798.18
+}

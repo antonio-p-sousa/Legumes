@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+// ─── Domínio "Operação Semanal" ─────────────────────────────────────────────
+// Tudo o que NÃO vem do Shopify: fichas técnicas, zonas, parceiros, config.
+// Ver docs/ARCHITECTURE.md secção 5.
+
+model Dish {
+  id         String   @id @default(cuid())
+  baseName   String   @unique // "Tranche de Salmão com amêndoa e sweet chili"
+  category   String // peixe|carne|vegetariano|poke|pizza|sopa|sobremesa|embalagem
+  shopifyIds String   @default("[]") // JSON string[] — SQLite não suporta listas escalares
+  doses      Dose[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Dose {
+  id          String       @id @default(cuid())
+  dish        Dish         @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  dishId      String
+  label       String // "Low Carb" | "Bulk" | "300g" | "M arroz" ...
+  active      Boolean      @default(true)
+  ingredients RecipeLine[]
+
+  @@unique([dishId, label])
+}
+
+model Ingredient {
+  id         String       @id @default(cuid())
+  name       String       @unique // "Tranche de salmão"
+  supplier   Supplier?    @relation(fields: [supplierId], references: [id])
+  supplierId String?
+  unit       String // kg|g|ml|L|un
+  lines      RecipeLine[]
+}
+
+model RecipeLine {
+  id           String     @id @default(cuid())
+  dose         Dose       @relation(fields: [doseId], references: [id], onDelete: Cascade)
+  doseId       String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
+  qtyPerMeal   Float // quantidade por 1 refeição, na unidade do ingrediente
+
+  @@unique([doseId, ingredientId])
+}
+
+model Supplier {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  email       String?
+  orderDay    String? // dia em que se encomenda (texto livre)
+  ingredients Ingredient[]
+}
+
+model Zone {
+  id        String   @id @default(cuid())
+  matchText String   @unique // "Lisboa (Centro da cidade) 19-23h"
+  county    String // concelho/região
+  confDay   String // "2f" | "3f" | "4f" | "vespera"
+  courier   Courier? @relation(fields: [courierId], references: [id])
+  courierId String?
+  active    Boolean  @default(true)
+}
+
+model Courier {
+  id       String  @id @default(cuid())
+  name     String  @unique // "Off Limits", "CrossFit Leiria", "DPD", "Interno"
+  type     String // internal|partner|dpd
+  email    String? // p/ envio de rota (partner)
+  ordering String  @default("manual") // manual|postcode|county
+  zones    Zone[]
+}
+
+model AppConfig {
+  id               String  @id @default("singleton")
+  orderWindowFrom  String  @default("SAT_00:00")
+  orderWindowTo    String  @default("FRI_23:59")
+  ignoreAfterClose Boolean @default(true)
+  purchaseMargin   Float   @default(0.08)
+  dpdAccount       String?
+}
+
+model WeekRun {
+  id          String   @id @default(cuid())
+  weekLabel   String // "2025-W47"
+  generatedAt DateTime @default(now())
+  ordersJson  String // snapshot processado (JSON serializado)
+}
