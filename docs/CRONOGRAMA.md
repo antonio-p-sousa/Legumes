@@ -16,7 +16,7 @@
 | Fase 3 — Cozinha | Página mapa de produção + exports cozinha/etiquetas | 13/07 | ✅ Concluída |
 | Fase 4 — Estafetas | Rotas + CSV DPD (email aos parceiros aguarda decisão de serviço) | 13/07 | ✅ Concluída |
 | Fase 5 — Compras | Página por fornecedor + estados "sem ficha" (conteúdo real aguarda fichas) | 13/07 | ✅ Concluída |
-| Fase 6 — Polimento | Cockpit ✅, etiquetas ✅; falta histórico de semanas (WeekRun) e envio de emails | 13–14/07 | 🔄 Em curso |
+| Fase 6 — Polimento | Cockpit ✅, etiquetas ✅, **importação manual de CSV** ✅ (app usável sem credenciais), impressão/PDF ✅; emails aguardam decisão | 13/07 | ✅ Concluída |
 | Ligação à loja real | Custom app instalada + dados live | — | ⛔ **Bloqueada** (credenciais) |
 | Piloto com operador | 1–2 semanas em paralelo com o processo manual | 27/07–07/08 prev. | ⛔ Bloqueada (dep. anterior) |
 | Go-live | Operador passa a usar a app | ago prev. | ⬜ Planeada |
