@@ -13,10 +13,10 @@
 | Fase 0 — Scaffold | Template react-router + Prisma + fixtures w47 anonimizadas | 10/07 | ✅ Concluída |
 | Fase 1 — Motor | 9 funções puras + golden test w47 (120 testes) | 10/07 | ✅ Concluída |
 | Fase 2 — Definições | CRUD zonas/parceiros/fichas/config + seed (214 testes no total) | 13/07 | ✅ Concluída |
-| Fase 3 — Cozinha | Página mapa de produção + export xlsx + cockpit | 14–15/07 prev. | ⬜ Planeada |
-| Fase 4 — Estafetas | Rotas + CSV DPD + email aos parceiros | 16–17/07 prev. | ⬜ Planeada |
-| Fase 5 — Compras | Página por fornecedor + estados "sem ficha" | 17–20/07 prev. | ⬜ Planeada |
-| Fase 6 — Polimento | Etiquetas, histórico, "Gerar tudo", estados de erro | 21–22/07 prev. | ⬜ Planeada |
+| Fase 3 — Cozinha | Página mapa de produção + exports cozinha/etiquetas | 13/07 | ✅ Concluída |
+| Fase 4 — Estafetas | Rotas + CSV DPD (email aos parceiros aguarda decisão de serviço) | 13/07 | ✅ Concluída |
+| Fase 5 — Compras | Página por fornecedor + estados "sem ficha" (conteúdo real aguarda fichas) | 13/07 | ✅ Concluída |
+| Fase 6 — Polimento | Cockpit ✅, etiquetas ✅; falta histórico de semanas (WeekRun) e envio de emails | 13–14/07 | 🔄 Em curso |
 | Ligação à loja real | Custom app instalada + dados live | — | ⛔ **Bloqueada** (credenciais) |
 | Piloto com operador | 1–2 semanas em paralelo com o processo manual | 27/07–07/08 prev. | ⛔ Bloqueada (dep. anterior) |
 | Go-live | Operador passa a usar a app | ago prev. | ⬜ Planeada |
