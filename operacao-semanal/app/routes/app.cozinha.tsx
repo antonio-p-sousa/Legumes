@@ -17,7 +17,7 @@ type LoaderResult =
   | {
       ok: true;
       view: CozinhaView;
-      source: "demo" | "live";
+      source: "demo" | "live" | "csv";
       weekLabel: string;
       weekToken: string;
     }
@@ -264,6 +264,8 @@ export default function Cozinha() {
               <s-badge tone="warning">
                 {`Dados de demonstração — ${weekToken}`}
               </s-badge>
+            ) : source === "csv" ? (
+              <s-badge tone="info">{`Import manual — ${weekLabel}`}</s-badge>
             ) : (
               <s-badge tone="success">{`Semana ${weekLabel}`}</s-badge>
             )}
@@ -273,6 +275,19 @@ export default function Cozinha() {
               </s-button>
               <s-button href="/app/api/export/etiquetas">
                 Exportar etiquetas
+              </s-button>
+              <s-button
+                href={
+                  selectedDay
+                    ? `/app/print/cozinha?dia=${selectedDay.confDay}`
+                    : "/app/print/cozinha"
+                }
+                target="_blank"
+              >
+                Imprimir / PDF
+              </s-button>
+              <s-button href="/app/print/etiquetas" target="_blank">
+                Imprimir etiquetas
               </s-button>
             </s-stack>
           </s-stack>

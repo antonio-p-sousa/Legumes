@@ -71,8 +71,16 @@ export default function Estafetas() {
       <s-section heading={`Semana ${meta.weekLabel}`}>
         <s-stack gap="base">
           <s-stack direction="inline" gap="small">
-            <s-badge tone={isDemo ? "warning" : "success"}>
-              {isDemo ? "Dados de demonstração" : "Dados da loja"}
+            <s-badge
+              tone={
+                isDemo ? "warning" : meta.source === "csv" ? "info" : "success"
+              }
+            >
+              {isDemo
+                ? "Dados de demonstração"
+                : meta.source === "csv"
+                  ? "Import manual"
+                  : "Dados da loja"}
             </s-badge>
             <s-badge tone="neutral">{`${meta.totalOrders} encomendas`}</s-badge>
           </s-stack>
@@ -84,6 +92,14 @@ export default function Estafetas() {
               disabled={view.routes.length === 0}
             >
               Exportar xlsx (todas as rotas)
+            </s-button>
+            <s-button
+              variant="secondary"
+              href="/app/print/rotas"
+              target="_blank"
+              disabled={view.routes.length === 0}
+            >
+              Imprimir / PDF
             </s-button>
             <s-button variant="secondary" disabled>
               Enviar rotas por email

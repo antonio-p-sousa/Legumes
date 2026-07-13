@@ -22,6 +22,7 @@ export default function App() {
         <s-link href="/app/cozinha">Cozinha</s-link>
         <s-link href="/app/compras">Compras</s-link>
         <s-link href="/app/estafetas">Estafetas</s-link>
+        <s-link href="/app/importar">Importar CSV</s-link>
         <s-link href="/app/definicoes/fichas">Fichas técnicas</s-link>
         <s-link href="/app/definicoes/zonas">Zonas &amp; dias</s-link>
         <s-link href="/app/definicoes/parceiros">Parceiros &amp; fornecedores</s-link>

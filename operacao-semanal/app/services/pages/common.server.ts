@@ -109,7 +109,7 @@ export async function loadWeekData(
 ): Promise<WeekData> {
   const [{ zones, couriers }, week] = await Promise.all([
     loadEngineConfigs(prisma),
-    fetchWeekOrders(admin),
+    fetchWeekOrders(admin, prisma),
   ]);
 
   const { processed } = processOrders(week.orders, zones);

@@ -75,8 +75,20 @@ export default function Compras() {
       <s-section>
         <s-stack gap="base">
           <s-stack direction="inline" gap="base" alignItems="center">
-            <s-badge tone={source === "live" ? "success" : "warning"}>
-              {source === "live" ? "Dados da loja" : "Dados de demonstração"}
+            <s-badge
+              tone={
+                source === "live"
+                  ? "success"
+                  : source === "csv"
+                    ? "info"
+                    : "warning"
+              }
+            >
+              {source === "live"
+                ? "Dados da loja"
+                : source === "csv"
+                  ? "Import manual"
+                  : "Dados de demonstração"}
             </s-badge>
             <s-text color="subdued">{`margem +${marginPct} % aplicada às quantidades`}</s-text>
           </s-stack>
@@ -88,6 +100,14 @@ export default function Compras() {
               disabled={isEmpty}
             >
               Exportar tudo
+            </s-button>
+            <s-button
+              variant="secondary"
+              href="/app/print/compras"
+              target="_blank"
+              disabled={isEmpty}
+            >
+              Imprimir / PDF
             </s-button>
             <s-button
               variant="secondary"

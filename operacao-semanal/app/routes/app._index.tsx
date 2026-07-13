@@ -113,16 +113,20 @@ export default function Semana() {
   const temEncomendas = kpis.encomendas > 0;
   const configurado = configuracao.zones > 0 && configuracao.couriers > 0;
   const isDemo = semana.source === "demo";
+  const isImport = semana.source === "csv";
   const badgeModo = isDemo
     ? `Dados de demonstração — ${semana.weekLabel.replace(/\s*\(demonstração\)/, "")}`
-    : "Dados da loja";
+    : isImport
+      ? "Import manual de CSV"
+      : "Dados da loja";
+  const badgeTone = isDemo ? "warning" : isImport ? "info" : "success";
 
   return (
     <s-page heading={`Semana — ${semana.weekLabel}`}>
       <s-section>
         <s-stack gap="small">
           <s-stack direction="inline" gap="small" alignItems="center">
-            <s-badge tone={isDemo ? "warning" : "success"}>{badgeModo}</s-badge>
+            <s-badge tone={badgeTone}>{badgeModo}</s-badge>
             <s-text color="subdued">
               Janela: {semana.janela} · importado há {semana.importadoHaMin} min
             </s-text>
