@@ -76,8 +76,17 @@ export interface DishDose {
 
 // ── Configuração (espelho plain-object dos modelos Prisma) ─────────────────
 
-/** Dia de confeção. "vespera" resolve para o dia anterior ao de entrega. */
-export type ConfDayRule = "2f" | "3f" | "4f" | "vespera";
+/**
+ * Regra de dia de confeção de uma zona.
+ * - "2f" | "3f" | "4f": dia da semana fixo.
+ * - "vespera": dia anterior ao de entrega (ex.: DPD nacional, recolhido na
+ *   véspera).
+ * - "mesmo": o próprio dia de entrega (ex.: recolhas em loja e entregas locais
+ *   confecionadas no dia — "quando é recolha, é sempre no próprio dia").
+ * "vespera" e "mesmo" são relativas à data de entrega, por isso acompanham
+ * qualquer calendário (incluindo domingo) sem reconfiguração.
+ */
+export type ConfDayRule = "2f" | "3f" | "4f" | "vespera" | "mesmo";
 
 /** Dia de confeção resolvido (segunda=2f ... domingo=dom, sábado=sab). */
 export type ConfDay = "2f" | "3f" | "4f" | "5f" | "6f" | "sab" | "dom";

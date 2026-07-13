@@ -1,0 +1,86 @@
+[00:00] explicamos, nas condutabilizações, só damos pontos, estávamos há bocado, ok, fizemos
+[00:05] segunda, fizemos terceira, fizemos corda, quer dizer, agora não é assim, porque mudámos
+[00:08] já não é quarta e domingo, mas pronto, passámos a este ponto, ok, aí o alcatnia
+[00:14] tinha falado, que sabia que nem aqui a tal lógica que é que é quando a coluna cidade
+[00:19] tem Portugal, quando ela passa, pode ir anterior, mas agora também temos Lisboa, Lisboa
+[00:25] e segunda, passa para comigo, estou a pôr aqui para ficar mais completo, pronto, mas não
+[00:33] tem a ver com este passo que vamos falar agora, pronto, agora vamos criar a folha das
+[00:36] condutabilizações que no fundo é esta folha aqui, ok, que eu já os passo a explicar,
+[00:41] mas ela é alimentada por esta coluna que é feita deste calco auxiliar, portanto,
+[00:49] e eu sinto que isto está tudo interligado e que vocês conseguem efetivamente criar
+[00:53] aqui uma coisa muito simples, ou com algum trabalho agora de início, depois conseguem-me
+[01:02] criar aqui uma estrutura simples em que consiga ser feito tudo de forma automática, ok, portanto,
+[01:08] isto sim tem que passar para o outro lado, mas eu não posso chegar aqui e colar, porque
+[01:14] no fundo é isso, o que eu vou fazer é chegar aqui e passar para aqui, só que isto vai
+[01:22] pegar isto e não vai, nem sequer vai ficar bem, e por que, porque continuam aqui outros pratos,
+[01:29] eu vou explicar por que, porque isto tem espaçamentos, ou seja, esta informação é esta que está aqui,
+[01:33] e está ali, esta é outra, esta é outra, e esta é outra, tem que haver o prato de ser caro,
+[01:40] se há produtos que não têm este prato, ok, portanto, vocês podem idealizar isto até
+[01:45] se calhar de outra forma, que isto nem se coloca, ok, que vão por nombres de produtos,
+[01:49] whatever, façam isto da forma que acharem melhor, mas a verdade é que, eu faço assim,
+[01:57] porque no fundo estas contabilizações estão montadas desta forma, e essas já estão,
+[02:04] têm aqui as fórmulas, portanto, vocês já estão, mas já têm isto ao vosso lado,
+[02:08] estas fórmulas, isto, lê-se, se for alocar, vai multiplicar sobre um valor, isto,
+[02:13] esses cálculos, ou seja, aliás, estão aqui, vocês depois podem analisar as fórmulas,
+[02:17] portanto, isto já está tudo aqui, ok, e, exatamente, agora, eu pego para chegar aqui,
+[02:26] e isto é uma leitura do que é que é, porque depois lá está, isto é o total, depois é aqui o
+[02:31] domingo, a segunda e a terça, ok, isto é calculador e poucas, isto, isto é para esquecer,
+[02:37] porque isto são coisas que até podemos ir trabalhando mais para a frente, que é uma das
+[02:43] coisas que eu queria, que eu já falei, inclusive, com o nome, mas eu também não tenho isto
+[02:49] desenvolvido de meu lado, portanto, isto é um segundo passo do que temos que desenvolver no futuro,
+[02:55] ok, para já, e voltando aqui à nossa realidade atual, eu vou ter que ordenar isto, ok, porque eu
+[03:05] vou ter que meter aqui, já com os pratos de peixe, que eu quero que apareçam aqui,
+[03:09] que também vai ficar o nome, mas, portanto, ou seja, quero os pratos de peixe, depois os pratos de
+[03:15] carne, depois os dois pratos estadianos, depois a pizza, sopa e sobremesa, depois entrou umas poucas,
+[03:20] as com arroz, as com quinoa, e, portanto, tenho aqui os tutais, os peices, portanto, isto para dizer que
+[03:29] ah, ah, para não me perder, então, eu chego aqui e eu tenho que fazer esta, esta ordenação,
+[03:38] tenho que ordenar estes pratos pela ordem que eu quero que eles apareçam lá, ok, portanto,
+[03:43] eu vou aos pratos de peixe e faço um, é, low carb, bulk, extra bulk, agora eu venho, por exemplo,
+[03:49] aqui, ao brinco de bacalhão, portanto, low carb, bulk, extra bulk, tenho que fazer exatamente
+[03:54] uma coisa, portanto, um, dois, três, depois é quatro, cinco, seis, depois aqui pescado, pescado,
+[04:00] sete, oito, nove, pescado, dez, onze, doze, depois, por exemplo, aqui, treze, quatorze, quinze, cuidado aqui,
+[04:16] que é quinze, dezesseis, sete, oito, a nove, ou seja, porque é low carb, bulk, extra bulk,
+[04:22] low carb, ok, depois de a nove, vinte, vinte e um, vinte e dois, vinte e três, vinte e quatro na
+[04:32] pisa, vinte e cinco na sopa, vinte e seis na sobremesa, feito, estes pratos quase de
+[04:40] um tinha a doze, zero carb, mas ela está contemplada aqui, portanto, eu tenho que ter
+[04:47] atenção sempre nesses passamentos, o que é que eu faço? Chego aqui, mas pronto, lá está,
+[04:54] chego e reforço, vocês não têm que fazer isto assim, ou seja, há certamente outra forma
+[04:58] muito mais simples e eficiente de fazer a coisa e automática, né, porque senão as coisas não
+[05:07] avançam e é por isso que eu preciso a vossa ajuda, portanto, extra bulk zero carb, isso aqui já
+[05:12] está considerado, depois aqui nos estaríamos igual, portanto, a estas duas versões é trezentos e
+[05:18] quatrocentos e cinquenta, às vezes que há pratos de peixe que também é nesta dosagem, ok, trezentos e
+[05:24] cinquenta, quando é o caso, e por causa aqui desta, esta ordem de, o carb, extra bulk e zero carb, quando
+[05:33] é um prato sem ser bostariano com estas dosagens únicas, imagina que é, ok, eu vou sumir que este
+[05:40] é o low carb, que este é o extra bulk e vou-lhe adicionar aqui um amei, que é o bulk,
+[05:45] ok, portanto, depois ao copiar para lá vai passar low carb, bulk nada, extra bulk,
+[05:52] quantidade e zero carb se não existe, ok, portanto, aqui neste caso não é o caso, portanto,
+[05:59] isto está ordenado pela ordem que eu quero, só que, e depois já tenho que fazer o mesmo aqui
+[06:05] nas formas, não ia fazer já, porque ainda me falta fazer aqui esta parte e depois aqui nas
+[06:12] poucas, tenho outra lógica, portanto, ordenado por ordem alfabética fica assim e depois
+[06:18] de chegar aqui, portanto, esta numeração, a partida, vai-me organizá-los da maneira que eu quero,
+[06:29] não organizou, por causa ali de um erro pronto. Isto é aqui uma coisa, porque antigamente havia aqui
+[06:34] poucas de camarão, portanto, porque deixei-te espacamente, porque na contabilização elas
+[06:40] ainda estão previstas aqui de camarão e já não existe, portanto, eu não refiz ali a
+[06:47] altura, portanto, esta aqui é de quinoa, portanto, há um erro, há um erro não, ou seja, o tofo
+[06:54] da roxo, xijel, não se vendeu e por isso é que ela não apareceu ali, portanto, tenho que estar só
+[07:00] atento a isto, xijel, xijel é uma roxo e o xijel que não existe, depois entrou então com quinoa
+[07:07] salmão, supostamente dos camarão, mxl, mxl e está feito, portanto, esta aqui não existe,
+[07:18] depois que quiser posso fazer isto, só para isto não se perder, esta ordem, pronto, depois chego aqui
+[07:32] e vou copiar portanto, 1.254 e colar sem formatação, 1.254 está tudo certo, assume logo os nomes,
+[07:50] domingo está aqui, 230, eu posso se validar, mas sim, 230, pronto, está tudo certo e no fundo
+[07:59] acabo por ser isto o passo aqui das controlizações, portanto, seja no fundo isto, registro controlizações
+[08:09] para nada, isso tem a ver com mesmo, do que vos estava a falar, portanto, isto 4 até acabo por ser
+[08:16] este 0.3, 0.3, portanto, ou não, no fundo, este é o CA, é como trabalhar aquela nova página,
+[08:26] esta nova folha, digo, e este passo número 4, eu digo que é basicamente colar só
+[08:35] esta coluna, esta tabela deste lado, portanto é só isso, mas basicamente estão interligados os passos,
+[08:45] portanto, vamos passar agora para a parte das etiquetas, ou seja, parte da documentação deste
+[08:50] documento, do documento de mãe, para que como ele se chama, está feito, portanto, este documento
+[08:56] está fechado, este documento é feito, e atenção, vocês podem sugerir o que quiserem e mudarmos
+[09:03] isto por completo, se ficar muito mais fácil, ou às vezes pode estar meio quadrado, porque
+[09:08] já estou a ver isto assim há anos, mas basicamente, eu queria vos dizer isto, que é, eu só faço
+[09:14] este documento para mudar isto, detalhado, portanto, se vocês me conseguirem dar isto,
+[09:23] sem fazer todos estes passos, está tudo certo, portanto, se me conseguirem fazer isso,
+[09:32] dar-me esta informação, sem dar estes passinhos todos que eu dei até aqui, perfeito,
+[09:38] se calhar evitamos isso, e faço também este documento, por causa disto, ou seja,
+[09:46] de conseguir criar etiquetas para cada uma delas, que é o passo que vamos trabalhar agora a seguir,
+[09:51] portanto, muito importante esta parte.

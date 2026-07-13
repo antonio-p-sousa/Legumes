@@ -34,6 +34,7 @@ const CONF_DAY_RULES: ReadonlySet<string> = new Set([
   "3f",
   "4f",
   "vespera",
+  "mesmo",
 ]);
 
 export async function loadEngineConfigs(prisma: PrismaClient): Promise<{

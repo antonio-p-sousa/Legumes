@@ -1,0 +1,44 @@
+[00:00] dos pedidos, basicamente, tenho que ir ao Shopify, vou aqui em comendas e pronto, a partida
+[00:09] aqui é que é efetivamente aquela questão de trabalhar os pedidos e a base começa aqui,
+[00:16] o que foi feito agora é basicamente preparar o site para continuar a receber pedidos já
+[00:21] para a próxima semana, portanto a partida aqui é que é a questão das encomendas,
+[00:27] como é que se faz ou o que é que se faz, basicamente ele está a selecionar todas,
+[00:31] eu venho aqui a data, filtro por intervalo, portanto é o dia 11 eu estou a aceitar de sábado para
+[00:40] frente, porque é que não é de 4 a 10 e se vocês queriam automatismos será assim, acredito eu,
+[00:47] é de sempre de 4 a 10, este é o ciclo de sábado a sexta, final do dia, só que como eu estou a
+[00:54] 1h45 e não tenho um cut-off eu vou deixar aberto, mas o mais correto se eu fizesse exatamente
+[01:02] à meia-noite eu sóvesse um cut-off rígido, à meia-noite eu tinha que filtrar de dia 4 a 10,
+[01:08] ou seja, de sábado a sexta, como neste caso eu faço sempre manualmente a hora que for,
+[01:12] nem sempre à meia-noite, às vezes é uma da manhã, duas, pronto, e os clientes com isto
+[01:18] também vão podendo fazer em comendas à meia-noite e meia, a uma até eu ouvir bloquear basicamente,
+[01:24] não é bloquear o site, mas é mudar o que eu já mudei, portanto mudar a emenda e mudar os pratos,
+[01:30] portanto depois disto está filtrado, eu chego aqui, portanto, vamos a dia 4, não defino uma data de fim,
+[01:40] isto é 50 todos e quero marcá-los comprocessados todos e querem ver a notificação,
+[01:48] muitos de eles já estão, porque quando há apagamento é produçado e depois quero, eu não sessionei
+[01:53] todos, porque vocês vão ver aqui aos portados os 50 mais em comendas correspondentes à pesquisa e
+[02:00] que queres portar, ok? Isto está aqui a mandar comprocessado, o que é importante mencionar? Há em
+[02:11] caso não estão pagas ainda, mas nós vamos sempre produçá-las e vamos sempre considerá-las para a
+[02:22] produção, por que? Porque há clientes que, por acaso este foi às 5 da tarde já ter tempo a pagar, mas
+[02:29] às vezes são clientes ou pessoas mais velhas que fazem à noite e preferem ir ao motivante no dia a seguir
+[02:34] e nós, por isso, consideramos sempre e depois tenho uma obstafeta, tenho uma pessoa logística que é
+[02:42] a mesma pessoa que faz desta feta, mas essa pessoa, uma das tarefas de ela ao sábado é entrar em
+[02:48] contacto com todas as pessoas que não pagaram e perceber se é para considerar ou não é para
+[02:53] considerar em comenda, ok? Portanto, partimos sempre do proposto que sim, depois vei lá que faz
+[02:58] a consideração. Não sei porquê que está em Rascun, não era suposto, mas vamos ignorar esta parte.
+[03:07] Pronto, estás portado, ela demora sempre um bocadinho, ela vai por e-mail, ok? Eu vou só aqui encontrar
+[03:15] o e-mail, portanto ela vem para aqui e já aqui está. Portanto, eu depois mando sempre isto para esta
+[03:39] feta. Chega aqui e dou-lhe sempre o nome de sequencial, dou-lhe o número da semana e ele vem com este
+[03:52] comportamento, portanto ele vem com... separado por vir-las, não é? E eu sei que isto em Excel também
+[03:58] dá para fazer, mas eu já o fiz em Excel e não resulta bem, depois podem tentar, mas eu tenho
+[04:06] sempre que eu faço com o open office. Pronto, pontei vir-la e vir-la. Avance. Portanto, eu acho que
+[04:24] estava a dizer que avance, porque eu puse aqui em pós um bocado, porque eu estava a sentir que me engasgar
+[04:27] de um tipo que ia buscar algo. Portanto, eu venho de sempre para aqui, para o open office,
+[04:33] porque... e já me disseram várias pessoas que isto depois dá para fazer em Excel,
+[04:41] ou seja, converter de vir-las para tabela, só que às vezes que eu fiz, ou vez que eu fiz para testar
+[04:50] e depois já estou passando uns tempos outra vez, há aqui uma coluna que não fica em coluna, fica tipo
+[04:58] depois tipo em linha, podem fazer-se isto. Basicamente só venho aqui mesmo, abri-lo e guardá-lo,
+[05:07] depois guardo em XGL10 e ele fica em antepormata atual e ele fica pronto para trabalhar em tabela. Pronto,
+[05:23] no entanto, no entanto, eu não trabalho ali em Excel, eu trabalho em Google Sheet.
+[05:38] Portanto, eu trago para aqui, abro, ele está abrindo em Google Sheet, ainda assim tem XGL10
+[05:47] e a primeira passo é guardá-lo mesmo como para que fique aqui e ilumine daqui, portanto, isto é um passo,
+[06:00] vou meter deste lado, pronto. Pronto, eu aqui, há aqui um guião, e eu muitas vezes venho ao guião, ok?

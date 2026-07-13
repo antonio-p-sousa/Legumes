@@ -95,15 +95,26 @@ A app separa o sufixo de dose. Doses possíveis:
 - Vegetariano: `300g`, `400g`, `450g`.
 - Pokes: variantes `M`/`XL` × `arroz`/`quinoa` (12 combinações).
 
-### 4.3 Confeção = véspera da entrega · 3 dias de confeção (2ª, 3ª, 4ª)
-- Entregas locais (Coimbra/Lisboa/Leiria) confecionam-se no dia mapeado pela zona.
-- **DPD nacional ("Portugal Continental 08-15h") é recolhido na véspera** → entra na produção do
-  dia anterior à entrega, junto com a produção desse dia. **Esta é a regra mais fácil de errar.**
+### 4.3 Dia de confeção — regra por zona
+Cada zona define como se calcula o dia de confeção a partir da data de entrega:
+- **Dia fixo** (`2f`|`3f`|`4f`): confeciona sempre nesse dia da semana.
+- **`vespera`**: dia ANTERIOR ao de entrega. **DPD nacional ("Portugal Continental
+  08-15h") é recolhido na véspera** → entra na produção do dia anterior. **A regra mais fácil de errar.**
+- **`mesmo`**: o PRÓPRIO dia de entrega. Recolhas em loja e entregas locais
+  confecionadas no dia — confirmado nos vídeos do cliente: *"quando é recolha, é
+  sempre no próprio dia"*. `vespera` e `mesmo` são relativas à data de entrega,
+  por isso acompanham qualquer calendário (incl. domingo) sem reconfiguração.
 
-Mapa (do ficheiro do cliente):
+> ⚠️ **Calendário em revisão (jul 2026).** Os vídeos do cliente indicam que os dias
+> de produção passaram de **2ª/3ª/4ª** para **domingo/segunda/terça**, e que **Lisboa**
+> passou a ser confecionada na véspera (como o DPD). As fontes ainda divergem no 3.º dia
+> (terça vs quarta) e o Miguel prometeu uma **matriz definitiva** entrega↔confeção.
+> Até lá, o mapeamento concreto de cada zona (qual usa `mesmo`/`vespera`/dia fixo) fica
+> por confirmar; o motor já suporta as três regras. Mapa histórico (semana 47, base do
+> golden test):
 ```
 Entrega Segunda  → confeção 2ª feira
-Entrega Terça    → confeção 3ª feira (local) ; DPP recolhido 2ª
+Entrega Terça    → confeção 3ª feira (local) ; DPD recolhido 2ª
 Entrega Quarta   → confeção 4ª feira (local) ; DPD recolhido 3ª
 Entrega Quinta+  → confeção 4ª feira (último dia de confeção)
 ```

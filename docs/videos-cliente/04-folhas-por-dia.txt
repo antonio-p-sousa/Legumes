@@ -1,0 +1,85 @@
+[00:00] Então, fiz basicamente a folha de mestres e agora vamos criar as outras, que basicamente
+[00:07] é só duplicar isto três vezes, mas com o filtro.
+[00:15] Portanto, eu vou chamar esta, antigamente quer a segunda-feira, agora é domingo, segunda
+[00:24] e terça.
+[00:25] Portanto, como é que eu filtro?
+[00:28] Atenção, depois eu posso explicar isto de outra forma, que foi aquela matriz
+[00:32] que eu disse que eu podia facultar, tem a ver com esta informação, o que é que é confeccionado
+[00:39] em que dias, ou seja, que são opções já que ganam um dia para trás, porque antigamente
+[00:44] eu tinha já uma teoria que eu acho que eu tenho escrito lá no tutorial, Portugal Continental
+[00:49] passa sempre um dia para trás, todas as outras não, só que agora mudámos um bocadinho
+[00:54] que é a Lisboa, segunda-feira passa também para domingo, no fundo acho que as únicas
+[01:00] premissas são estas, portanto, e atenção quando é recolha, é sempre no próprio dia,
+[01:09] ok?
+[01:10] Que é feita.
+[01:11] Portanto, também esta possibilidade, portanto, como é que eu faço isto depois entramos
+[01:17] práticos?
+[01:18] Portanto, é que eu tenho esta coluna, é aqui que eu atravale, eu basicamente agora
+[01:22] eu estou filtrado domingo e eu quero dizer que eu não quero que as de domingo e
+[01:29] este de segunda apareçam, estou a ocultá-las para poder apagar todas as outras, ok?
+[01:39] Depois de apagar todas as outras eu sei que já só me está a aparecer do domingo e de
+[01:44] segunda, domingo eu sei que vou confeccionar o próprio domingo, este de segunda é que
+[01:49] eu tenho algumas dúvidas, então ok, vou chegar aqui, vou filtrar, isto é o que
+[01:53] eu vou entregar no domingo, ou desculpe-me, o que eu vou entregar na segunda, mas
+[01:59] tem que ser de confecção domingo, e o que é que eu sei que é de confecção domingo
+[02:02] é Lisboa, portanto, esta é a entrega de leiria e esta é o pick-up de leiria, que
+[02:08] também é confeccionado no próprio dia, portanto, eu tito Lisboa para poder apagar
+[02:16] e ficar só com Lisboa de segunda-feira e de domingo, portanto, agora está limpo,
+[02:26] portanto, este documento está feito, segunda-feira vamos fazer igual, venha a zona, pesquise
+[02:33] segunda e limpo e pesquise sempre o dia seguinte e limpo, assim, eu estou a vos explicar um
+[02:38] momento, obviamente vocês devem ter milhares de formas de fazer isto e de formas bem
+[02:42] mais simples, talvez que aquela explicação até inicial que eu fiz, portanto, mas
+[02:47] esta resulta, ou até resulta desses anos todos, portanto, mas dá muito trabalho,
+[02:53] é certo, ou seja, o que é que eu fiz, coloquei a segunda e terça para apagar todos os outros,
+[02:59] agora só tenho a segunda e terça, e eu cheguei aqui, há uma coisa aqui, não está bem, vamos
+[03:05] ver os perfatos, ali às 12 de domingo, portanto, o errado está aqui, porque é que este dia
+[03:13] parece terça, portanto, é uma subscrição, o arever não é importante, até podemos
+[03:21] ocultar isto, portanto, vamos ignorar, porque a subscrição depois já é para apagar, portanto,
+[03:29] não, ou seja, não é um produto que é teórico, não afete, mas o cliente efetivamente escolheu
+[03:37] mas aquele atribuiu mal, foi um erro, não interesse, até porque a subscrição não requer
+[03:42] uma, ou seja, nós vemos já agora, tenta ver porque é que isso aconteceu, então
+[03:52] o cliente se escolheu o produto, mas o site permitiu-lhe escolher no calendário uma data
+[03:58] e não era suposto, portanto, esta sim é segunda-feira e esta é terça, portanto, segunda, o que
+[04:05] é que nós queremos que seja de confesão de segunda, ora, Lisboa, eu já sei que
+[04:11] vai ser confesionado no domingo, portanto, Leiria vai ser confesionado na segunda, portanto,
+[04:15] eu vou querer ver nas Lisboa para poder apagá-las, e pronto, basicamente é isso que eu
+[04:22] vou fazer, e agora sim, vou ao outro, e vou dizer, terça-feira, o que é que é para confesionado
+[04:36] segunda? É só por tudo, portanto, todas as outras vou apagar, porque os outros já
+[04:46] era coimbra e picape de coimbra, pronto, depois de feito, posso até fazer mais cliente isto,
+[04:53] apagar isto, porque não está aqui a fazer nada, portanto, também já está feito,
+[05:00] ocultar, eu só oculto, porque se não tem um comportamento difícil, as linhas ficam
+[05:05] demasiado largas, como está aqui, antes já são mariquísse minhas, mas pronto, aqui na zona,
+[05:13] fazer igual, portanto, terça, oculto e quarta, oculto, para poder eliminar todos os outros
+[05:22] dias, e agora, então, poder, não devemos ter aqui um problema, dá a bocado, né?
+[05:35] Eu sou o Manoel, na ximente, tenho aqui um bag, portanto, está resolvido, portanto, terça-feira,
+[05:43] já havíamos de fazer isso a bocado, portanto, a bocado, queríamos o Portugal, e agora,
+[05:49] terça-feira, eu quero confesionar sim as coimbra e as do picape, portanto, eu vou
+[05:54] ocultar estas, porque estas aqui, podemos validar, porque Portugal, continental, também
+[05:59] há quarta-feira, mas neste caso, estamos a falar de coisas que são entregues às vezes
+[06:02] também a terça-feira, portanto, isso vai de que ser confesionado na segunda-feira, portanto,
+[06:06] está tudo certo, iluminado, e depois, então, aqui, quarta, a partida, só esta opção,
+[06:19] portanto, é sempre para ser confesionado, só está a validade, a partida está tudo,
+[06:25] vou ocultar, portanto, como é que eu já faço a validação disto? Depois, aqui, também
+[06:30] eu oculto, só para ser melhor leitura, portanto, isto, os documentos estão trabalhados,
+[06:39] eu abro aqui um calco auxiliar, que chega aqui, nico-pio, só para ter a base,
+[06:49] vocês, obviamente, não precisarão de fazer nada disto, porque hoje vocês
+[06:53] criam logo o sistema, porque o que eu faço isto é por causa das fórmulas,
+[07:00] isto aqui é tudo para ignorar, mas, portanto, isto também, já posso fazer isto,
+[07:05] que é o que eu faço, por norma, depois o que é que eu faço? Chega aqui ao total,
+[07:09] vou ocular todos os itens ali, para aqui, para remover os duplicados,
+[07:16] posso já esticar a fórmula, para ver se vai de certo ou não manter,
+[07:25] porque eu fiz o total, este total vai buscar a foia-mãe e esta é o sumatório
+[07:33] e por que que não está bem? Até podemos já fazer aqui, criar aqui filtros,
+[07:38] meter aqui por ordem, porque, imagine, embalagens biodegradáveis,
+[07:44] este é sempre o passo que eu faço aqui, isto é para ignorar, portanto,
+[07:48] eu costumo colar por cima, nem costumo apagar, mas, portanto,
+[07:51] ponho ali, só para não estar aqui, porque aqui estamos a estragar aqui
+[07:54] os sumatórios, estipos e subscrições, também é para ser daqui,
+[08:01] e o R está exatamente aqui, é que as subscrições, como vocês viram,
+[08:05] apaguei uma inclusiva, porque elas não é para aparecer nem aqui,
+[08:08] estão aqui 36 e não está 0, 0, 0, portanto, o R está logo ali,
+[08:12] portanto, iluminando, dá 1.254, 1.254, está tudo certo,
+[08:18] é 5 de valida, este é um primeiro checkpoint que eu faço,
+[08:23] um double check no fundo, e portanto, é 5 que eu faço este double check,
+[08:29] eu agora vou encerrar este vídeo, mas para iniciar o próximo,
+[08:33] que é das contagens, ok?

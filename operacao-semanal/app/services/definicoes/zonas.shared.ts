@@ -8,7 +8,13 @@
  */
 
 /** Regras de dia de confeção aceites (ARCHITECTURE §4.3 e §5). */
-export const CONF_DAY_RULES = ["2f", "3f", "4f", "vespera"] as const;
+export const CONF_DAY_RULES = [
+  "2f",
+  "3f",
+  "4f",
+  "vespera",
+  "mesmo",
+] as const;
 
 export type ConfDayRule = (typeof CONF_DAY_RULES)[number];
 
@@ -18,4 +24,5 @@ export const CONF_DAY_LABELS: Record<ConfDayRule, string> = {
   "3f": "Terça",
   "4f": "Quarta",
   vespera: "Véspera da entrega",
+  mesmo: "Mesmo dia da entrega",
 };

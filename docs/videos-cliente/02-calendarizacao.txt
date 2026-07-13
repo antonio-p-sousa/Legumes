@@ -1,0 +1,43 @@
+[00:00] Agora para o segundo passo, que é basicamente disponibilizar a parte do cutoff no fundo,
+[00:09] que é então disponibilizar aos 9 dias de entrega, porque é porque amanhã e noite,
+[00:13] ou seja, quando eu faço esta troca, eu troca em menta, e eu aqui nesta aplicação de
+[00:19] Shopify, não sei se depois dá para criar algum tipo de automatismo, se isto tem
+[00:24] que ser sempre feito manualmente, tanto o passo anterior como este pronto, são
+[00:29] dois que eu tenho dúvida sobre como é que vocês vão automatizar este step.
+[00:37] Portanto, o que é que eu tenho que vir aqui fazer, ou seja, pronto, viram settings,
+[00:42] shipping, e depois isto já está definido, que no fundo é o tal cutoff, mas, ou seja,
+[00:51] não está a ser validado, porque é porque eu chegando aqui amanhã e noite fazendo
+[00:56] esta operação, basicamente, não interessa a outra informação.
+[01:01] Portanto, eu estava a receber entregas para dia 12, 13, 14 e 15, e eu basicamente tenho
+[01:06] que iluminar os bloquear estes dias, e abrir os dias da próxima semana, e bloquear os
+[01:16] da segunda ou terceira semana a seguir, para quê, ou porque é por causa destes
+[01:19] 14 aqui, porque estou a permitir que o cliente, no dia 1, possa fazer encomendas
+[01:24] até o dia 14, com base aqui neste 14, ok? Mas isto são os blocos de deitos, portanto,
+[01:31] só validar, está ok? Tenho esta semana, e por que que eu não bloquei estes dias aqui?
+[01:36] Porque está aqui mais abaixo aqui a dizer que só trabalhamos nesses dias, ok?
+[01:43] Portanto, eu guardo, depois disto é importante, tal como diz aqui, ou seja, é configurar
+[01:53] também os pickups, ou os pontos pickups, portanto, eu aqui tenho que ir aqui às recolezações,
+[01:59] e tenho duas neste caso, mas se tivesse 10, tinha que fazer manualmente para as 10, e achado
+[02:06] porque efetivamente já tive muitas, e sempre na mesma base, ou seja, venho aqui editar,
+[02:18] e basicamente, aqui nos blocos, vou bloquear estes, abrir o 21 e 22, e bloquear os da
+[02:26] outra semana. Isto tem aqui o 0, e no atinho 1, lá está, porque não interessa, porque
+[02:32] como sou eu que cheguei e bloquei, eu posso permitir que a pessoa possa encomendar, literalmente
+[02:39] pode ir a seguir, porque eu é que cheguei e faço esta validação de datas. Portanto,
+[02:47] isto era o ponto com ímbra, e falta aqui o ponto leria. O ponto leria faço exatamente
+[03:00] a mesma coisa, e como é só a segunda, eu só tenho que abrir novamente a segunda da próxima
+[03:14] semana. Pronto, isto está feito, vamos também validar esta vertente, como selecionando um
+[03:21] produto, adicionando-lo ao carrinho, e quando chegamos ao carrinho, eu espero que
+[03:27] abra aqui o mapa, ok? Estou a aceitar para, estamos ao dia 11, e vou aceitar em comendas
+[03:33] de 11 a 17. No dia 17 fecha, e depois fecha, abre em comendas, então ao dia 18 a 24, para
+[03:43] receberem, então 26, 27, 28 e 29, e é sempre assim. Portanto, eu agora vou receberem comendas
+[03:48] de 11 a 17, e chegar aqui ao dia 18, e estes dias desaparecem, deixam-me estar disponíveis
+[03:55] para passar a adaptar a semana seguinte, 26, 27, 28 e 29, sempre com o mesmo formato.
+[04:01] Eu não vou mostrar isto, mas é Lisboa, aqui diz Lisboa, aqui diz Lisboa e Leria, aqui diz
+[04:06] Portugal e Coimbra, aqui diz ao Portugal. Isto também está definido aqui. Pronto, basicamente,
+[04:14] não no Store Pickup, mas onde nós estávamos inicialmente, posso-vos mostrar novamente só
+[04:21] para que percebam que o flow completo da coisa. Portanto, estava aqui a dar passos,
+[04:29] carregados necessários, portanto, setting, shipping, e aqui, aqui sim conseguem em cada
+[04:39] dia, depois tem várias funcionalidades, mas lá está, não interessa tanto, o cutoff. Pronto,
+[04:45] aqui segundo, eu defino os testes que quero acrescentar, ok? Se quiser acrescentar mais testes,
+[04:52] é possível, é só adicionar salatos. Isto caso não é o que se pertence. Portanto, e isto? Descargar,
+[05:01] recargar.

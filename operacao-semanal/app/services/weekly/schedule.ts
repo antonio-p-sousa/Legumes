@@ -32,20 +32,28 @@ export function matchZone(
  * - Zonas "vespera" (DPD nacional, recolhido na véspera da entrega) entram na
  *   produção do dia ANTERIOR ao de entrega — weekday-1 com wrap
  *   (domingo → sábado). Esta é a regra mais fácil de errar.
+ * - Zonas "mesmo" (recolhas em loja e entregas locais confecionadas no dia)
+ *   confecionam no PRÓPRIO dia de entrega. Confirmado nos vídeos do cliente:
+ *   "quando é recolha, é sempre no próprio dia".
  *
  * O dia da semana é derivado da `deliveryDate` ISO (yyyy-mm-dd), nunca do
  * texto "Dia de entrega" — e a aritmética é feita em UTC para não depender
- * do timezone local do processo.
+ * do timezone local do processo. As regras "vespera"/"mesmo" acompanham
+ * qualquer calendário (incl. domingo) sem reconfiguração.
  */
 export function resolveConfDay(
   zone: ZoneConfig,
   delivery: ParsedDelivery,
 ): ConfDay {
-  if (zone.confDay !== "vespera") return zone.confDay;
-
-  const deliveryWeekday = isoWeekday(delivery.deliveryDate);
-  const eveWeekday = (deliveryWeekday + DAYS_IN_WEEK - 1) % DAYS_IN_WEEK;
-  return WEEKDAY_TO_CONFDAY[eveWeekday];
+  if (zone.confDay === "vespera") {
+    const deliveryWeekday = isoWeekday(delivery.deliveryDate);
+    const eveWeekday = (deliveryWeekday + DAYS_IN_WEEK - 1) % DAYS_IN_WEEK;
+    return WEEKDAY_TO_CONFDAY[eveWeekday];
+  }
+  if (zone.confDay === "mesmo") {
+    return WEEKDAY_TO_CONFDAY[isoWeekday(delivery.deliveryDate)];
+  }
+  return zone.confDay;
 }
 
 /** "2025-11-25" → 2 (0=domingo … 6=sábado), calculado em UTC. */

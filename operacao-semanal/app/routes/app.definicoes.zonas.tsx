@@ -106,6 +106,7 @@ const CONF_DAY_BADGE_TONE: Record<ConfDayRule, "info" | "warning"> = {
   "3f": "info",
   "4f": "info",
   vespera: "warning",
+  mesmo: "warning",
 };
 
 function confDayLabel(confDay: string): string {

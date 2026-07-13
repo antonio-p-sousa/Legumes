@@ -1,0 +1,105 @@
+[00:00] das etiquetas. Basicamente, que é a segunda parte mais importante,
+[00:04] isto é importante por causa desta contabilização e depois por causa das etiquetas, porque é
+[00:10] somente por causa disto que se faz este controle. E depois também dá jeito, o documento dá
+[00:16] jeito, obviamente, depois também para filtrar os pedidos para várias cidades, mas também
+[00:22] já há os pedicrisos. Mas isto também certamente arranjarão
+[00:25] uma forma mais simples do fazer. Portanto, etiquetas, venha aqui ao documento, já trabalhado,
+[00:34] portanto, as 2G31 são 2G36, portanto, o documento já está o mais atual possível e vou guardá-lo
+[00:44] e aí sim em Excel, aqui nas etiquetas, como num sequencial, semana e etiquetas. Chega
+[00:55] aqui, abre, na alta não paga o Excel, não digo a ninguém. Pronto, primeiro passo, podemos
+[01:09] tentar seguir isto, só para perceber. Cade os carregos a draves, já trabalhado, apagar
+[01:14] folhas e colunas, portanto, vamos usar para apagar folhas, portanto, total CA e original
+[01:23] aqui, não me dizem nada, portanto, aqui eu tiro sempre aqui um bocado zoom, para
+[01:27] apagar as colunas. Colunas que eu preciso, o código, todas as outras não, o número de
+[01:32] itens, os itens, o preço não, o nome do cliente, que foi aquela coluna que eu trabalhei, portanto,
+[01:41] aquela coluna que eu trabalhei e vocês já guardando, só para não correr riscos e portanto,
+[01:49] com isto já vamos conseguir as etiquetas, portanto, vamos fazer isto em todas, iluminar,
+[02:08] portanto, este passo está feito, agora, apagar colunas e aplicar a fórmula para colocar
+[02:25] um brato por linha, ou seja, o que é isto? Eu tenho aqui, esta vitória, eu preciso duas
+[02:32] linhas deste crème, com este código e com este nome, da mesma forma que preciso
+[02:37] quatro linhas com este código, com este nome e com este produto, portanto, eu fiz
+[02:45] aqui, o que eu queria tirar, isto aqui, mas se calhar não consigo, tenho que fazer isto
+[02:53] de outra forma. Portanto, eu tenho aqui uma fórmula que em código VBA, que na verdade
+[03:05] isto vai dar o erro, porque está sempre, portanto, em programador visual básico, inserir
+[03:11] modo pio, col aliás e corre, ele vai me dar erro, vai me dar erro, ele vai me desligar
+[03:19] o ex, ele vai me abrir novamente, ele faz sempre isto, mas muito provavelmente é porque o
+[03:26] ex, ele não é a versão paga, tenho que fazer igual, não tenho aqui a fórmula regulada,
+[03:42] gosto de garantir que ela está aqui aberta e correiro, portanto isto está às vezes
+[03:51] tremo um bocadinho, tenta que o running está ali a correr, antigamente isto não
+[03:59] aconteceu tanto, mas agora eu antigamente fazia assim e ele já me mudava para o documento,
+[04:06] como mudou agora, mas se reparar, ok, já utilizou, para ver se já abre aqui isto, depois eu
+[04:14] carrego aqui e volto a abrir, não sei bem porquê, mas pronto, o serviço está bem feito,
+[04:19] aqui o ex é um bocadinho, portanto está aqui o Francisco, as tiras estão aqui três,
+[04:26] mesmo gás, portanto, mas isto faz uma a uma, portanto, eu agora tenho que ver aqui,
+[04:32] mudar de folha e dar nova ordem, e desce para mudar, a segunda só um bocadinho mais,
+[04:44] portanto ele é capaz de se burrar um bocadinho mais, aqui é mudar de folha, e às vezes
+[04:50] força, às vezes até carrega aqui mesmo que é para ele mesmo dizer que não responde,
+[04:55] isto no início eu estava, mas agora já não, às vezes sei que ele faz parte
+[05:14] já assumiu, portanto, dois, dois, dois, está tudo, dois, três, queremos, está, ok,
+[05:20] vamos aqui a teste e voltar a fazer o mesmo, está um bocado chato, por que não olha,
+[05:26] mas tem muito que querer se posto, isto era bom até correr-se logo nas três folhas,
+[05:39] mas pronto, se calhar dá, mas lá está, não, não sou a melhor pessoa do mundo,
+[05:45] e não é que sou, não é que gostar bastante, mas não aguentado muitas vezes, portanto,
+[05:59] agora vai carregar, não quer substituir nada, sei o que se não queria,
+[06:06] deu ter arrastado aqui, portanto, dois, dois, três, três, está, ok, portanto,
+[06:10] é partida agora sim, está guardado, podemos guardar com autorização para isto,
+[06:15] pronto, o documento ainda não está finalizado, portanto, esta parte do VBA está feita,
+[06:20] voltamos aqui acima e dizemos, ok, aplicar a fórmula está, vamos apagar, tipo,
+[06:25] subscrições, embalagens e voz, porque isto é tudo de produtos teóricos,
+[06:30] há uma coisa que poderíamos fazer, que é passar tudo para um,
+[06:33] porque na verdade a fórmula já correu, eu já sei que só tenho um porolinho,
+[06:45] portanto, podemos fazer isto, está feita, isto não estava apontado,
+[06:52] mas pronto, é um procedimento que eu às vezes faço, agora sim, apagar linhas,
+[06:57] tips e subscrições, portanto, tips, está aqui uma,
+[07:05] subscrições não há e depois já sei que é aqui mais ou menos, a parte das embalagens,
+[07:12] veja, degradáveis, que não há, portanto, poderia haver, mas não há, é aqui tips,
+[07:21] portanto, se vocês obviamente reforçam, só verem, só verem, claro que sabem,
+[07:28] mas ver uma forma mais fácil e não manual, que sejas coluir logo na parte
+[07:35] das etiquetas, embalagens, tips, o que for, subscrições e só as outras, então,
+[07:43] perfeito, eu antigamente ainda fazia uma coisa, que era chegar aqui e ver,
+[07:46] ok, sou uma 576 e eu vejo nha aqui, se é a 576 está certo,
+[07:55] ou seja, fazer essa validação, agora confesso que confio tanto neste momento,
+[08:01] criei que não, nem valido, às vezes, porque, às vezes, a selecionar dois,
+[08:07] posso ir aqui a um terceiro sem querer, mas como programa, também tenta fazer isto,
+[08:14] não se coloca, porque, ou seja, podia acontecer isto, né, e eu apagar aqui um, um produto,
+[08:24] pronto, vossas também não houve, que eu vi, portanto, ou seja,
+[08:32] pagar tip, subscrições, amaldades e vossas, está feito, depois, uma das coisas é organizar os
+[08:39] nomes clientes, provarem a alfabética e meter-lhe o número total à frente,
+[08:44] para ficar com este aspecto, uma lista e depois mandar isto por whatsapp, ou para o grupo da equipe,
+[08:52] portanto, o que é que eu vou fazer? Vou organizar isto por cliente,
+[08:59] e eu vou colar aqui, mas vou remover duplicados.
+[09:06] Vou fazer exatamente o mesmo, ou seja, isto é uma coisa que eu espero que é uma listagem,
+[09:16] que no fundo, há outro sítio que vossas vão ter que mudar isto, outras rotas, portanto,
+[09:24] não precisa ser feito aqui neste passo, ok? Eu faço aqui, para depois alimentar a tal cena das
+[09:31] rotas, mas, mas não precisam de fazer aqui, ok? Portanto, isto está rolado,
+[09:39] e agora, tenho aqui uma fórmula que eu corro à frente deles, sem qualidade,
+[09:54] que no 176, como há bocado, eu já até fazia sempre a validação só aqui e não no outro lado,
+[10:01] portanto, faço aqui um bocadinho, só para que isto vá com outro aspecto, e que o nome
+[10:05] de todo já apareceu, mas é chato, mas para não estar sumido, vou aguardar, porque já se
+[10:14] fez muita coisa e não queria perder o que se fez, vou só aguardar então bem, porque eu vou
+[10:18] abrir aqui o grupo do WhatsApp aqui no computador, portanto, como eu estava dizendo,
+[10:25] então depois vou colar isto, estou no grupo da equipa, não que precise, porque depois com o
+[10:32] novo método que temos, já não se coloca, mas, portanto, escrevi sempre aqui, como é um
+[10:37] hábito antigo nós tínhamos, porque com a nova coisa que eu vos vou dar mais à frente,
+[10:43] que é que a questão das rotas, esta informação já lá vai, portanto, já não havia necessidade,
+[10:47] e depois já é imprimida lá na cozinha, portanto, já não havia necessidade de o fazer, mas
+[10:54] o pessoal está habituado a ter esta informação e então vamos manter, depois de colado, deixe-me
+[11:16] só aqui acompanhar, depois de colar esta parte, reporte quantidades, vamos só colar esta parte
+[11:26] da data de confeição, que é aqui, portanto, chega aqui, portanto, e estamos a falar
+[11:36] domingo, amanhã, portanto, 12, 12, 7, atenção, 7, 12, 7, agora começa a ser mais fácil,
+[11:59] 3, 2, 7, e depois posso tentar gravar no computador desta feita,
+[12:09] por que que eu faço isto, tanto esta parte como a parte depois da DPD, que é lá que é feita,
+[12:18] foi o que vocês entendam, o fluxo de tudo, ou seja, 14 de terça-feira, vamos só validar,
+[12:25] 14 de terça-feira, está certo, portanto, isto está feito, colar a data de confeição,
+[12:32] porque isto depois vai na etiqueta e isso é importante, e ordenar pratos e apagar linhas
+[12:36] remanescentes, eu faço isto porque às vezes já aconteceu impressora continuar
+[12:43] em tipo a imprimir rolo em branco, porque assume que isto é infinito, portanto,
+[12:51] assim eu já sei que se existir uma base de dados, termina ali, é só um passo, é só porque
+[13:01] esta feita pode não verificar quantas etiquetas é que ele está a mandar imprimir, meta a máquina
+[13:09] de andar, sai dali, entretanto chega lá e tem o rolo todo no chão, portanto, é assim que eu termino
+[13:20] esta parte das etiquetas, guarda, isto está aguardado na drive, isto é outra coisa importante,
+[13:27] que depois vocês também vamos ter que realizar isso como é que onde é que se
+[13:33] partilhou o que, na verdade não é na drive que isto está, é na dropbox,
+[13:37] mas, espanto, é um bocado igual, portanto, a pasta é onde isto está, isto é tudo na dropbox,
+[13:44] dropbox Miguel, em alguns ministrativos, que é que está apartada com o bacana,
+[13:53] depois me faz as coisas no sábado, portanto, está terminado.

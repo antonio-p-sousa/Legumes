@@ -149,6 +149,39 @@ describe("resolveConfDay", () => {
     expect(resolveConfDay(dpd, delivery)).toBe("2f");
   });
 
+  // Regra "mesmo" (recolhas e entregas locais confecionadas no próprio dia).
+  // Confirmada nos vídeos do cliente: "quando é recolha, é sempre no próprio dia".
+  test("mesmo dia: entrega terça 2025-11-25 confeciona na 3f", () => {
+    const pickup = makeZone({
+      matchText: "Store Pickup — Coimbra",
+      confDay: "mesmo",
+    });
+    const delivery = makeDelivery({ deliveryDate: "2025-11-25", dia: "Terça" });
+
+    expect(resolveConfDay(pickup, delivery)).toBe("3f");
+  });
+
+  test("mesmo dia acompanha o novo calendário: entrega domingo confeciona ao domingo", () => {
+    const local = makeZone({ matchText: "Lisboa domingo", confDay: "mesmo" });
+    const delivery = makeDelivery({
+      deliveryDate: "2025-11-30", // domingo
+      dia: "Domingo",
+    });
+
+    // "dom" não é exprimível por dia fixo (2f/3f/4f) — só "mesmo"/"vespera" o cobrem.
+    expect(resolveConfDay(local, delivery)).toBe("dom");
+  });
+
+  test("mesmo dia baseia-se na deliveryDate ISO, não no texto do dia", () => {
+    const local = makeZone({ confDay: "mesmo" });
+    const delivery = makeDelivery({
+      deliveryDate: "2025-11-24", // segunda
+      dia: "Quarta", // texto errado de propósito
+    });
+
+    expect(resolveConfDay(local, delivery)).toBe("2f");
+  });
+
   test("vespera lança erro para deliveryDate fora do formato yyyy-mm-dd", () => {
     const dpd = makeZone({ confDay: "vespera" });
     const delivery = makeDelivery({ deliveryDate: "25/11/2025" });
