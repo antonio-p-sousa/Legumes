@@ -12,7 +12,7 @@
 | Mockups | 6 ecrãs navegáveis (chrome Shopify Admin) | 10/07 | ✅ Concluída |
 | Fase 0 — Scaffold | Template react-router + Prisma + fixtures w47 anonimizadas | 10/07 | ✅ Concluída |
 | Fase 1 — Motor | 9 funções puras + golden test w47 (120 testes) | 10/07 | ✅ Concluída |
-| Fase 2 — Definições | CRUD zonas/parceiros/fichas/config + seed | 13/07 | 🔄 Em curso |
+| Fase 2 — Definições | CRUD zonas/parceiros/fichas/config + seed (214 testes no total) | 13/07 | ✅ Concluída |
 | Fase 3 — Cozinha | Página mapa de produção + export xlsx + cockpit | 14–15/07 prev. | ⬜ Planeada |
 | Fase 4 — Estafetas | Rotas + CSV DPD + email aos parceiros | 16–17/07 prev. | ⬜ Planeada |
 | Fase 5 — Compras | Página por fornecedor + estados "sem ficha" | 17–20/07 prev. | ⬜ Planeada |
