@@ -18,7 +18,8 @@
     "prisma": "prisma",
     "graphql-codegen": "graphql-codegen",
     "vite": "vite",
-    "typecheck": "react-router typegen && tsc --noEmit"
+    "typecheck": "react-router typegen && tsc --noEmit",
+    "seed": "tsx prisma/seed.ts"
   },
   "type": "module",
   "engines": {
@@ -57,6 +58,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "graphql-config": "^5.1.1",
     "prettier": "^3.6.2",
+    "tsx": "^4.23.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vitest": "^4.1.10"
@@ -71,5 +73,8 @@
   ],
   "overrides": {
     "p-map": "^4.0.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
