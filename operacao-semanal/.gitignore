@@ -16,7 +16,7 @@ database.sqlite
 .env
 .env.*
 
-package-lock.json
+# package-lock.json committed para deploys/CI reproduzíveis (ver docs/DEPLOY.md)
 yarn.lock
 pnpm-lock.yaml
 
