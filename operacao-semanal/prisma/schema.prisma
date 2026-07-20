@@ -78,6 +78,18 @@ model RecipeLine {
   @@unique([doseId, ingredientId])
 }
 
+// Modelo de COMPONENTES do empratamento (1.ª fase, 20 jul 2026): kg por
+// refeição de cada componente (Proteína|Hidratos|Legumes) por dose. Os valores
+// seedados já incluem a margem de 10 g por componente — nunca somar margem.
+model ComponentFactor {
+  id        String @id @default(cuid())
+  dose      String // "Low Carb" | "Bulk" | ... | "Dose M" | "Dose XL"
+  component String // "Proteína" | "Hidratos" | "Legumes"
+  kgPerMeal Float // kg por 1 refeição (margem de 10 g já incluída)
+
+  @@unique([dose, component])
+}
+
 model Supplier {
   id          String       @id @default(cuid())
   name        String       @unique

@@ -6,7 +6,9 @@
  *   1. Couriers + Zones — fixtures reais da w47 (test/fixtures/zones-w47.ts);
  *   2. AppConfig singleton — defaults do schema + conta DPD;
  *   3. Dishes + Doses — derivados dos line items REFEIÇÃO da w47
- *      (test/fixtures/w47-orders.json), categorizados por heurística.
+ *      (test/fixtures/w47-orders.json), categorizados por heurística;
+ *   4. ComponentFactor — tabela de empratamento por componentes do cliente
+ *      (20 jul 2026, margem de 10 g já incluída — nunca somar margem).
  *
  * Idempotente: usa upsert em tudo — correr duas vezes não duplica nada.
  * Pratos/doses usam `update: {}` (só-inserir) para nunca sobrepor edições
@@ -19,7 +21,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { PrismaClient } from "@prisma/client";
 
-import { isMealItem, splitDishDose } from "../app/services/weekly/index";
+import {
+  DEFAULT_COMPONENT_FACTORS,
+  isMealItem,
+  splitDishDose,
+} from "../app/services/weekly/index";
 import { COURIERS_W47, ZONES_W47 } from "../test/fixtures/zones-w47";
 
 /** Conta DPD da loja (ARCHITECTURE.md §4.6 — 1ª coluna do CSV DPD). */
@@ -108,6 +114,7 @@ export interface SeedSummary {
   zones: number;
   dishes: number;
   doses: number;
+  componentFactors: number;
 }
 
 export async function seed(prisma: PrismaClient): Promise<SeedSummary> {
@@ -181,14 +188,33 @@ export async function seed(prisma: PrismaClient): Promise<SeedSummary> {
     }
   }
 
-  const [couriers, zones, dishCount, doses] = await Promise.all([
-    prisma.courier.count(),
-    prisma.zone.count(),
-    prisma.dish.count(),
-    prisma.dose.count(),
-  ]);
+  // 5. Fatores de componentes do empratamento (tabela do cliente, 20 jul 2026
+  //    — margem de 10 g por componente JÁ incluída). `update: {}` = só-inserir,
+  //    para nunca sobrepor valores editados pelo operador.
+  for (const factor of DEFAULT_COMPONENT_FACTORS) {
+    await prisma.componentFactor.upsert({
+      where: {
+        dose_component: { dose: factor.dose, component: factor.component },
+      },
+      create: {
+        dose: factor.dose,
+        component: factor.component,
+        kgPerMeal: factor.kgPerMeal,
+      },
+      update: {},
+    });
+  }
 
-  return { couriers, zones, dishes: dishCount, doses };
+  const [couriers, zones, dishCount, doses, componentFactors] =
+    await Promise.all([
+      prisma.courier.count(),
+      prisma.zone.count(),
+      prisma.dish.count(),
+      prisma.dose.count(),
+      prisma.componentFactor.count(),
+    ]);
+
+  return { couriers, zones, dishes: dishCount, doses, componentFactors };
 }
 
 // ── Execução direta (npx tsx prisma/seed.ts) ────────────────────────────────
@@ -205,7 +231,8 @@ if (isDirectRun) {
     .then((summary) => {
       console.log(
         `Seed concluído: ${summary.zones} zonas, ${summary.couriers} estafetas, ` +
-          `${summary.dishes} pratos, ${summary.doses} doses (conta DPD ${DPD_ACCOUNT}).`,
+          `${summary.dishes} pratos, ${summary.doses} doses, ` +
+          `${summary.componentFactors} fatores de componentes (conta DPD ${DPD_ACCOUNT}).`,
       );
     })
     .catch((error) => {

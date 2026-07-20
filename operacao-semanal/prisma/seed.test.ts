@@ -24,6 +24,8 @@ const TEST_DB = path.join(TMP_DIR, "seed.sqlite");
 // 19 pratos distintos (baseName) e 49 doses distintas (dishId+label).
 const EXPECTED_DISHES = 19;
 const EXPECTED_DOSES = 49;
+// Tabela de componentes do cliente (20 jul 2026): 8 doses × 3 componentes.
+const EXPECTED_COMPONENT_FACTORS = 24;
 
 let prisma: PrismaClient;
 let firstRun: SeedSummary;
@@ -44,6 +46,7 @@ beforeAll(async () => {
   await prisma.zone.deleteMany();
   await prisma.courier.deleteMany();
   await prisma.appConfig.deleteMany();
+  await prisma.componentFactor.deleteMany();
 
   firstRun = await seed(prisma);
 });
@@ -125,7 +128,48 @@ describe("seed — idempotência", () => {
     expect(secondRun.couriers).toBe(COURIERS_W47.length);
     expect(secondRun.dishes).toBe(EXPECTED_DISHES);
     expect(secondRun.doses).toBe(EXPECTED_DOSES);
+    expect(secondRun.componentFactors).toBe(EXPECTED_COMPONENT_FACTORS);
     expect(configCount).toBe(1);
+  });
+});
+
+describe("seed — fatores de componentes", () => {
+  it("cria exatamente 24 fatores (8 doses × 3 componentes)", async () => {
+    // Act
+    const count = await prisma.componentFactor.count();
+
+    // Assert
+    expect(count).toBe(EXPECTED_COMPONENT_FACTORS);
+    expect(firstRun.componentFactors).toBe(EXPECTED_COMPONENT_FACTORS);
+  });
+
+  it("Zero Carbs tem Hidratos = 0 de propósito (fator explícito, não em falta)", async () => {
+    // Act
+    const factor = await prisma.componentFactor.findUnique({
+      where: { dose_component: { dose: "Zero Carbs", component: "Hidratos" } },
+    });
+
+    // Assert
+    expect(factor).not.toBeNull();
+    expect(factor?.kgPerMeal).toBe(0);
+  });
+
+  it("não sobrepõe valores editados pelo operador (upsert só-inserir)", async () => {
+    // Arrange — o operador ajusta um fator na BD
+    const edited = await prisma.componentFactor.update({
+      where: { dose_component: { dose: "Bulk", component: "Proteína" } },
+      data: { kgPerMeal: 0.999 },
+    });
+    expect(edited.kgPerMeal).toBe(0.999);
+
+    // Act — novo seed por cima
+    await seed(prisma);
+    const after = await prisma.componentFactor.findUnique({
+      where: { dose_component: { dose: "Bulk", component: "Proteína" } },
+    });
+
+    // Assert — o valor editado sobrevive ao re-seed
+    expect(after?.kgPerMeal).toBe(0.999);
   });
 });
 

@@ -10,7 +10,10 @@ import type { PrismaClient } from "@prisma/client";
 import type { AdminGraphqlClient } from "../orders/graphql.server";
 import { fetchWeekOrders, type WeekOrders } from "../orders/provider.server";
 import {
+  COMPONENT_NAMES,
   processOrders,
+  type ComponentFactor,
+  type ComponentName,
   type ConfDayRule,
   type CourierConfig,
   type ProcessedOrder,
@@ -97,6 +100,29 @@ export async function loadRecipes(
     }
   }
   return recipes;
+}
+
+/**
+ * Fatores de empratamento por componentes (BD → motor). O seed só escreve
+ * componentes do domínio; linhas fora dele (BD editada à mão) são ignoradas —
+ * o motor não saberia empratá-las e o CRUD futuro valida à entrada.
+ */
+export async function loadComponentFactors(
+  prisma: PrismaClient,
+): Promise<ComponentFactor[]> {
+  const rows = await prisma.componentFactor.findMany({
+    orderBy: [{ dose: "asc" }, { component: "asc" }],
+  });
+
+  return rows
+    .filter((row): row is (typeof rows)[number] & { component: ComponentName } =>
+      (COMPONENT_NAMES as readonly string[]).includes(row.component),
+    )
+    .map((row) => ({
+      dose: row.dose,
+      component: row.component,
+      kgPerMeal: row.kgPerMeal,
+    }));
 }
 
 /**

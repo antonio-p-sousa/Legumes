@@ -8,8 +8,14 @@
  * Tudo aqui são funções puras e testadas — quem carrega da BD/Shopify são os
  * loaders (loadWeekData + prisma.dish.findMany), não este módulo.
  */
-import { WEEKDAY_TO_CONFDAY, buildKitchenMap } from "../weekly";
+import {
+  WEEKDAY_TO_CONFDAY,
+  buildComponentPlan,
+  buildKitchenMap,
+} from "../weekly";
 import type {
+  ComponentFactor,
+  ComponentPlan,
   ConfDay,
   KitchenDay,
   KitchenRow,
@@ -78,6 +84,12 @@ export interface CozinhaView {
   totalOrders: number;
   /** Itens não-cozinha da semana inteira (fora dos totais de refeições). */
   nonMeal: KitchenRow[];
+  /**
+   * Plano de empratamento por componentes (kg de Proteína/Hidratos/Legumes
+   * por dia). Opcional para retrocompatibilidade — só existe quando o loader
+   * passa os fatores da BD a buildCozinhaView.
+   */
+  componentPlan?: ComponentPlan;
 }
 
 // ── Constantes de domínio (regra 4.2) ────────────────────────────────────────
@@ -107,11 +119,14 @@ function resolveSection(category: string): SectionKey {
 
 /**
  * Constrói a vista da página Cozinha a partir da semana processada e da lista
- * de pratos (baseName → category). Função pura: não muta os argumentos.
+ * de pratos (baseName → category). Com `componentFactors`, calcula também o
+ * plano de empratamento por componentes (campo opcional `componentPlan`).
+ * Função pura: não muta os argumentos.
  */
 export function buildCozinhaView(
   weekData: WeekData,
   dishes: DishCategoryInput[],
+  componentFactors?: ComponentFactor[],
 ): CozinhaView {
   const categoryByDish = new Map(
     dishes.map((dish) => [dish.baseName, dish.category]),
@@ -127,6 +142,9 @@ export function buildCozinhaView(
     totalMeals: kitchen.totalMeals,
     totalOrders: days.reduce((sum, day) => sum + day.totalOrders, 0),
     nonMeal: kitchen.nonMeal,
+    ...(componentFactors
+      ? { componentPlan: buildComponentPlan(weekData.processed, componentFactors) }
+      : {}),
   };
 }
 

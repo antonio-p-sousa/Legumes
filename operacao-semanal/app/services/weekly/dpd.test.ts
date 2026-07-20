@@ -157,9 +157,14 @@ describe("buildDpdCsv", () => {
     expect(firstLineFields(result.csv)[COL.codigoPostal]).toBe("0435-123");
   });
 
-  test("volumes nos limiares: 79.99→1, 80→2, 159.99→2, 160→3", () => {
-    const at = (totalPrice: number) =>
-      makeProcessed({ order: makeOrder({ totalPrice }) });
+  test("volumes nos limiares do SUBTOTAL: 79.99→1, 80→2, 159.99→2, 160→3", () => {
+    // totalPrice deliberadamente diferente (subtotal + portes) para provar
+    // que a base é o subtotal — fórmula confirmada pelo cliente (20 jul):
+    // =SE(Subtotal<80;1;(SE(Subtotal<160;2;3)))
+    const at = (subtotalPrice: number) =>
+      makeProcessed({
+        order: makeOrder({ subtotalPrice, totalPrice: subtotalPrice + 4.9 }),
+      });
 
     const result = buildDpdCsv(
       [at(79.99), at(80), at(159.99), at(160)],
@@ -174,9 +179,11 @@ describe("buildDpdCsv", () => {
     expect(result.totalVolumes).toBe(1 + 2 + 2 + 3);
   });
 
-  test("peso = total/20 com vírgula decimal e sem zeros à direita", () => {
-    const at = (totalPrice: number) =>
-      makeProcessed({ order: makeOrder({ totalPrice }) });
+  test("peso = subtotal/20 com vírgula decimal e sem zeros à direita", () => {
+    const at = (subtotalPrice: number) =>
+      makeProcessed({
+        order: makeOrder({ subtotalPrice, totalPrice: subtotalPrice + 4.9 }),
+      });
 
     const result = buildDpdCsv([at(64.45), at(40), at(50)], COURIERS, CONFIG);
 
@@ -292,8 +299,10 @@ describe("buildDpdCsv", () => {
   });
 
   test("agrega totais: shipments, peso a 2 casas e volumes", () => {
-    const at = (name: string, totalPrice: number) =>
-      makeProcessed({ order: makeOrder({ name, totalPrice }) });
+    const at = (name: string, subtotalPrice: number) =>
+      makeProcessed({
+        order: makeOrder({ name, subtotalPrice, totalPrice: subtotalPrice + 4.9 }),
+      });
 
     const result = buildDpdCsv(
       [at("#1", 64.45), at("#2", 40)],
@@ -304,6 +313,18 @@ describe("buildDpdCsv", () => {
     expect(result.shipments).toBe(2);
     expect(result.totalWeightKg).toBe(5.22); // 3.2225 + 2 = 5.2225 → 5.22
     expect(result.totalVolumes).toBe(2);
+  });
+
+  test("nome de envio vazio cai para o nome de faturação (cliente, 20 jul)", () => {
+    const order = makeOrder({});
+    order.shippingAddress = { ...order.shippingAddress!, name: "" };
+    order.billingName = "Cliente Faturação";
+
+    const result = buildDpdCsv([makeProcessed({ order })], COURIERS, CONFIG);
+
+    const fields = result.csv.split(";");
+    expect(fields[2]).toBe("Cliente Faturação"); // nome
+    expect(fields[10]).toBe("Cliente Faturação"); // contacto no destino
   });
 
   test("não muta os inputs", () => {

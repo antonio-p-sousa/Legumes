@@ -6,7 +6,12 @@ const DPD_COLUMN_COUNT = 17;
 const COUNTRY_CODE = "PT";
 /** Peso estimado: €20 de encomenda ≈ 1 kg. */
 const EUR_PER_KG = 20;
-/** Limiares de preço total → nº de volumes. */
+/**
+ * Limiares → nº de volumes, sobre o SUBTOTAL (sem portes).
+ * Confirmado pelo cliente (20 jul 2026): "=SE(Subtotal<80;1;(SE(Subtotal<160;2;3)))"
+ * — "a regra é cada volume levar 80€ aproximadamente". O peso usa a mesma
+ * base (a coluna do Template_DPD é o Subtotal).
+ */
 const TWO_VOLUMES_FROM_EUR = 80;
 const THREE_VOLUMES_FROM_EUR = 160;
 
@@ -40,14 +45,17 @@ export function buildDpdCsv(
 
   for (const { order } of dpdOrders) {
     const address = order.shippingAddress;
-    const name = cleanTextField(address?.name ?? "");
+    // Nome de ENVIO é o correto (confirmado pelo cliente, 20 jul 2026);
+    // fallback para o de faturação quando o de envio vem vazio — era por
+    // isso que o processo manual usava faturação.
+    const name = cleanTextField(address?.name || order.billingName || "");
     const street = cleanTextField(address?.address1 ?? "");
     // Código postal fica string tal e qual (preserva zeros à esquerda).
     const postalCode = cleanTextField(address?.zip ?? "");
     const city = cleanTextField(address?.city ?? "");
     const mobile = cleanPhone(address?.phone ?? "");
-    const weightKg = roundTo(order.totalPrice / EUR_PER_KG, 4);
-    const volumes = volumesFor(order.totalPrice);
+    const weightKg = roundTo(order.subtotalPrice / EUR_PER_KG, 4);
+    const volumes = volumesFor(order.subtotalPrice);
 
     if (!mobile) issues.push(`${order.name}: envio sem telefone`);
     if (!street) issues.push(`${order.name}: envio sem morada`);
@@ -123,10 +131,10 @@ function formatWeight(weightKg: number): string {
     .replace(".", ",");
 }
 
-/** Nº de volumes por escalão de preço total. */
-function volumesFor(totalPrice: number): number {
-  if (totalPrice < TWO_VOLUMES_FROM_EUR) return 1;
-  if (totalPrice < THREE_VOLUMES_FROM_EUR) return 2;
+/** Nº de volumes por escalão do subtotal (sem portes). */
+function volumesFor(subtotalPrice: number): number {
+  if (subtotalPrice < TWO_VOLUMES_FROM_EUR) return 1;
+  if (subtotalPrice < THREE_VOLUMES_FROM_EUR) return 2;
   return 3;
 }
 

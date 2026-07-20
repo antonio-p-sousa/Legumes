@@ -304,10 +304,11 @@ describe("buildSemanaView — documentos", () => {
       estado: "success",
       detalhe: "2 rotas · 3 paragens",
     });
-    // 1 envio DPD de 100€ → 100/20 = 5 kg.
+    // 1 envio DPD com subtotal 40€ → 40/20 = 2 kg (peso sobre o SUBTOTAL,
+    // confirmado pelo cliente a 20 jul 2026).
     expect(dpd).toMatchObject({
       estado: "success",
-      detalhe: "1 envio · 5 kg",
+      detalhe: "1 envio · 2 kg",
     });
   });
 

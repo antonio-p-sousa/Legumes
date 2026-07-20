@@ -12,6 +12,7 @@ import {
   type DishCategoryInput,
 } from "./cozinha.server";
 import type { WeekData } from "./common.server";
+import { DEFAULT_COMPONENT_FACTORS } from "../weekly";
 import type {
   ConfDay,
   LabelRow,
@@ -423,6 +424,59 @@ describe("buildCozinhaView", () => {
     expect(view.days[0].confDate).toBe("2025-11-24");
     expect(view.days[1].confDate).toBe("2025-11-26");
     expect(viewDpd.days[0].confDate).toBe("2025-11-24");
+  });
+
+  test("com fatores, a vista inclui o componentPlan por dia e as doses únicas em skipped", () => {
+    // Arrange — 2× Bulk (P 0,320 · H 0,290 · L 0,260) + 1 sopa (Dose Única)
+    const weekData = makeWeekData([
+      {
+        confDay: "2f",
+        lineItems: [
+          { name: "Jardineira de Novilho - Bulk", quantity: 2 },
+          { name: "Creme de Cenoura", quantity: 1 },
+        ],
+      },
+    ]);
+
+    // Act
+    const view = buildCozinhaView(weekData, DISHES, [
+      ...DEFAULT_COMPONENT_FACTORS,
+    ]);
+
+    // Assert
+    expect(view.componentPlan?.days).toEqual([
+      {
+        confDay: "2f",
+        kg: { Proteína: 0.32, Hidratos: 0.29, Legumes: 0.26 },
+        meals: 2,
+      },
+    ]);
+    expect(view.componentPlan?.totals).toEqual({
+      Proteína: 0.32,
+      Hidratos: 0.29,
+      Legumes: 0.26,
+    });
+    expect(view.componentPlan?.skipped).toEqual([
+      { dose: "Dose Única", units: 1 },
+    ]);
+  });
+
+  test("sem fatores, a vista mantém-se retrocompatível (sem componentPlan)", () => {
+    // Arrange
+    const weekData = makeWeekData([
+      {
+        confDay: "2f",
+        lineItems: [{ name: "Jardineira de Novilho - Bulk", quantity: 1 }],
+      },
+    ]);
+
+    // Act — assinatura antiga, sem terceiro argumento
+    const view = buildCozinhaView(weekData, DISHES);
+
+    // Assert
+    expect(view.componentPlan).toBeUndefined();
+    expect("componentPlan" in view).toBe(false);
+    expect(view.days[0].totalMeals).toBe(1);
   });
 
   test("semana vazia devolve vista vazia (empty state da página)", () => {

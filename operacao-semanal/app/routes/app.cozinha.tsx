@@ -3,7 +3,10 @@ import { useLoaderData, useRouteError, useSearchParams } from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
-import { loadWeekData } from "../services/pages/common.server";
+import {
+  loadComponentFactors,
+  loadWeekData,
+} from "../services/pages/common.server";
 import {
   buildCozinhaView,
   weekLabelFileToken,
@@ -11,7 +14,7 @@ import {
   type CozinhaView,
   type DoseMatrix,
 } from "../services/pages/cozinha.server";
-import type { KitchenRow } from "../services/weekly";
+import type { ComponentPlan, KitchenRow } from "../services/weekly";
 
 type LoaderResult =
   | {
@@ -29,17 +32,18 @@ export const loader = async ({
   const { admin } = await authenticate.admin(request);
 
   try {
-    const [weekData, dishes] = await Promise.all([
+    const [weekData, dishes, componentFactors] = await Promise.all([
       loadWeekData(prisma, admin),
       prisma.dish.findMany({
         select: { baseName: true, category: true },
         orderBy: { baseName: "asc" },
       }),
+      loadComponentFactors(prisma),
     ]);
 
     return {
       ok: true,
-      view: buildCozinhaView(weekData, dishes),
+      view: buildCozinhaView(weekData, dishes, componentFactors),
       source: weekData.meta.source,
       weekLabel: weekData.meta.weekLabel,
       weekToken: weekLabelFileToken(weekData.meta.weekLabel),
@@ -173,7 +177,25 @@ function SimpleRowsTable({
   );
 }
 
-function ProducaoDoDia({ day }: { day: CozinhaDay }) {
+/** kg com até 3 casas, em formato pt-PT ("12,345"). */
+function formatKg(value: number): string {
+  return value.toLocaleString("pt-PT", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 3,
+  });
+}
+
+function ProducaoDoDia({
+  day,
+  plan,
+}: {
+  day: CozinhaDay;
+  plan?: ComponentPlan;
+}) {
+  const planDay = plan?.days.find((d) => d.confDay === day.confDay);
+  const skippedUnits =
+    plan?.skipped.reduce((sum, entry) => sum + entry.units, 0) ?? 0;
+
   return (
     <s-section slot="aside" heading="Produção do dia">
       <s-stack gap="base">
@@ -187,6 +209,26 @@ function ProducaoDoDia({ day }: { day: CozinhaDay }) {
             <s-heading>{String(day.totalOrders)}</s-heading>
           </s-stack>
         </s-stack>
+        {plan && (
+          <>
+            <s-divider />
+            <s-stack gap="small-300">
+              <s-text type="strong">Empratamento por componentes</s-text>
+              <s-text fontVariantNumeric="tabular-nums">
+                {`Proteína ${formatKg(planDay?.kg["Proteína"] ?? 0)} kg · ` +
+                  `Hidratos ${formatKg(planDay?.kg["Hidratos"] ?? 0)} kg · ` +
+                  `Legumes ${formatKg(planDay?.kg["Legumes"] ?? 0)} kg`}
+              </s-text>
+              {skippedUnits > 0 && (
+                <s-text color="subdued">
+                  {`${skippedUnits} ${
+                    skippedUnits === 1 ? "refeição" : "refeições"
+                  } de dose única fora do cálculo de componentes`}
+                </s-text>
+              )}
+            </s-stack>
+          </>
+        )}
         <s-divider />
         <s-stack gap="small">
           <s-text type="strong">Notas para a cozinha</s-text>
@@ -337,7 +379,7 @@ export default function Cozinha() {
             rows={selectedDay.doseUnica}
             showDose={false}
           />
-          <ProducaoDoDia day={selectedDay} />
+          <ProducaoDoDia day={selectedDay} plan={view.componentPlan} />
         </>
       )}
 

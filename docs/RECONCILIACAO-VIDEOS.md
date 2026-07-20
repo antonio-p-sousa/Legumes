@@ -1,5 +1,22 @@
 # Reconciliação — vídeos do cliente ↔ documentação/código
 
+> **ATUALIZAÇÃO 20 jul 2026 — respostas do Miguel (por email):**
+> - **Fichas técnicas por ingrediente NÃO existem** — só a ficha da dose média (bulk)
+>   e o cálculo por COMPONENTES (Proteína/Hidratos/Legumes × dose). Fichas por
+>   ingrediente + fornecedores ficam para uma **2ª fase**. A 1ª fase usa a tabela de
+>   fatores por dose (fornecida por screenshot; margem de 10g/componente já incluída)
+>   — implementada no motor (`weekly/components.ts`).
+> - **DPD**: nome correto é o de ENVIO (com fallback para faturação quando vazio) ✔
+>   aplicado; volumes/peso sobre o **SUBTOTAL** (fórmula do cliente:
+>   `=SE(Subtotal<80;1;(SE(Subtotal<160;2;3)))`) ✔ aplicado; >160€ = 3 volumes ✔.
+> - **Margem de compras**: +8% confirmado (equivale às 10g/componente).
+> - **Parceiros**: Leiria vai ser substituída por **PORTO** (2ª feira, mesma regra de
+>   confeção); emails Avenidas (Lisboa) recebidos — configurar na página Parceiros
+>   (campo CC múltiplo: melhoria futura).
+> - **Sessão de validação**: o Miguel ainda não conhece os mockups — enviar link.
+> - Pergunta dele em aberto: volumes DPD por nº de itens? (análise feita: ver
+>   POR-FAZER.md)
+
 > 7 vídeos (walkthrough do processo manual, ~63 min) transcritos localmente com
 > Whisper (transcrições em `docs/videos-cliente/`). Comparados com o PDF "Tarefas
 > Semanais", o `ARCHITECTURE.md` e o código. 13 jul 2026.

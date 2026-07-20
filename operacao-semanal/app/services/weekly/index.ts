@@ -31,3 +31,19 @@ export { buildLabels } from "./labels";
 export { buildPurchaseList } from "./purchases";
 export { buildRoutes } from "./routes";
 export { buildDpdCsv } from "./dpd";
+
+// Modelo de COMPONENTES do empratamento (1.ª fase — kg por dose/componente,
+// sem fichas técnicas por ingrediente; ver components.ts).
+export {
+  COMPONENT_NAMES,
+  DEFAULT_COMPONENT_FACTORS,
+  buildComponentPlan,
+  normalizeDoseForFactors,
+} from "./components";
+export type {
+  ComponentFactor,
+  ComponentName,
+  ComponentPlan,
+  ComponentPlanDay,
+  ComponentSkipped,
+} from "./components";
