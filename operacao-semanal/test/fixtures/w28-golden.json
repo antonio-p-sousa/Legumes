@@ -1,0 +1,22 @@
+{
+  "orders": 197,
+  "lineItems": 918,
+  "totalUnits": 1353,
+  "unitsByDia": {
+    "Domingo": 153,
+    "Terça": 959,
+    "Segunda": 153,
+    "<sem dia>": 47,
+    "Quarta": 41
+  },
+  "ordersByDia": {
+    "Domingo": 18,
+    "Terça": 119,
+    "Segunda": 17,
+    "<sem dia>": 37,
+    "Quarta": 6
+  },
+  "ordersSemZona": 37,
+  "distinctProducts": 40,
+  "totalRevenue": 9554.33
+}

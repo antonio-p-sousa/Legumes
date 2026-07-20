@@ -113,6 +113,7 @@ model Courier {
   name     String  @unique // "Off Limits", "CrossFit Leiria", "DPD", "Interno"
   type     String // internal|partner|dpd
   email    String? // p/ envio de rota (partner)
+  ccEmails String  @default("[]") // JSON string[] — SQLite não suporta listas escalares (cf. Dish.shopifyIds)
   ordering String  @default("manual") // manual|postcode|county
   zones    Zone[]
 }

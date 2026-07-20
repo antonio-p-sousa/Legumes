@@ -1,5 +1,6 @@
-# Fixtures w47 (anonimizadas)
-Origem: export Shopify real `w47_2025_orders_export.csv` (185 encomendas, 1028 line items).
-Anonimização determinística por email: nomes → `Cliente NNN`, emails → `clienteNNN@example.com`, telefones → `9NNNNNNNN`, moradas → `Rua Exemplo N`; notes com PII limpas. Mantidos reais: zip, cidade, Note Attributes, produtos, quantidades, preços, datas, tags, shipping method, estado financeiro, nº de encomenda.
-Gerado em 2026-07-10 por `scripts/generate-fixtures.py` (verificação anti-PII incluída no gerador).
-Nunca editar à mão — regenerar com `py scripts/generate-fixtures.py`.
+# Fixtures w47 e w28 (anonimizadas)
+Origem w47: export Shopify real `w47_2025_orders_export.csv` (185 encomendas, 1028 line items) — calendário ANTIGO (2f/3f/4f). Gerado em 2026-07-10.
+Origem w28: export Shopify real `w28_2026_orders_export.csv` (197 encomendas, 918 line items) — calendário NOVO (dom/2f/3f). Gerado em 2026-07-20 para pasta temporária e renomeado `w47-*` → `w28-*` (o gerador fixa os nomes de saída); verificação anti-PII do gerador (0 hits em 806 termos reais) + grep independente por emails/apelidos/telefones reais (0 ocorrências fora de nomes de cidades como "Pereira"/"Figueira da Foz", que são dados de negócio mantidos de propósito).
+Anonimização determinística por email: nomes → `Cliente NNN`, emails → `clienteNNN@example.com`, telefones → `9NNNNNNNN`, moradas → `Rua Exemplo N`; notes com PII limpas (na w28 TODAS as notes não vazias são limpas — as exceções curadas do gerador só cobrem a w47). Mantidos reais: zip, cidade, Note Attributes, produtos, quantidades, preços, datas, tags, shipping method, estado financeiro, nº de encomenda.
+Gerados por `scripts/generate-fixtures.py` (verificação anti-PII incluída no gerador).
+Nunca editar à mão — regenerar com `py scripts/generate-fixtures.py [--input CSV --out-dir DIR]`.

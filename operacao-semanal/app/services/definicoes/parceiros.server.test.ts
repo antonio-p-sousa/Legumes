@@ -161,6 +161,83 @@ describe("createCourier", () => {
   });
 });
 
+describe("createCourier · emails em CC", () => {
+  test("cria com 3 CCs válidos (um por linha) e devolve-os como lista", async () => {
+    // Arrange
+    const input = {
+      name: "Parceiro Avenidas",
+      type: "partner",
+      ccEmails: "comercial@parceiro.pt\nsegundo@parceiro.pt\nterceiro@parceiro.pt",
+    };
+
+    // Act
+    const result = await createCourier(prisma, input);
+
+    // Assert
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.ccEmails).toEqual([
+        "comercial@parceiro.pt",
+        "segundo@parceiro.pt",
+        "terceiro@parceiro.pt",
+      ]);
+    }
+  });
+
+  test("rejeita quando um CC é inválido e identifica-o na mensagem", async () => {
+    // Arrange + Act
+    const result = await createCourier(prisma, {
+      name: "Parceiro CC Inválido",
+      type: "partner",
+      ccEmails: "valido@parceiro.pt\nsem-arroba.pt",
+    });
+
+    // Assert
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors.ccEmails).toContain('"sem-arroba.pt"');
+      expect(result.errors.ccEmails).toMatch(/formato inválido/);
+    }
+    const notCreated = await prisma.courier.findUnique({
+      where: { name: "Parceiro CC Inválido" },
+    });
+    expect(notCreated).toBeNull();
+  });
+
+  test("normaliza duplicados (case-insensitive), vazios e separadores por vírgula", async () => {
+    // Arrange — mistura linhas, vírgulas, espaços, linhas vazias e duplicados
+    const result = await createCourier(prisma, {
+      name: "Parceiro CC Normalizado",
+      type: "partner",
+      ccEmails: " a@parceiro.pt , A@parceiro.pt\n\n b@parceiro.pt \na@parceiro.pt\n   ",
+    });
+
+    // Assert
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.ccEmails).toEqual(["a@parceiro.pt", "b@parceiro.pt"]);
+    }
+  });
+
+  test("sem CCs guarda lista vazia (coluna JSON '[]')", async () => {
+    // Arrange + Act
+    const result = await createCourier(prisma, {
+      name: "Parceiro Sem CC",
+      type: "partner",
+    });
+
+    // Assert
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.ccEmails).toEqual([]);
+      const row = await prisma.courier.findUnique({
+        where: { id: result.data.id },
+      });
+      expect(row?.ccEmails).toBe("[]");
+    }
+  });
+});
+
 describe("updateCourier", () => {
   test("atualiza os campos de um estafeta existente", async () => {
     // Arrange
@@ -186,6 +263,34 @@ describe("updateCourier", () => {
       expect(result.data.ordering).toBe("county");
       expect(result.data.email).toBe("leiria@crossfit.pt");
     }
+  });
+
+  test("substitui a lista de CCs pela nova (não acumula)", async () => {
+    // Arrange
+    const created = await createCourier(prisma, {
+      name: "Parceiro CC Update",
+      type: "partner",
+      ccEmails: "antigo1@parceiro.pt\nantigo2@parceiro.pt",
+    });
+    expect(created.ok).toBe(true);
+    if (!created.ok) return;
+
+    // Act
+    const result = await updateCourier(prisma, created.data.id, {
+      name: "Parceiro CC Update",
+      type: "partner",
+      ccEmails: "novo@parceiro.pt",
+    });
+
+    // Assert
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.ccEmails).toEqual(["novo@parceiro.pt"]);
+    }
+    const row = await prisma.courier.findUnique({
+      where: { id: created.data.id },
+    });
+    expect(row?.ccEmails).toBe('["novo@parceiro.pt"]');
   });
 
   test("rejeita mudar o nome para um nome já usado por outro estafeta", async () => {
@@ -304,6 +409,22 @@ describe("listCouriers", () => {
 
     const offLimits = couriers.find((c) => c.name === "Off Limits");
     expect(offLimits?.zoneCount).toBe(0);
+  });
+
+  test("desserializa os CCs da coluna JSON para string[]", async () => {
+    // Act
+    const couriers = await listCouriers(prisma);
+
+    // Assert — "Parceiro Avenidas" foi criado com 3 CCs; "Off Limits" sem CCs
+    const avenidas = couriers.find((c) => c.name === "Parceiro Avenidas");
+    expect(avenidas?.ccEmails).toEqual([
+      "comercial@parceiro.pt",
+      "segundo@parceiro.pt",
+      "terceiro@parceiro.pt",
+    ]);
+
+    const offLimits = couriers.find((c) => c.name === "Off Limits");
+    expect(offLimits?.ccEmails).toEqual([]);
   });
 });
 

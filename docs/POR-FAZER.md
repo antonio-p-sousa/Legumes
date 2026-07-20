@@ -8,7 +8,11 @@
 - 🔴 **Matriz definitiva entrega↔confeção** — prometida nos vídeos ("aquela matriz que
   posso facultar"). Dados da w28/2026 confirmam entregas dom/seg/ter/qua com produção
   dom/seg/ter; falta a matriz oficial para configurar as zonas. O motor já suporta
-  (dia fixo / véspera / mesmo dia).
+  (dia fixo / véspera / mesmo dia). **Pergunta específica descoberta no golden w28:**
+  as entregas de Lisboa de DOMINGO são confecionadas no sábado ou no próprio domingo?
+  (o operador junta-as ao domingo; "véspera" daria sábado — se a resposta for
+  "domingo→mesmo dia + segunda→véspera" na mesma zona, o motor precisa de uma regra
+  composta nova, ~meio dia de trabalho)
 - 🟡 **Ficheiro "w28_Registo e contabilização dos pratos"** — referido no email mas
   **não chegou na pasta** (só vieram o CSV e as Etiquetas da w28 + imagens de
   assinatura). Reenviar. A tabela de fatores por dose chegou por screenshot e já está

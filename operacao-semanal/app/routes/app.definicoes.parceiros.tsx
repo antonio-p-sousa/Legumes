@@ -66,6 +66,7 @@ export const action = async ({
         type: text("type"),
         ordering: text("ordering"),
         email: text("email"),
+        ccEmails: text("ccEmails"),
       });
       return result.ok
         ? {
@@ -83,6 +84,7 @@ export const action = async ({
         type: text("type"),
         ordering: text("ordering"),
         email: text("email"),
+        ccEmails: text("ccEmails"),
       });
       return result.ok
         ? {
@@ -272,7 +274,17 @@ export default function Parceiros() {
                     {COURIER_ORDERING_LABELS[courier.ordering] ??
                       courier.ordering}
                   </s-table-cell>
-                  <s-table-cell>{courier.email ?? "—"}</s-table-cell>
+                  <s-table-cell>
+                    {courier.email ?? "—"}
+                    {courier.ccEmails.length > 0 && (
+                      <>
+                        {" "}
+                        <s-badge tone="neutral">
+                          {`+${courier.ccEmails.length} CC`}
+                        </s-badge>
+                      </>
+                    )}
+                  </s-table-cell>
                   <s-table-cell>{String(courier.zoneCount)}</s-table-cell>
                   <s-table-cell>
                     <s-stack direction="inline" gap="base" alignItems="center">
@@ -387,6 +399,15 @@ export default function Parceiros() {
                 error={courierFormErrors.email}
               />
             </s-stack>
+            <s-text-area
+              label="Emails em CC (um por linha)"
+              name="ccEmails"
+              rows={3}
+              placeholder={"comercial@parceiro.pt\nlogistica@parceiro.pt"}
+              defaultValue={courierEdit?.ccEmails.join("\n") ?? ""}
+              error={courierFormErrors.ccEmails}
+              details="Para o envio automático das rotas; ex.: parceiro com vários contactos. Também aceita emails separados por vírgula."
+            />
             <s-stack direction="inline" gap="base" alignItems="center">
               <s-button type="submit" variant="primary">
                 {courierEdit ? "Guardar alterações" : "Adicionar estafeta"}

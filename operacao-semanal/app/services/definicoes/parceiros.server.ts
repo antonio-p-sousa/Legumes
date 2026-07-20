@@ -28,6 +28,8 @@ export interface CourierInput {
   type: string;
   ordering?: string;
   email?: string;
+  /** Emails em CC — texto livre: um por linha e/ou separados por vírgula. */
+  ccEmails?: string;
 }
 
 export interface SupplierInput {
@@ -41,6 +43,8 @@ export interface CourierRecord {
   name: string;
   type: string;
   email: string | null;
+  /** Emails em CC no envio de rotas, já desserializados (BD guarda JSON string[]). */
+  ccEmails: string[];
   ordering: string;
 }
 
@@ -82,11 +86,64 @@ function validateEmail(value: string | undefined | null): {
   return { value: email };
 }
 
+/**
+ * Normaliza e valida a lista de CCs vinda do formulário (textarea): aceita um
+ * email por linha e/ou separados por vírgula/ponto-e-vírgula. Remove vazios e
+ * duplicados (case-insensitive) e valida cada um com o padrão partilhado.
+ */
+function validateCcEmails(value: string | undefined | null): {
+  value: string[];
+  error?: string;
+} {
+  const entries = (value ?? "")
+    .split(/[\n,;]+/)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry !== "");
+
+  const seen = new Set<string>();
+  const emails: string[] = [];
+  const invalid: string[] = [];
+
+  for (const entry of entries) {
+    const key = entry.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (!EMAIL_PATTERN.test(entry)) {
+      invalid.push(entry);
+      continue;
+    }
+    emails.push(entry);
+  }
+
+  if (invalid.length > 0) {
+    return {
+      value: emails,
+      error: `Email(s) em CC com formato inválido: ${invalid
+        .map((email) => `"${email}"`)
+        .join(", ")} (ex.: nome@dominio.pt).`,
+    };
+  }
+
+  return { value: emails };
+}
+
+/** BD → string[] (a coluna guarda JSON; valores corrompidos caem em []). */
+function parseCcEmails(raw: string): string[] {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((entry): entry is string => typeof entry === "string");
+  } catch {
+    return [];
+  }
+}
+
 interface ValidCourierData {
   name: string;
   type: CourierType;
   ordering: CourierOrdering;
   email: string | null;
+  ccEmails: string[];
 }
 
 function validateCourierInput(
@@ -116,6 +173,11 @@ function validateCourierInput(
     errors.email = email.error;
   }
 
+  const ccEmails = validateCcEmails(input.ccEmails);
+  if (ccEmails.error) {
+    errors.ccEmails = ccEmails.error;
+  }
+
   if (Object.keys(errors).length > 0) {
     return { ok: false, errors };
   }
@@ -127,6 +189,7 @@ function validateCourierInput(
       type: type as CourierType,
       ordering: ordering as CourierOrdering,
       email: email.value,
+      ccEmails: ccEmails.value,
     },
   };
 }
@@ -168,6 +231,26 @@ function validateSupplierInput(
 
 // ─── Couriers (estafetas e transportadoras) ─────────────────────────────────
 
+interface CourierRow {
+  id: string;
+  name: string;
+  type: string;
+  email: string | null;
+  ccEmails: string;
+  ordering: string;
+}
+
+function toCourierRecord(row: CourierRow): CourierRecord {
+  return {
+    id: row.id,
+    name: row.name,
+    type: row.type,
+    email: row.email,
+    ccEmails: parseCcEmails(row.ccEmails),
+    ordering: row.ordering,
+  };
+}
+
 export async function listCouriers(
   prisma: PrismaClient,
 ): Promise<CourierWithZoneCount[]> {
@@ -177,11 +260,7 @@ export async function listCouriers(
   });
 
   return couriers.map((courier) => ({
-    id: courier.id,
-    name: courier.name,
-    type: courier.type,
-    email: courier.email,
-    ordering: courier.ordering,
+    ...toCourierRecord(courier),
     zoneCount: courier._count.zones,
   }));
 }
@@ -207,8 +286,13 @@ export async function createCourier(
     };
   }
 
-  const created = await prisma.courier.create({ data: validated.data });
-  return { ok: true, data: created };
+  const created = await prisma.courier.create({
+    data: {
+      ...validated.data,
+      ccEmails: JSON.stringify(validated.data.ccEmails),
+    },
+  });
+  return { ok: true, data: toCourierRecord(created) };
 }
 
 export async function updateCourier(
@@ -245,9 +329,12 @@ export async function updateCourier(
 
   const updated = await prisma.courier.update({
     where: { id },
-    data: validated.data,
+    data: {
+      ...validated.data,
+      ccEmails: JSON.stringify(validated.data.ccEmails),
+    },
   });
-  return { ok: true, data: updated };
+  return { ok: true, data: toCourierRecord(updated) };
 }
 
 export async function deleteCourier(
