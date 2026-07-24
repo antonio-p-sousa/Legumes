@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   ISSUE_MISSING_DELIVERY_ATTRS,
   ISSUE_UNKNOWN_ZONE_PREFIX,
+  ISSUE_ZONE_NO_COURIER,
   processOrders,
 } from "./pipeline";
 import type { OrderInput, ZoneConfig } from "./types";
@@ -156,6 +157,82 @@ describe("processOrders", () => {
 
     expect(processed[0].confDay).toBe("2f");
     expect(processed[0].issues).toEqual([]);
+  });
+
+  test("zona correspondida SEM estafeta → confDay definido e issue zona-sem-estafeta", () => {
+    // Arrange — zona ativa com courierName vazio (estafeta por atribuir)
+    const zones: ZoneConfig[] = [
+      {
+        matchText: "Aveiro (Centro) 18-21h",
+        county: "Aveiro",
+        confDay: "3f",
+        courierName: "",
+        active: true,
+      },
+    ];
+    const order = makeOrder({
+      customAttributes: makeAttrs({
+        "Horário de entrega": "Aveiro (Centro) 18-21h",
+        "Dia de entrega": "Terça",
+        "Data de entrega": "25/11/2025",
+      }),
+    });
+
+    // Act
+    const { processed } = processOrders([order], zones);
+
+    // Assert — entra na cozinha (tem confDay) mas é sinalizada com o matchText
+    expect(processed[0].zone?.matchText).toBe("Aveiro (Centro) 18-21h");
+    expect(processed[0].confDay).toBe("3f");
+    expect(processed[0].issues).toEqual([
+      `${ISSUE_ZONE_NO_COURIER}Aveiro (Centro) 18-21h`,
+    ]);
+  });
+
+  test("courierName só com espaços conta como sem estafeta", () => {
+    // Arrange
+    const zones: ZoneConfig[] = [
+      {
+        matchText: "Aveiro (Centro) 18-21h",
+        county: "Aveiro",
+        confDay: "3f",
+        courierName: "   ",
+        active: true,
+      },
+    ];
+    const order = makeOrder({
+      customAttributes: makeAttrs({
+        "Horário de entrega": "Aveiro (Centro) 18-21h",
+        "Dia de entrega": "Terça",
+        "Data de entrega": "25/11/2025",
+      }),
+    });
+
+    // Act
+    const { processed } = processOrders([order], zones);
+
+    // Assert
+    expect(processed[0].confDay).toBe("3f");
+    expect(processed[0].issues).toEqual([
+      `${ISSUE_ZONE_NO_COURIER}Aveiro (Centro) 18-21h`,
+    ]);
+  });
+
+  test("zona com estafeta normal NÃO emite zona-sem-estafeta", () => {
+    // Arrange — zona Lisboa (courierName "Parceiro Lisboa")
+    const order = makeOrder();
+
+    // Act
+    const { processed } = processOrders([order], ZONES);
+
+    // Assert
+    expect(processed[0].zone?.courierName).toBe("Parceiro Lisboa");
+    expect(
+      processed[0].issues.some((issue) =>
+        issue.startsWith(ISSUE_ZONE_NO_COURIER),
+      ),
+    ).toBe(false);
+    expect(processed[0].confDay).toBe("2f");
   });
 
   test("nunca descarta: devolve um ProcessedOrder por cada encomenda, pela mesma ordem", () => {

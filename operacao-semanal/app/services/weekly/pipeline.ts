@@ -13,6 +13,14 @@ export const ISSUE_MISSING_DELIVERY_ATTRS = "atributos-entrega-em-falta";
 /** Prefixo da issue de zona sem correspondência na config: "zona-desconhecida:<texto>". */
 export const ISSUE_UNKNOWN_ZONE_PREFIX = "zona-desconhecida:";
 
+/**
+ * Prefixo da issue de zona correspondida mas SEM estafeta atribuído:
+ * "zona-sem-estafeta:<texto>". A encomenda entra na cozinha (tem confDay) mas
+ * não apareceria em Rotas nem no CSV DPD — tem de ser sinalizada, nunca cair
+ * em silêncio (ARCHITECTURE §10).
+ */
+export const ISSUE_ZONE_NO_COURIER = "zona-sem-estafeta:";
+
 export interface PipelineResult {
   /** Uma entrada por encomenda dentro da janela — NUNCA se descarta nenhuma. */
   processed: ProcessedOrder[];
@@ -67,11 +75,17 @@ function processOrder(order: OrderInput, zones: ZoneConfig[]): ProcessedOrder {
     };
   }
 
+  // Zona correspondida mas sem estafeta → a encomenda produz-se na cozinha mas
+  // ficaria fora de Rotas/DPD. Sinaliza, não descarta (§10).
+  const issues = zone.courierName.trim()
+    ? []
+    : [`${ISSUE_ZONE_NO_COURIER}${zone.matchText}`];
+
   return {
     order,
     delivery,
     zone,
     confDay: resolveConfDay(zone, delivery),
-    issues: [],
+    issues,
   };
 }

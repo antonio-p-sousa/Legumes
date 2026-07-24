@@ -345,3 +345,86 @@ describe("buildDpdCsv", () => {
     expect(config).toEqual(CONFIG);
   });
 });
+
+describe("buildDpdCsv — neutraliza CSV/formula injection (OWASP)", () => {
+  function withName(name: string): ProcessedOrder {
+    const order = makeOrder({});
+    order.shippingAddress = { ...order.shippingAddress!, name };
+    return makeProcessed({ order });
+  }
+
+  test("nome que abre com '=' é prefixado com plica no nome E no contacto", () => {
+    // Arrange — nome vindo do checkout do cliente (terceiro não-fiável)
+    const order = withName('=HYPERLINK("http://x")');
+
+    // Act
+    const result = buildDpdCsv([order], COURIERS, CONFIG);
+
+    // Assert — índices 2 (nome) e 10 (contacto no destino) neutralizados
+    const fields = firstLineFields(result.csv);
+    expect(fields[COL.nome]).toBe('\'=HYPERLINK("http://x")');
+    expect(fields[COL.contactoDestino]).toBe('\'=HYPERLINK("http://x")');
+    expect(fields).toHaveLength(17);
+  });
+
+  test("nota que abre com '-' é prefixada com plica nas observações", () => {
+    // Arrange
+    const order = makeProcessed({
+      order: makeOrder({ note: "-2+3 cmd" }),
+    });
+
+    // Act
+    const result = buildDpdCsv([order], COURIERS, CONFIG);
+
+    // Assert
+    const fields = firstLineFields(result.csv);
+    expect(fields[COL.observacoes]).toBe("'-2+3 cmd");
+    expect(fields).toHaveLength(17);
+  });
+
+  test("prefixa plica aos restantes gatilhos de fórmula: '+' e '@'", () => {
+    // Arrange — os restantes caracteres perigosos (OWASP CSV Injection)
+    const gatilhos: Array<[string, string]> = [
+      ["+491 chamar", "'+491 chamar"],
+      ["@SUM(A1)", "'@SUM(A1)"],
+    ];
+
+    for (const [entrada, esperado] of gatilhos) {
+      // Act
+      const result = buildDpdCsv([withName(entrada)], COURIERS, CONFIG);
+
+      // Assert
+      const fields = firstLineFields(result.csv);
+      expect(fields[COL.nome]).toBe(esperado);
+      expect(fields).toHaveLength(17);
+    }
+  });
+
+  test("TAB à cabeça é removido pelo trim antes do teste (branch \\t seguro)", () => {
+    // O regex inclui \t, mas cleanTextField faz .trim() ANTES do teste, pelo
+    // que uma TAB inicial nunca chega a disparar a plica — é apenas removida.
+    // Resultado seguro (sem TAB, o Excel não interpreta fórmula), documentado
+    // aqui para não dar a falsa ideia de que sai "'\tvalor".
+    const result = buildDpdCsv([withName("\tAna")], COURIERS, CONFIG);
+
+    const fields = firstLineFields(result.csv);
+    expect(fields[COL.nome]).toBe("Ana");
+    expect(fields[COL.nome].startsWith("'")).toBe(false);
+    expect(fields).toHaveLength(17);
+  });
+
+  test("nome normal ('Ana') não leva plica — não regride", () => {
+    // Arrange
+    const order = withName("Ana");
+
+    // Act
+    const result = buildDpdCsv([order], COURIERS, CONFIG);
+
+    // Assert
+    const fields = firstLineFields(result.csv);
+    expect(fields[COL.nome]).toBe("Ana");
+    expect(fields[COL.nome].startsWith("'")).toBe(false);
+    expect(fields[COL.contactoDestino]).toBe("Ana");
+    expect(fields).toHaveLength(17);
+  });
+});

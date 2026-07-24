@@ -30,6 +30,14 @@ export const IMPORT_LABEL_PREFIX = "import-";
 /** Sem estas colunas não há encomendas para reconstruir. */
 const REQUIRED_COLUMNS = ["Name", "Lineitem name", "Lineitem quantity"] as const;
 
+/**
+ * Tampão de sanidade para a quantidade por line item. Uma refeição encomendada
+ * em quantidade acima disto é quase de certeza dado corrompido; sem limite,
+ * buildLabels (1 linha por unidade) alocaria centenas de MB. Valor folgado
+ * face ao real (uma encomenda grande tem ~30 unidades).
+ */
+const MAX_QUANTITY_PER_ITEM = 500;
+
 /** Colunas que enriquecem a encomenda; a falta gera warning, não erro. */
 const EXPECTED_COLUMNS = [
   "Email",
@@ -136,15 +144,29 @@ function buildLineItems(
       continue;
     }
     const rawQuantity = cell(row, "Lineitem quantity");
-    const quantity = Number.parseInt(rawQuantity, 10);
-    if (!Number.isFinite(quantity)) {
+    const parsed = Number.parseInt(rawQuantity, 10);
+    // Sanidade da quantidade: negativas produziriam refeições/kg negativos e
+    // um valor absurdo (dado corrompido) faria buildLabels explodir a memória.
+    // Limita a [0, MAX] e sinaliza; nunca confia cegamente no CSV.
+    let quantity = Number.isFinite(parsed) ? parsed : 0;
+    if (!Number.isFinite(parsed)) {
       warnings.push(
         `Encomenda ${orderName}: quantidade inválida ("${rawQuantity}") em "${name}" — assumido 0.`,
       );
+    } else if (parsed < 0) {
+      warnings.push(
+        `Encomenda ${orderName}: quantidade negativa (${parsed}) em "${name}" — assumido 0.`,
+      );
+      quantity = 0;
+    } else if (parsed > MAX_QUANTITY_PER_ITEM) {
+      warnings.push(
+        `Encomenda ${orderName}: quantidade anormalmente alta (${parsed}) em "${name}" — limitada a ${MAX_QUANTITY_PER_ITEM}.`,
+      );
+      quantity = MAX_QUANTITY_PER_ITEM;
     }
     items.push({
       name,
-      quantity: Number.isFinite(quantity) ? quantity : 0,
+      quantity,
       price: toMoney(cell(row, "Lineitem price")),
     });
   }

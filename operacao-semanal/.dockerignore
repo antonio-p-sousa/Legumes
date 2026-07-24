@@ -1,3 +1,7 @@
 .cache
 build
 node_modules
+
+# Base de dados de dev — pode conter dados reais locais; nunca vai na imagem
+prisma/dev.sqlite
+prisma/dev.sqlite-journal

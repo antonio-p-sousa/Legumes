@@ -102,19 +102,38 @@ export function buildDpdCsv(
 }
 
 /**
- * Limpeza global de campos de texto: remove ";" (é o separador do CSV) e
- * achata quebras de linha para espaço (uma linha do CSV = um envio).
+ * Sanitização BASE de um campo do CSV: remove ";" (é o separador) e achata
+ * quebras de linha para espaço (uma linha do CSV = um envio). Sem guard de
+ * fórmula — é a base do telemóvel, que não pode ganhar uma plica.
  */
-function cleanTextField(value: string): string {
+function stripCsvControls(value: string): string {
   return value.replace(/[\r\n]+/g, " ").replace(/;/g, "").trim();
 }
 
 /**
- * O portal DPD rejeita o indicativo: remove o prefixo "+351" e TODOS os
- * espaços e hífenes. "+351 912 345 678" → "912345678".
+ * Campo de texto LIVRE: sanitização base + NEUTRALIZAÇÃO de formula/CSV
+ * injection.
+ *
+ * Os nomes/moradas/notas vêm do checkout do cliente (terceiro não-fiável). Um
+ * valor que abra com "=", "+", "-", "@" é interpretado como fórmula pelo
+ * Excel/Sheets ao abrir o CSV — ex.: um nome "=HYPERLINK(...)" executaria na
+ * máquina do operador. Prefixamos uma plica simples (padrão OWASP CSV
+ * Injection); o portal DPD recebe o valor com a plica, cosmético e recuperável.
+ * (TAB não entra na regex: o trim já remove qualquer TAB inicial.)
+ */
+function cleanTextField(value: string): string {
+  const cleaned = stripCsvControls(value);
+  return /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
+}
+
+/**
+ * Telemóvel: só sanitização base (NUNCA o guard de fórmula — um número
+ * normalizado é só dígitos e o "+" do indicativo não pode virar plica). O
+ * portal DPD rejeita o indicativo: remove "+351" e todos os espaços/hífenes.
+ * "+351 912 345 678" → "912345678".
  */
 function cleanPhone(raw: string): string {
-  return cleanTextField(raw)
+  return stripCsvControls(raw)
     .replace(/[\s-]/g, "")
     .replace(/^\+351/, "");
 }

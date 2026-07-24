@@ -255,6 +255,48 @@ describe("parseShopifyOrdersCsv — casos-limite", () => {
     expect(warnings.some((w) => w.includes("quantidade inválida"))).toBe(true);
   });
 
+  test("quantidade negativa (-3) → 0 + warning de negativa", () => {
+    // Arrange
+    const csv = miniCsv(
+      '#80004-LoV,c@example.com,paid,5,5,,2025-11-20 11:00:00 +0000,-3,Prato Negativo - Bulk,5.00,,"",,,,,,,',
+    );
+
+    // Act
+    const { orders, warnings } = parseShopifyOrdersCsv(csv);
+
+    // Assert
+    expect(orders[0].lineItems[0].quantity).toBe(0);
+    expect(warnings.some((w) => w.includes("quantidade negativa"))).toBe(true);
+  });
+
+  test("quantidade anormalmente alta (99999) → limitada a 500 + warning", () => {
+    // Arrange — sem tampão, buildLabels (1 linha/unidade) alocaria centenas de MB
+    const csv = miniCsv(
+      '#80005-LoV,d@example.com,paid,5,5,,2025-11-20 11:00:00 +0000,99999,Prato Enorme - Bulk,5.00,,"",,,,,,,',
+    );
+
+    // Act
+    const { orders, warnings } = parseShopifyOrdersCsv(csv);
+
+    // Assert
+    expect(orders[0].lineItems[0].quantity).toBe(500);
+    expect(warnings.some((w) => w.includes("anormalmente alta"))).toBe(true);
+  });
+
+  test("quantidade válida (2) fica intacta e sem warning de quantidade", () => {
+    // Arrange
+    const csv = miniCsv(
+      '#80006-LoV,e@example.com,paid,5,5,,2025-11-20 11:00:00 +0000,2,Prato Normal - Bulk,5.00,,"",,,,,,,',
+    );
+
+    // Act
+    const { orders, warnings } = parseShopifyOrdersCsv(csv);
+
+    // Assert
+    expect(orders[0].lineItems[0].quantity).toBe(2);
+    expect(warnings.some((w) => w.includes("quantidade"))).toBe(false);
+  });
+
   test("cabeçalho válido sem linhas de dados → 0 encomendas + warning", () => {
     // Act
     const { orders, warnings } = parseShopifyOrdersCsv(MINI_HEADER + "\n");
