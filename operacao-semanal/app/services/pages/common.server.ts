@@ -8,7 +8,9 @@
  */
 import type { PrismaClient } from "@prisma/client";
 import type { AdminGraphqlClient } from "../orders/graphql.server";
+import { computeOrderWindow } from "../orders/graphql.server";
 import { fetchWeekOrders, type WeekOrders } from "../orders/provider.server";
+import { getConfig } from "../definicoes/config.server";
 import {
   COMPONENT_NAMES,
   processOrders,
@@ -134,10 +136,24 @@ export async function loadWeekData(
   prisma: PrismaClient,
   admin: AdminGraphqlClient | null,
 ): Promise<WeekData> {
-  const [{ zones, couriers }, week] = await Promise.all([
+  const [{ zones, couriers }, config] = await Promise.all([
     loadEngineConfigs(prisma),
-    fetchWeekOrders(admin, prisma),
+    getConfig(prisma),
   ]);
+
+  // Janela de encomendas configurada (Definições > Geral). Só afeta o modo
+  // live — demo/CSV são snapshots e não são filtrados. Com os defaults do
+  // schema (Sáb 00:00 → Sex 23:59) o comportamento é idêntico ao anterior;
+  // passa a divergir assim que o operador muda o cutoff.
+  // NOTA: o switch `ignoreAfterClose` (incluir-e-sinalizar as pós-fecho em vez
+  // de excluir) ainda não é honrado — a janela é sempre imposta na query
+  // GraphQL. Registado em docs/POR-FAZER.md como melhoria.
+  const window = computeOrderWindow(
+    new Date(),
+    config.orderWindowFrom,
+    config.orderWindowTo,
+  );
+  const week = await fetchWeekOrders(admin, prisma, window);
 
   const { processed } = processOrders(week.orders, zones);
 

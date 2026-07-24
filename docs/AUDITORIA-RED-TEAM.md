@@ -13,7 +13,7 @@
 |---|---|---|---|
 | injecao-1 | **Formula/CSV injection no CSV DPD** — nome/morada/nota do cliente (controlados no checkout) entram sem neutralizar `= + - @`; o operador abre o CSV no Excel → execução na máquina dele | segurança | ✅ **corrigido** |
 | falhas-1 | **Encomendas de zona sem estafeta desaparecem de Rotas/DPD sem aviso** | robustez | ✅ **corrigido** |
-| bugs-1 | **Janela de encomendas (Definições>Geral) é um no-op** — grava com toast de sucesso mas nenhum loader a aplica; se o cutoff real mudar, a app processa a semana errada em silêncio | bug | ⏸️ **recomendação** (ver nota) |
+| bugs-1 | **Janela de encomendas (Definições>Geral) é um no-op** — grava com toast de sucesso mas nenhum loader a aplica; se o cutoff real mudar, a app processa a semana errada em silêncio | bug | ✅ **corrigido** (só modo live; ver nota) |
 | falhas-2 | Dose "400g" cai em `skipped` por falta de fator mas a UI rotula-a como "dose única", mascarando um gap de config | robustez | ⏸️ **recomendação** (metade precisa do cliente) |
 
 ### MÉDIO / BAIXO

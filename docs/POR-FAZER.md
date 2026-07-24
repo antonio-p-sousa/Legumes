@@ -45,6 +45,10 @@
   serviço (Brevo/Resend/SMTP) + campo CC múltiplo no Courier (Avenidas usa 3 CCs).
 - 🟡 **Configurar zonas/parceiros reais** — quando vier a matriz: Porto (2ª, vespera?),
   novo slot pickup "07:00 PM - 10:00 PM" (mudou de texto vs 2025!), Lisboa→vespera.
+- 🟡 **Janela de encomendas — modo "incluir e sinalizar"** (`ignoreAfterClose=false`):
+  o cutoff configurado já é aplicado no modo live (fix 20/07), mas o switch
+  "excluir vs incluir-e-sinalizar as pós-fecho" ainda não é honrado (a janela é
+  sempre imposta na query GraphQL).
 - 🟢 **Histórico de semanas** (ecrã) · botão "Gerar tudo" · validação de datas de
   entrega anómalas (w28 tinha uma encomenda com data 12/05 numa semana de julho).
 - 🟢 **2ª FASE (nova, definida pelo Miguel)**: fichas técnicas por ingrediente +

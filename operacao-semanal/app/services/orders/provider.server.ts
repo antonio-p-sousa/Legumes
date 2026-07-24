@@ -81,16 +81,21 @@ async function loadFallbackOrders(prisma?: PrismaClient): Promise<WeekOrders> {
  * manual de CSV mais recente, senão demo.
  * `admin` é o cliente GraphQL devolvido por authenticate.admin (ou null).
  * `prisma` é opcional: sem ele o comportamento live/demo é o de sempre.
+ * `window` é a janela de encomendas configurada (Definições > Geral). SÓ se
+ * aplica ao modo live — o import manual e a demo são snapshots de uma semana já
+ * fechada e não devem ser filtrados (é a base dos golden tests). Ausente →
+ * fetchLiveOrders usa a sua janela default.
  */
 export async function fetchWeekOrders(
   admin: AdminGraphqlClient | null,
   prisma?: PrismaClient,
+  window?: { windowStart: string; windowEnd: string },
 ): Promise<WeekOrders> {
   const forceDemo = process.env.DEMO_DATA === "1";
   if (!admin || forceDemo) return loadFallbackOrders(prisma);
 
   try {
-    return await fetchLiveOrders(admin);
+    return await fetchLiveOrders(admin, window ? { window } : undefined);
   } catch (error) {
     // Falha de API não pode deixar o operador sem página (ARCHITECTURE §10):
     // degrada para import/demo com aviso explícito no label.
