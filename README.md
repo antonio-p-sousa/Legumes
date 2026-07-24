@@ -7,7 +7,7 @@ Custom app Shopify (embebida no admin) para a **Legumes e outros Vícios** ([leg
 | Pasta | Conteúdo |
 |---|---|
 | [`operacao-semanal/`](operacao-semanal/) | A app (React Router + TypeScript + Polaris + Prisma), baseada no template oficial `shopify-app-template-react-router` |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Documento de arquitetura — regras de negócio, modelo de dados, módulos do motor, fases |
+| [`docs/`](docs/README.md) | Documentação do projeto — arquitetura, cronograma, deploy, auditoria, decisões (índice em [`docs/README.md`](docs/README.md)) |
 
 ## Motor de processamento
 
