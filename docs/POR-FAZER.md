@@ -37,10 +37,14 @@
 
 ## Do lado da Loop — trabalho técnico
 
-- 🔴 **Deployment** — alojar (Vercel/Fly), migrar SQLite→Postgres, publicar config
-  da app no Shopify. Sem isto a app só corre em dev.
+- 🔴 **Deployment** — alojar (**Fly.io**, `fly.toml` pronto), migrar SQLite→Postgres,
+  publicar config da app no Shopify. Guia em DEPLOY.md; `.env.example` pronto.
 - 🔴 **Ligação real testada** — o GraphQL nunca correu contra a loja verdadeira
-  (depende das credenciais). Validar: downloads no iframe, rótulo da semana, fuso.
+  (depende das credenciais). **Já plug-and-play:** preencher SHOPIFY_SHOP+SHOPIFY_ADMIN_TOKEN
+  no `.env` → `npm run fetch-live` valida a ligação; a app passa a "live" sem alterar código.
+  Falta só validar: downloads no iframe, rótulo da semana, fuso.
+- ✅ **Documento "Rotas de câmara"** — FEITO (28/07): motor + impressão landscape + export,
+  botões na página Estafetas.
 - 🟡 **Documento "Rotas de câmara"** (NOVO, descoberto 28/07 em `00. Rotas.xlsx`) —
   a app produz as folhas de entrega por estafeta (com morada) mas NÃO o documento que
   o Miguel usa na câmara refrigerada: por dia de PRODUÇÃO, blocos de rota/destino com
