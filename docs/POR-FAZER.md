@@ -37,33 +37,46 @@
 
 ## Do lado da Loop — trabalho técnico
 
-- 🔴 **Deployment** — alojar (**Fly.io**, `fly.toml` pronto), migrar SQLite→Postgres,
-  publicar config da app no Shopify. Guia em DEPLOY.md; `.env.example` pronto.
-- 🔴 **Ligação real testada** — o GraphQL nunca correu contra a loja verdadeira
-  (depende das credenciais). **Já plug-and-play:** preencher SHOPIFY_SHOP+SHOPIFY_ADMIN_TOKEN
-  no `.env` → `npm run fetch-live` valida a ligação; a app passa a "live" sem alterar código.
-  Falta só validar: downloads no iframe, rótulo da semana, fuso.
-- ✅ **Documento "Rotas de câmara"** — FEITO (28/07): motor + impressão landscape + export,
-  botões na página Estafetas.
-- 🟡 **Documento "Rotas de câmara"** (NOVO, descoberto 28/07 em `00. Rotas.xlsx`) —
-  a app produz as folhas de entrega por estafeta (com morada) mas NÃO o documento que
-  o Miguel usa na câmara refrigerada: por dia de PRODUÇÃO, blocos de rota/destino com
-  `Encomenda | Cliente | nº de refeições` + lista-mestre de refeições por cliente,
-  impresso em landscape. Dados já existem no motor (é uma vista + impressão nova).
-  Modelar "recolha em loja" como destino e (fase 2) entradas manuais "ÚLTIMA HORA".
-- 🟡 **Envio de emails aos parceiros** — feature por construir; requer decisão do
-  serviço (Brevo/Resend/SMTP) + campo CC múltiplo no Courier (Avenidas usa 3 CCs).
-- 🟡 **Configurar zonas/parceiros reais** — quando vier a matriz: Porto (2ª, vespera?),
-  novo slot pickup "07:00 PM - 10:00 PM" (mudou de texto vs 2025!), Lisboa→vespera.
-- 🟡 **Janela de encomendas — modo "incluir e sinalizar"** (`ignoreAfterClose=false`):
-  o cutoff configurado já é aplicado no modo live (fix 20/07), mas o switch
-  "excluir vs incluir-e-sinalizar as pós-fecho" ainda não é honrado (a janela é
-  sempre imposta na query GraphQL).
-- 🟢 **Histórico de semanas** (ecrã) · botão "Gerar tudo" · validação de datas de
-  entrega anómalas (w28 tinha uma encomenda com data 12/05 numa semana de julho).
-- 🟢 **2ª FASE (nova, definida pelo Miguel)**: fichas técnicas por ingrediente +
-  fornecedores + lista de compras detalhada — o modelo Dish/Dose/RecipeLine e a
-  página de Fichas já existem à espera disto.
+**Bloqueado nas credenciais (não há mais a fazer sem elas):**
+- 🔴 **Deployment** — alojar (Fly.io), migrar SQLite→Postgres, publicar config no Shopify.
+  Preparado ao máximo: `fly.toml`, `.env.example`, schema Postgres verificado offline
+  (`prisma/postgres-init.sql`), checklist final com stop points de conta/billing (DEPLOY.md).
+- 🔴 **Ligação real testada** — plug-and-play: `SHOPIFY_SHOP`+`SHOPIFY_ADMIN_TOKEN` no
+  `.env` → `npm run fetch-live` valida; a app passa a "live" sem código novo. Falta só
+  validar (com a loja): downloads no iframe, rótulo da semana, fuso.
+
+**Feito (interno, sem dependências):**
+- ✅ **Rotas de câmara** — documento novo (28/07): motor + impressão landscape + export.
+- ✅ **Incluir e assinalar pós-fecho** (`ignoreAfterClose=false`) — encomendas depois do
+  fecho entram e ficam assinaladas (banner no cockpit) quando o operador escolhe incluir.
+- ✅ **Histórico de semanas** (`/app/historico`) — lista/vê/elimina snapshots (WeekRun).
+- ✅ **Envio de emails agnóstico** — interface + dry-run/preview construídos; o botão
+  "Enviar rotas" mostra quem receberia. **Falta só a DECISÃO do serviço** (Brevo/Resend/
+  SMTP) para ativar o envio real — depois pluga-se em minutos. Campo CC múltiplo já existe.
+- ✅ **CI** (GitHub Actions), **manual do operador**, **de-risking Postgres**.
+
+**Ainda por fazer (dependente):**
+- 🟡 **Configurar zonas/parceiros reais** — quando vier a matriz: Porto (2ª), slot pickup
+  "07:00 PM - 10:00 PM", Lisboa→vespera. É configuração na app (Definições), não código.
+- 🟢 Botão "Gerar tudo" · validação de datas de entrega anómalas (nice-to-have).
+- 🟢 **2ª FASE (Miguel)**: fichas por ingrediente + fornecedores + compras detalhadas —
+  modelo Dish/Dose/RecipeLine + página de Fichas já existem à espera dos dados.
+
+## ESTADO FINAL — trabalho Loop restante (29 jul 2026)
+
+**Trabalho Loop restante = só integração real + piloto, ambos à espera de
+credenciais/materiais.** Todo o trabalho interno sem dependências está feito, testado
+(445 testes, CI verde) e no GitHub. O que falta, exatamente:
+
+1. **Integração real** — precisa do **token da custom app** (dono da loja cria; instruções
+   em `O_que_falta_legumes.docx`). Depois: `npm run fetch-live` → validar → deploy
+   (Fly+Neon, precisa de **contas/billing** — decisão do António).
+2. **Piloto** — precisa dos **materiais do Miguel** (matriz entrega↔confeção; opcional:
+   ficheiro w28_Registo). Pode arrancar já por import de CSV assim que houver a matriz
+   para configurar as zonas.
+3. **Decisões da Loop** — serviço de email (ativa o envio real) + provider Postgres.
+
+Nada disto é código à espera de ser escrito — é acessos, materiais e decisões.
 
 ## Decisões em aberto (Loop)
 
