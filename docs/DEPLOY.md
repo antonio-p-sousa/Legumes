@@ -262,3 +262,36 @@ pg_restore --dbname="<neon-url>" backup-2026-07-20.dump   # restauro
 Cadência mínima sugerida: dump manual à sexta antes de gerar a semana, até haver
 rotina automática. Os dados críticos (fichas técnicas, zonas, parceiros) são
 pequenos — um dump demora segundos.
+
+---
+
+## Checklist final de deploy (o que está pronto vs. o que precisa de ti)
+
+> Preparado até ao limite que não exige criação de contas/billing. Os passos
+> ⏸ **PARAM à espera do António** (contas/faturação). Tudo o resto (config,
+> scripts, schema) está pronto e verificado.
+
+### Já pronto no repositório ✅
+- [x] `Dockerfile` (do template, funciona tal e qual)
+- [x] `fly.toml` (região mad, min_machines_running=1)
+- [x] `.env.example` (todas as variáveis, incl. token estático)
+- [x] Schema **verificado Postgres-compatível** offline (`prisma/postgres-init.sql`)
+- [x] `package-lock.json` versionado (deploys/CI reproduzíveis)
+- [x] CI verde (typecheck + 400+ testes + build)
+- [x] Ligação por token plug-and-play (`npm run fetch-live`)
+- [x] Seed idempotente (`npm run seed`)
+
+### Passos de deploy — por ordem
+1. ⏸ **Criar conta Fly.io** (`fly auth signup`) — **precisa de cartão/billing → ESPERA ANTÓNIO.**
+2. ⏸ **Criar Postgres Neon** (neon.tech, free tier) e obter a `DATABASE_URL` — **precisa de conta → ESPERA ANTÓNIO** (o free tier não pede cartão, mas é criação de conta).
+3. ✅ Migração para Postgres — mudar o provider no `schema.prisma` (secção 3.1) e re-gerar as migrações (secção 3.2). *Schema já verificado; comando pronto.*
+4. ⏸ **Registar/ligar a app no Shopify** (`shopify app config link` / Partners) — **precisa de conta Partners → ESPERA ANTÓNIO.**
+5. ✅ `fly launch --no-deploy` (usa o `fly.toml`) → `fly secrets set` (SHOPIFY_API_SECRET, DATABASE_URL, SHOPIFY_ADMIN_TOKEN, …) → `fly deploy`. *Comandos prontos (secção 5).*
+6. ✅ Pós-deploy: correr o seed uma vez, smoke test (secção 6), validar os 3 pontos (downloads no iframe, rótulo da semana, fuso).
+
+### Nota sobre "migração testada localmente"
+O teste **completo** contra um Postgres local exige Docker ou um Postgres instalado
+(nenhum disponível nesta máquina). Foi feita a **verificação offline** possível: o
+`prisma migrate diff` gera o DDL de Postgres limpo (11 tabelas, tipos standard) —
+ver `prisma/postgres-init.sql`. O teste contra uma instância real fica para o deploy
+(ou quando houver Docker), mas o risco de schema está removido.
