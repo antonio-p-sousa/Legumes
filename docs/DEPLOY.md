@@ -108,7 +108,7 @@ direta (não-pooled)** em `DATABASE_URL` — dispensa `directUrl`/pgbouncer no s
 |---|---|---|---|
 | `SHOPIFY_API_KEY` | Client ID da app | `[env]` no `fly.toml` | Não é segredo (vai no bundle do cliente) |
 | `SHOPIFY_API_SECRET` | Client secret | `fly secrets set` | **Segredo** |
-| `SCOPES` | `write_products` | `[env]` no `fly.toml` | Tem de bater certo com `shopify.app.toml` |
+| `SCOPES` | `read_orders` | `[env]` no `fly.toml` | Tem de bater certo com `shopify.app.toml` |
 | `SHOPIFY_APP_URL` | `https://<app>.fly.dev` | `[env]` no `fly.toml` | O `fly launch` preenche |
 | `DATABASE_URL` | connection string Neon | `fly secrets set` | **Segredo**; usada pelo schema (3.1) e pelo `migrate deploy` do boot |
 | `DEMO_DATA` | *(não definir)* | — | Nosso. `1` força dados demo; em prod fica ausente para a app usar a loja real |
@@ -152,7 +152,7 @@ Confirmar no `fly.toml` gerado (o `fly launch` importa `shopify app env show`):
   PORT = "3000"
   SHOPIFY_API_KEY = "<client-id>"
   SHOPIFY_APP_URL = "https://operacao-semanal.fly.dev"
-  SCOPES = "write_products"
+  SCOPES = "read_orders"
 
 [http_service]
   internal_port = 3000
