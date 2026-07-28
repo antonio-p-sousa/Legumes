@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  ISSUE_AFTER_CLOSE,
   ISSUE_MISSING_DELIVERY_ATTRS,
   ISSUE_UNKNOWN_ZONE_PREFIX,
   ISSUE_ZONE_NO_COURIER,
@@ -265,5 +266,122 @@ describe("processOrders", () => {
     });
 
     expect(() => processOrders(orders, zones, window)).not.toThrow();
+  });
+});
+
+describe("processOrders — markAfterClose (incluir e assinalar pós-fecho)", () => {
+  // Fecho oficial: sexta 21/11 23:59:59. Antes = dentro; depois = pós-fecho.
+  const FECHO = "2025-11-21T23:59:59Z";
+
+  test("marca as encomendas criadas depois do fecho com ISSUE_AFTER_CLOSE", () => {
+    // Arrange — uma encomenda pós-fecho (sábado 22/11), zona/atributos válidos.
+    const posFecho = makeOrder({
+      name: "#45100-LoV",
+      createdAt: "2025-11-22T01:28:00Z",
+    });
+
+    // Act
+    const { processed } = processOrders([posFecho], ZONES, undefined, {
+      markAfterClose: FECHO,
+    });
+
+    // Assert — ENTRA nos cálculos (confDay resolvido) e fica assinalada.
+    expect(processed).toHaveLength(1);
+    expect(processed[0].confDay).toBe("2f");
+    expect(processed[0].issues).toContain(ISSUE_AFTER_CLOSE);
+  });
+
+  test("não marca as encomendas criadas antes ou no instante do fecho", () => {
+    // Arrange — uma antes do fecho e outra criada exatamente no instante (a
+    // comparação é estrita: o fecho é inclusivo, logo não é pós-fecho).
+    const antes = makeOrder({ name: "#1", createdAt: "2025-11-18T10:00:00Z" });
+    const noFecho = makeOrder({ name: "#2", createdAt: FECHO });
+
+    // Act
+    const { processed } = processOrders([antes, noFecho], ZONES, undefined, {
+      markAfterClose: FECHO,
+    });
+
+    // Assert
+    expect(processed[0].issues).not.toContain(ISSUE_AFTER_CLOSE);
+    expect(processed[1].issues).not.toContain(ISSUE_AFTER_CLOSE);
+  });
+
+  test("acrescenta ISSUE_AFTER_CLOSE mantendo as outras issues da encomenda", () => {
+    // Arrange — pós-fecho E com zona desconhecida (duas condições a assinalar).
+    const posFechoSemZona = makeOrder({
+      name: "#45101-LoV",
+      createdAt: "2025-11-22T05:00:00Z",
+      customAttributes: makeAttrs({
+        "Horário de entrega": "Braga (Centro) 09-12h",
+      }),
+    });
+
+    // Act
+    const { processed } = processOrders([posFechoSemZona], ZONES, undefined, {
+      markAfterClose: FECHO,
+    });
+
+    // Assert — a issue de zona mantém-se e a pós-fecho é acrescentada.
+    expect(processed[0].issues).toEqual([
+      `${ISSUE_UNKNOWN_ZONE_PREFIX}Braga (Centro) 09-12h`,
+      ISSUE_AFTER_CLOSE,
+    ]);
+  });
+
+  test("sem markAfterClose nada muda — nenhuma encomenda é assinalada", () => {
+    // Arrange — a mesma encomenda pós-fecho, sem passar options.
+    const posFecho = makeOrder({
+      name: "#45100-LoV",
+      createdAt: "2025-11-22T01:28:00Z",
+    });
+
+    // Act — 3.º arg (janela) e 4.º (options) ausentes: comportamento clássico.
+    const semOptions = processOrders([posFecho], ZONES);
+    const optionsVazias = processOrders([posFecho], ZONES, undefined, {});
+
+    // Assert
+    expect(semOptions.processed[0].issues).not.toContain(ISSUE_AFTER_CLOSE);
+    expect(optionsVazias.processed[0].issues).not.toContain(ISSUE_AFTER_CLOSE);
+  });
+
+  test("createdAt ilegível não é assinalado como pós-fecho", () => {
+    // Arrange — data inválida não pode ser tratada como posterior ao fecho.
+    const semData = makeOrder({ name: "#?", createdAt: "sem-data" });
+
+    // Act
+    const { processed } = processOrders([semData], ZONES, undefined, {
+      markAfterClose: FECHO,
+    });
+
+    // Assert
+    expect(processed[0].issues).not.toContain(ISSUE_AFTER_CLOSE);
+  });
+
+  test("não muta as issues do ProcessedOrder ao assinalar (imutabilidade)", () => {
+    // Arrange — pós-fecho com uma issue prévia (atributos em falta).
+    const posFechoSemAtributos = makeOrder({
+      name: "#45102-LoV",
+      createdAt: "2025-11-22T05:00:00Z",
+      customAttributes: [],
+    });
+
+    // Act — corre duas vezes; a marcação não pode acumular nem partilhar array.
+    const primeira = processOrders([posFechoSemAtributos], ZONES, undefined, {
+      markAfterClose: FECHO,
+    });
+    const segunda = processOrders([posFechoSemAtributos], ZONES, undefined, {
+      markAfterClose: FECHO,
+    });
+
+    // Assert — cada resultado tem exatamente as duas issues, sem duplicação.
+    expect(primeira.processed[0].issues).toEqual([
+      ISSUE_MISSING_DELIVERY_ATTRS,
+      ISSUE_AFTER_CLOSE,
+    ]);
+    expect(segunda.processed[0].issues).toEqual([
+      ISSUE_MISSING_DELIVERY_ATTRS,
+      ISSUE_AFTER_CLOSE,
+    ]);
   });
 });

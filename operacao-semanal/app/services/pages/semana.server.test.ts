@@ -190,6 +190,7 @@ function makeWeekData(processed: ProcessedOrder[]): WeekData {
       totalOrders: processed.length,
       ordersSemAtributos: 0,
       ordersZonaDesconhecida: 0,
+      ordersPosFecho: 0,
     },
   };
 }

@@ -19,11 +19,13 @@ export { filterOrderWindow, matchZone, resolveConfDay } from "./schedule";
 
 // Pipeline de entrada: OrderInput[] → ProcessedOrder[] (nunca descarta).
 export {
+  ISSUE_AFTER_CLOSE,
   ISSUE_MISSING_DELIVERY_ATTRS,
   ISSUE_UNKNOWN_ZONE_PREFIX,
+  ISSUE_ZONE_NO_COURIER,
   processOrders,
 } from "./pipeline";
-export type { PipelineResult } from "./pipeline";
+export type { PipelineResult, ProcessOrdersOptions } from "./pipeline";
 
 // Outputs: cozinha (4.3), etiquetas (4.7), compras (4.5), rotas e DPD (4.6).
 export { buildKitchenMap } from "./kitchen";

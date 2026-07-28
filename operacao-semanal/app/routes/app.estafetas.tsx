@@ -1,6 +1,7 @@
 import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
 import {
   Link,
+  useFetcher,
   useLoaderData,
   useRouteError,
   useSearchParams,
@@ -11,6 +12,7 @@ import prisma from "../db.server";
 import { loadWeekData } from "../services/pages/common.server";
 import { buildEstafetasView } from "../services/pages/estafetas.server";
 import { getConfig } from "../services/definicoes/config.server";
+import type { RoutePreview } from "./app.api.enviar-rotas";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
@@ -59,6 +61,12 @@ function formatKg(value: number): string {
 export default function Estafetas() {
   const { view, meta, selectedDate } = useLoaderData<typeof loader>();
   const [, setSearchParams] = useSearchParams();
+
+  // Pré-visualização (dry-run) do envio de rotas por email. NÃO envia nada —
+  // apenas carrega o preview do endpoint /app/api/enviar-rotas.
+  const emailFetcher = useFetcher<RoutePreview>();
+  const emailPreview = emailFetcher.data;
+  const isLoadingPreview = emailFetcher.state !== "idle";
 
   const activeRoutes = view.routes.filter(
     (route) => route.deliveryDate === selectedDate,
@@ -115,14 +123,23 @@ export default function Estafetas() {
             >
               Exportar câmara (xlsx)
             </s-button>
-            <s-button variant="secondary" disabled>
+            <s-button
+              variant="secondary"
+              disabled={view.routes.length === 0 || isLoadingPreview}
+              loading={isLoadingPreview}
+              onClick={() => emailFetcher.load("/app/api/enviar-rotas")}
+            >
               Enviar rotas por email
             </s-button>
           </s-stack>
           <s-text color="subdued">
-            O envio de rotas por email aos parceiros fica indisponível até o
-            serviço de email estar decidido (decisão em aberto com o cliente).
+            O botão «Enviar rotas por email» mostra uma pré-visualização
+            (dry-run): quem receberia, o assunto e quantas paragens vão para
+            cada parceiro. Nada é enviado — o envio real fica ativo quando o
+            serviço de email for configurado (decisão em aberto com o cliente).
           </s-text>
+
+          {emailPreview && <RouteEmailPreview preview={emailPreview} />}
         </s-stack>
       </s-section>
 
@@ -328,6 +345,86 @@ export default function Estafetas() {
         </s-stack>
       </s-section>
     </s-page>
+  );
+}
+
+/**
+ * Pré-visualização (dry-run) do envio de rotas. Deixa CLARO que nada foi
+ * enviado e mostra, por parceiro, quem receberia, o assunto e nº de paragens.
+ */
+function RouteEmailPreview({ preview }: { preview: RoutePreview }) {
+  const nada = preview.recipients.length === 0 && preview.skipped.length === 0;
+
+  return (
+    <s-box
+      padding="base"
+      borderWidth="base"
+      borderRadius="base"
+      background="subdued"
+    >
+      <s-stack gap="base">
+        <s-banner tone="info" heading="Pré-visualização — nada foi enviado">
+          <s-paragraph>{preview.note}</s-paragraph>
+        </s-banner>
+
+        {nada ? (
+          <s-text color="subdued">
+            Não há parceiros com rotas para enviar nesta semana.
+          </s-text>
+        ) : (
+          <>
+            {preview.recipients.length > 0 && (
+              <s-table>
+                <s-table-header-row>
+                  <s-table-header>Parceiro</s-table-header>
+                  <s-table-header>Para</s-table-header>
+                  <s-table-header>CC</s-table-header>
+                  <s-table-header>Assunto</s-table-header>
+                  <s-table-header format="numeric">Paragens</s-table-header>
+                </s-table-header-row>
+                <s-table-body>
+                  {preview.recipients.map((recipient) => (
+                    <s-table-row key={recipient.courier}>
+                      <s-table-cell>{recipient.courier}</s-table-cell>
+                      <s-table-cell>{recipient.to}</s-table-cell>
+                      <s-table-cell>
+                        {recipient.cc.length > 0 ? (
+                          recipient.cc.join(", ")
+                        ) : (
+                          <s-text color="subdued">—</s-text>
+                        )}
+                      </s-table-cell>
+                      <s-table-cell>{recipient.subject}</s-table-cell>
+                      <s-table-cell>{String(recipient.stopCount)}</s-table-cell>
+                    </s-table-row>
+                  ))}
+                </s-table-body>
+              </s-table>
+            )}
+
+            {preview.skipped.length > 0 && (
+              <s-banner
+                tone="warning"
+                heading="Parceiros sem email (não seriam contactados)"
+              >
+                <s-paragraph>
+                  Estes parceiros têm rotas mas não têm email configurado em
+                  Parceiros &amp; fornecedores — adiciona o email para que
+                  entrem no envio:
+                </s-paragraph>
+                <s-unordered-list>
+                  {preview.skipped.map((partner) => (
+                    <s-list-item key={partner.courier}>
+                      {`${partner.courier} — ${partner.stopCount} paragem(ns)`}
+                    </s-list-item>
+                  ))}
+                </s-unordered-list>
+              </s-banner>
+            )}
+          </>
+        )}
+      </s-stack>
+    </s-box>
   );
 }
 

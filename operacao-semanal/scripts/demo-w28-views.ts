@@ -37,6 +37,7 @@ const weekData: WeekData = {
     totalOrders: processed.length,
     ordersSemAtributos: processed.filter((p) => p.issues.some((i) => i.startsWith("atributos-entrega"))).length,
     ordersZonaDesconhecida: processed.filter((p) => p.issues.some((i) => i.startsWith("zona-desconhecida"))).length,
+    ordersPosFecho: processed.filter((p) => p.issues.includes("encomenda-pos-fecho")).length,
   },
 };
 
@@ -75,5 +76,5 @@ const out = {
 writeFileSync(join(here, "demo-w28-views.json"), JSON.stringify(out, null, 2), "utf-8");
 console.log("OK — views escritas em scripts/demo-w28-views.json");
 console.log("Semana:", JSON.stringify(semana.kpis));
-console.log("Cozinha dias:", cozinha.days.map((d: any) => `${d.confDay}:${d.totalMeals}`).join(" "));
+console.log("Cozinha dias:", cozinha.days.map((d) => `${d.confDay}:${d.totalMeals}`).join(" "));
 console.log("Compras missing:", compras.missing.count, "| Estafetas rotas:", estafetas.routes.length, "| DPD:", estafetas.dpd.shipments);

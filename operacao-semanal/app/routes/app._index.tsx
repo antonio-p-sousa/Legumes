@@ -45,6 +45,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       source: meta.source,
       janela: `${formatDataHoraPt(meta.windowStart)} → ${formatDataHoraPt(meta.windowEnd)}`,
       importadoHaMin: minutosDesde(meta.fetchedAt),
+      ordersPosFecho: meta.ordersPosFecho,
     },
     configuracao: {
       zones,
@@ -131,6 +132,30 @@ export default function Semana() {
               Janela: {semana.janela} · importado há {semana.importadoHaMin} min
             </s-text>
           </s-stack>
+
+          {semana.ordersPosFecho > 0 && (
+            <s-banner
+              tone="info"
+              heading={
+                semana.ordersPosFecho === 1
+                  ? "1 encomenda recebida depois do fecho"
+                  : `${semana.ordersPosFecho} encomendas recebidas depois do fecho`
+              }
+            >
+              <s-paragraph>
+                {semana.ordersPosFecho === 1
+                  ? "Esta encomenda entrou"
+                  : "Estas encomendas entraram"}{" "}
+                na loja depois do fecho da janela e{" "}
+                {semana.ordersPosFecho === 1
+                  ? "foi incluída e assinalada"
+                  : "foram incluídas e assinaladas"}{" "}
+                nos cálculos — foi a opção escolhida em{" "}
+                <Link to="/app/definicoes/geral">Definições — Geral</Link>{" "}
+                (incluir e assinalar as pós-fecho, em vez de as excluir).
+              </s-paragraph>
+            </s-banner>
+          )}
 
           {kpis.semZona > 0 && (
             <s-banner

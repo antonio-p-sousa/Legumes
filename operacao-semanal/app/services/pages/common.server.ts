@@ -13,6 +13,7 @@ import { fetchWeekOrders, type WeekOrders } from "../orders/provider.server";
 import { getConfig } from "../definicoes/config.server";
 import {
   COMPONENT_NAMES,
+  ISSUE_AFTER_CLOSE,
   processOrders,
   type ComponentFactor,
   type ComponentName,
@@ -31,6 +32,8 @@ export interface WeekData {
     totalOrders: number;
     ordersSemAtributos: number;
     ordersZonaDesconhecida: number;
+    /** Encomendas incluídas mas assinaladas por serem pós-fecho (§10). */
+    ordersPosFecho: number;
   };
 }
 
@@ -141,21 +144,40 @@ export async function loadWeekData(
     getConfig(prisma),
   ]);
 
-  // Janela de encomendas configurada (Definições > Geral). Só afeta o modo
-  // live — demo/CSV são snapshots e não são filtrados. Com os defaults do
-  // schema (Sáb 00:00 → Sex 23:59) o comportamento é idêntico ao anterior;
-  // passa a divergir assim que o operador muda o cutoff.
-  // NOTA: o switch `ignoreAfterClose` (incluir-e-sinalizar as pós-fecho em vez
-  // de excluir) ainda não é honrado — a janela é sempre imposta na query
-  // GraphQL. Registado em docs/POR-FAZER.md como melhoria.
-  const window = computeOrderWindow(
-    new Date(),
+  // Janela oficial configurada (Definições > Geral). Só afeta o modo live —
+  // demo/CSV são snapshots e não são filtrados. Com os defaults do schema
+  // (Sáb 00:00 → Sex 23:59) o fecho é idêntico ao anterior; passa a divergir
+  // assim que o operador muda o cutoff.
+  const now = new Date();
+  const officialWindow = computeOrderWindow(
+    now,
     config.orderWindowFrom,
     config.orderWindowTo,
   );
-  const week = await fetchWeekOrders(admin, prisma, window);
 
-  const { processed } = processOrders(week.orders, zones);
+  // `AppConfig.ignoreAfterClose` decide o destino das encomendas criadas DEPOIS
+  // do fecho:
+  //  - true (default): EXCLUIR — a query corta em windowEnd (comportamento
+  //    clássico); nada é marcado.
+  //  - false: INCLUIR mas ASSINALAR — alarga a janela até "agora" para ir
+  //    buscar as pós-fecho e marca-as com ISSUE_AFTER_CLOSE (§10, nunca em
+  //    silêncio). A marcação só faz sentido em modo LIVE: demo/CSV são
+  //    snapshots de uma semana já fechada, não filtrados nem marcados.
+  const includeAfterClose = !config.ignoreAfterClose;
+  const fetchWindow = includeAfterClose
+    ? { windowStart: officialWindow.windowStart, windowEnd: now.toISOString() }
+    : officialWindow;
+
+  const week = await fetchWeekOrders(admin, prisma, fetchWindow);
+
+  const markAfterClose =
+    includeAfterClose && week.source === "live"
+      ? officialWindow.windowEnd
+      : undefined;
+
+  const { processed } = processOrders(week.orders, zones, undefined, {
+    markAfterClose,
+  });
 
   return {
     processed,
@@ -173,6 +195,9 @@ export async function loadWeekData(
       ).length,
       ordersZonaDesconhecida: processed.filter((p) =>
         p.issues.some((i) => i.startsWith("zona-desconhecida")),
+      ).length,
+      ordersPosFecho: processed.filter((p) =>
+        p.issues.includes(ISSUE_AFTER_CLOSE),
       ).length,
     },
   };

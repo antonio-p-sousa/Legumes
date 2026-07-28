@@ -21,11 +21,31 @@ export const ISSUE_UNKNOWN_ZONE_PREFIX = "zona-desconhecida:";
  */
 export const ISSUE_ZONE_NO_COURIER = "zona-sem-estafeta:";
 
+/**
+ * Issue emitida quando a encomenda foi criada DEPOIS do fecho da janela mas o
+ * operador optou por INCLUÍ-LA (AppConfig.ignoreAfterClose = false). A
+ * encomenda ENTRA em todos os cálculos, mas fica assinalada para o operador
+ * saber que não pertence à janela oficial — nunca em silêncio (ARCHITECTURE
+ * §10). Com ignoreAfterClose = true (default) estas encomendas são excluídas a
+ * montante (na query) e esta issue nunca aparece.
+ */
+export const ISSUE_AFTER_CLOSE = "encomenda-pos-fecho";
+
 export interface PipelineResult {
   /** Uma entrada por encomenda dentro da janela — NUNCA se descarta nenhuma. */
   processed: ProcessedOrder[];
   /** Encomendas fora da janela (regra 4.4), à parte para sinalização na UI. */
   excludedByWindow: OrderInput[];
+}
+
+export interface ProcessOrdersOptions {
+  /**
+   * Instante ISO do fecho oficial da janela. Quando definido, cada encomenda
+   * criada ESTRITAMENTE depois deste instante recebe também a issue
+   * ISSUE_AFTER_CLOSE (mantendo as restantes issues). Ausente/undefined →
+   * nenhuma marcação, i.e. comportamento clássico de excluir as pós-fecho.
+   */
+  markAfterClose?: string;
 }
 
 /**
@@ -43,21 +63,50 @@ export interface PipelineResult {
  * Devolve SEMPRE um `ProcessedOrder` por encomenda na janela — encomendas com
  * problemas ficam com `issues` preenchidas, nunca são descartadas em silêncio.
  *
+ * `options.markAfterClose` (ISO) assinala as encomendas pós-fecho sem as
+ * descartar: as criadas depois desse instante ganham a issue ISSUE_AFTER_CLOSE
+ * (além das que já tivessem) e continuam a entrar nos cálculos. Serve o modo
+ * ignoreAfterClose = false (incluir-e-sinalizar); ausente, nada muda.
+ *
  * Função pura: não muta `orders` nem `zones`.
  */
 export function processOrders(
   orders: OrderInput[],
   zones: ZoneConfig[],
   window?: WindowConfig,
+  options?: ProcessOrdersOptions,
 ): PipelineResult {
   const { inWindow, excluded } = window
     ? filterOrderWindow(orders, window)
     : { inWindow: orders, excluded: [] as OrderInput[] };
 
+  // Instante de fecho em epoch ms (NaN quando não há marcação a fazer). A
+  // comparação sobre instantes trata offsets ISO diferentes corretamente.
+  const afterCloseMs = options?.markAfterClose
+    ? Date.parse(options.markAfterClose)
+    : Number.NaN;
+
   return {
-    processed: inWindow.map((order) => processOrder(order, zones)),
+    processed: inWindow.map((order) => {
+      const result = processOrder(order, zones);
+      return isAfterClose(order, afterCloseMs)
+        ? withAfterCloseIssue(result)
+        : result;
+    }),
     excludedByWindow: excluded,
   };
+}
+
+/** true quando a encomenda foi criada estritamente depois do instante de fecho. */
+function isAfterClose(order: OrderInput, afterCloseMs: number): boolean {
+  if (Number.isNaN(afterCloseMs)) return false;
+  const createdAt = Date.parse(order.createdAt);
+  return !Number.isNaN(createdAt) && createdAt > afterCloseMs;
+}
+
+/** Devolve uma cópia com ISSUE_AFTER_CLOSE acrescentada (sem mutar o original). */
+function withAfterCloseIssue(processed: ProcessedOrder): ProcessedOrder {
+  return { ...processed, issues: [...processed.issues, ISSUE_AFTER_CLOSE] };
 }
 
 function processOrder(order: OrderInput, zones: ZoneConfig[]): ProcessedOrder {
