@@ -41,6 +41,12 @@
   da app no Shopify. Sem isto a app só corre em dev.
 - 🔴 **Ligação real testada** — o GraphQL nunca correu contra a loja verdadeira
   (depende das credenciais). Validar: downloads no iframe, rótulo da semana, fuso.
+- 🟡 **Documento "Rotas de câmara"** (NOVO, descoberto 28/07 em `00. Rotas.xlsx`) —
+  a app produz as folhas de entrega por estafeta (com morada) mas NÃO o documento que
+  o Miguel usa na câmara refrigerada: por dia de PRODUÇÃO, blocos de rota/destino com
+  `Encomenda | Cliente | nº de refeições` + lista-mestre de refeições por cliente,
+  impresso em landscape. Dados já existem no motor (é uma vista + impressão nova).
+  Modelar "recolha em loja" como destino e (fase 2) entradas manuais "ÚLTIMA HORA".
 - 🟡 **Envio de emails aos parceiros** — feature por construir; requer decisão do
   serviço (Brevo/Resend/SMTP) + campo CC múltiplo no Courier (Avenidas usa 3 CCs).
 - 🟡 **Configurar zonas/parceiros reais** — quando vier a matriz: Porto (2ª, vespera?),

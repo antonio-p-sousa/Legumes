@@ -1,5 +1,27 @@
 # Reconciliação — vídeos do cliente ↔ documentação/código
 
+> **ATUALIZAÇÃO 28 jul 2026 — documentos logísticos do Miguel (pasta semanal w28):**
+> - **`00. Rotas.xlsx` — DOCUMENTO NOVO, a app NÃO o produz.** É o documento da
+>   **câmara refrigerada**: por dia de PRODUÇÃO (dom/2f/3f), blocos de rota/destino
+>   lado a lado, cada linha = `Encomenda | Cliente | nº de REFEIÇÕES` (não moradas).
+>   Alimentado por uma lista-mestre "refeições por cliente/dia" (VLOOKUP). Difere da
+>   impressão de rotas atual da app (por estafeta, com morada/telefone/valor, para
+>   navegar a entrega). Finalidade: separar as refeições por rota na câmara. → **a
+>   construir** (dados já existem no motor; falta a vista "refeições por cliente por
+>   rota" + impressão landscape). Ver POR-FAZER.md.
+> - **Folhas de entrega por zona** (01. Lisboa, 02. Leiria, 03. Coimbra, recolha em
+>   loja, entrega interna) — ✅ **já cobertas** pela impressão de rotas da app (mesmas
+>   colunas: Name/Billing/Phone/Shipping.../Subtotal/Notes).
+> - **CSV DPD real** (enviado ao portal) — ✅ a app gera corretamente as colunas 1-16.
+> - **Código AT (col 17)** — continua a vir do **Moloni** (gerado ao emitir a guia de
+>   transporte); a app **não o pode gerar** e faz bem em deixá-lo em branco. O novo
+>   template só automatiza a JUNÇÃO por nº de encomenda (XLOOKUP sobre um export do
+>   Moloni). ✅ A app já fornece a chave: `order.name` na coluna 15 ("Coluna O").
+> - **PDFs "fecho do dia"** — são o *Relatório Final do portal DPD* (downstream do
+>   upload do nosso CSV), não output da app. Fecham o ciclo, nada a fazer.
+> - Nota menor: no CSV real a col 8 (telefone fixo) vem com o telemóvel repetido; a
+>   app deixa-a vazia (é campo não-obrigatório — cosmético; espelhar se quiserem paridade).
+
 > **ATUALIZAÇÃO 20 jul 2026 — respostas do Miguel (por email):**
 > - **Fichas técnicas por ingrediente NÃO existem** — só a ficha da dose média (bulk)
 >   e o cálculo por COMPONENTES (Proteína/Hidratos/Legumes × dose). Fichas por
