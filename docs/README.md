@@ -15,6 +15,7 @@ referência versionados junto do código).
 | Documento | O que é |
 |---|---|
 | [CRONOGRAMA.md](CRONOGRAMA.md) | Fases do projeto, datas e estado. |
+| [MANUAL-OPERADOR.md](MANUAL-OPERADOR.md) | Guia de utilização semanal para o operador (handover / formação). |
 | [POR-FAZER.md](POR-FAZER.md) | Checklist completo até ao go-live (cliente / Loop / técnico / validação). Fonte única do que falta. |
 | [DECISOES-AUTONOMAS.md](DECISOES-AUTONOMAS.md) | Registo das decisões tomadas de forma autónoma durante a ausência do António, com justificação. |
 
