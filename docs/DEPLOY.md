@@ -45,6 +45,13 @@ Região: **`mad` (Madrid)** — a mais próxima de Portugal.
 
 ## 3. Migração SQLite → Postgres
 
+> ✅ **Verificado offline (28/07):** o schema gera DDL de Postgres limpo — as 11
+> tabelas, todas com tipos standard (TEXT / BOOLEAN / TIMESTAMP / BIGINT), sem
+> nada específico de SQLite. O DDL gerado está em
+> [`operacao-semanal/prisma/postgres-init.sql`](../operacao-semanal/prisma/postgres-init.sql)
+> como referência. Ou seja, a migração abaixo é de baixo risco — o schema já é
+> Postgres-compatível.
+
 ### 3.1 Alterações ao `prisma/schema.prisma`
 
 O datasource está hardcoded para SQLite. Mudar para:
