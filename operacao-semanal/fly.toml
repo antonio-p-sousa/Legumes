@@ -1,0 +1,35 @@
+# Configuração de deploy Fly.io — App "Operação Semanal" (LOV).
+# Ver docs/DEPLOY.md para o passo a passo completo.
+#
+# O nome ("app") é ajustado por `fly launch` na primeira vez.
+# SEGREDOS (SHOPIFY_API_SECRET, DATABASE_URL, SHOPIFY_ADMIN_TOKEN, ...) NÃO vão
+# aqui — definem-se com `fly secrets set CHAVE=valor`. Este ficheiro só tem
+# configuração não-sensível.
+
+app = "lov-operacao-semanal"
+primary_region = "mad" # Madrid — mais perto de PT
+
+[build]
+  # Usa o Dockerfile do repositório tal e qual.
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  # min_machines_running = 1 evita cold starts dentro do iframe do admin
+  # (a app é usada em rajadas à sexta; um cold start estraga a experiência).
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 200
+    hard_limit = 250
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
