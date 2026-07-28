@@ -19,7 +19,8 @@
     "graphql-codegen": "graphql-codegen",
     "vite": "vite",
     "typecheck": "react-router typegen && tsc --noEmit",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "fetch-live": "tsx scripts/fetch-live.ts"
   },
   "type": "module",
   "engines": {

@@ -43,6 +43,7 @@ const WINDOW = {
 
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
 });
 
 describe("fetchWeekOrders — janela configurada (bug-1)", () => {
@@ -58,12 +59,40 @@ describe("fetchWeekOrders — janela configurada (bug-1)", () => {
     expect(search).toContain(`created_at:<=${WINDOW.windowEnd}`);
   });
 
-  test("sem admin (demo): a janela é ignorada — snapshot não é filtrado", async () => {
+  test("sem admin nem token: cai na demo — snapshot não é filtrado", async () => {
+    vi.stubEnv("SHOPIFY_SHOP", "");
+    vi.stubEnv("SHOPIFY_ADMIN_TOKEN", "");
+
     const result = await fetchWeekOrders(null, undefined, WINDOW);
 
     expect(result.source).toBe("demo");
     // A demo mantém as suas próprias datas (semana 47), não as da janela.
     expect(result.windowStart).not.toBe(WINDOW.windowStart);
+  });
+
+  test("sem admin mas com token no ambiente: usa live (custom app)", async () => {
+    vi.stubEnv("SHOPIFY_SHOP", "legumes-e-outros-vicios.myshopify.com");
+    vi.stubEnv("SHOPIFY_ADMIN_TOKEN", "shpat_fake");
+    const calls: string[] = [];
+    vi.stubGlobal("fetch", async (url: string, init?: RequestInit) => {
+      calls.push(url);
+      // confirma o header do token
+      expect((init?.headers as Record<string, string>)["X-Shopify-Access-Token"]).toBe(
+        "shpat_fake",
+      );
+      return jsonResponse({
+        data: {
+          orders: { pageInfo: { hasNextPage: false, endCursor: null }, edges: [] },
+        },
+      });
+    });
+
+    const result = await fetchWeekOrders(null, undefined, WINDOW);
+
+    expect(result.source).toBe("live");
+    expect(calls[0]).toContain(
+      "legumes-e-outros-vicios.myshopify.com/admin/api/2025-10/graphql.json",
+    );
   });
 
   test("DEMO_DATA=1 força demo mesmo com admin e janela", async () => {

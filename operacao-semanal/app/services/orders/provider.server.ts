@@ -25,6 +25,7 @@ import type { PrismaClient } from "@prisma/client";
 import type { OrderInput } from "../weekly/types";
 import { loadLatestImport } from "./csv-import.server";
 import { fetchLiveOrders, type AdminGraphqlClient } from "./graphql.server";
+import { tokenAdminFromEnv } from "./token-client.server";
 
 export interface WeekOrders {
   orders: OrderInput[];
@@ -91,11 +92,16 @@ export async function fetchWeekOrders(
   prisma?: PrismaClient,
   window?: { windowStart: string; windowEnd: string },
 ): Promise<WeekOrders> {
-  const forceDemo = process.env.DEMO_DATA === "1";
-  if (!admin || forceDemo) return loadFallbackOrders(prisma);
+  if (process.env.DEMO_DATA === "1") return loadFallbackOrders(prisma);
+
+  // Cliente live: OAuth (app embebida) OU token estático do ambiente
+  // (custom app — plug-and-play, ver token-client.server.ts). Sem nenhum,
+  // cai no import de CSV / demo.
+  const client = admin ?? tokenAdminFromEnv();
+  if (!client) return loadFallbackOrders(prisma);
 
   try {
-    return await fetchLiveOrders(admin, window ? { window } : undefined);
+    return await fetchLiveOrders(client, window ? { window } : undefined);
   } catch (error) {
     // Falha de API não pode deixar o operador sem página (ARCHITECTURE §10):
     // degrada para import/demo com aviso explícito no label.
