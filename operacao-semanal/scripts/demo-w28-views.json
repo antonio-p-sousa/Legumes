@@ -1,0 +1,1497 @@
+{
+  "weekLabel": "2026-W28 (demonstração)",
+  "semana": {
+    "kpis": {
+      "encomendas": 197,
+      "validas": 160,
+      "semZona": 37,
+      "refeicoes": 1243,
+      "faturacao": 9554.33,
+      "clientes": 169
+    },
+    "dias": [
+      {
+        "confDay": "2f",
+        "diaPT": "Segunda",
+        "encomendas": 72,
+        "refeicoes": 576,
+        "canais": [
+          "Parceiro Leiria",
+          "Recolha em loja",
+          "DPD · 63 envios"
+        ]
+      },
+      {
+        "confDay": "3f",
+        "diaPT": "Terça",
+        "encomendas": 62,
+        "refeicoes": 444,
+        "canais": [
+          "Interno Coimbra",
+          "Recolha em loja",
+          "DPD · 6 envios"
+        ]
+      },
+      {
+        "confDay": "sab",
+        "diaPT": "Sábado",
+        "encomendas": 18,
+        "refeicoes": 153,
+        "canais": [
+          "Parceiro Lisboa"
+        ]
+      },
+      {
+        "confDay": "dom",
+        "diaPT": "Domingo",
+        "encomendas": 8,
+        "refeicoes": 70,
+        "canais": [
+          "Parceiro Lisboa"
+        ]
+      }
+    ],
+    "documentos": [
+      {
+        "nome": "Mapa de cozinha",
+        "estado": "success",
+        "estadoLabel": "Pronto a exportar",
+        "detalhe": "4 dias · 1243 refeições",
+        "href": "/app/api/export/cozinha"
+      },
+      {
+        "nome": "Etiquetas",
+        "estado": "success",
+        "estadoLabel": "Pronto a exportar",
+        "detalhe": "1243 etiquetas",
+        "href": "/app/api/export/etiquetas"
+      },
+      {
+        "nome": "Rotas de estafetas",
+        "estado": "success",
+        "estadoLabel": "Pronto a exportar",
+        "detalhe": "6 rotas · 91 paragens",
+        "href": "/app/api/export/rotas"
+      },
+      {
+        "nome": "CSV DPD",
+        "estado": "success",
+        "estadoLabel": "Pronto a exportar",
+        "detalhe": "69 envios · 192 kg",
+        "href": "/app/api/export/dpd"
+      },
+      {
+        "nome": "Compras",
+        "estado": "warning",
+        "estadoLabel": "37 pratos sem ficha",
+        "detalhe": "0 fornecedores · 0 ingredientes",
+        "href": "/app/api/export/compras"
+      }
+    ]
+  },
+  "cozinha": {
+    "days": [
+      {
+        "confDay": "2f",
+        "label": "Segunda",
+        "confDate": "2026-05-11",
+        "totalMeals": 576,
+        "totalOrders": 72,
+        "peixeCarne": {
+          "doseColumns": [
+            "Low Carb",
+            "Bulk",
+            "Extra Bulk",
+            "Zero Carbs"
+          ],
+          "rows": [
+            {
+              "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+              "cells": [
+                64,
+                10,
+                15,
+                null
+              ],
+              "total": 89
+            },
+            {
+              "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+              "cells": [
+                53,
+                9,
+                7,
+                null
+              ],
+              "total": 69
+            },
+            {
+              "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+              "cells": [
+                35,
+                1,
+                5,
+                null
+              ],
+              "total": 41
+            },
+            {
+              "dish": "Jardineira de Novilho",
+              "cells": [
+                45,
+                12,
+                6,
+                null
+              ],
+              "total": 63
+            },
+            {
+              "dish": "Salmão com crosta de azeitona e chia",
+              "cells": [
+                58,
+                11,
+                8,
+                null
+              ],
+              "total": 77
+            },
+            {
+              "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+              "cells": [
+                50,
+                13,
+                10,
+                1
+              ],
+              "total": 74
+            }
+          ],
+          "columnTotals": [
+            305,
+            56,
+            51,
+            1
+          ],
+          "total": 413
+        },
+        "vegetariano": {
+          "doseColumns": [
+            "300g",
+            "400g",
+            "450g"
+          ],
+          "rows": [
+            {
+              "dish": "Moqueca de Tofu e Legumes",
+              "cells": [
+                16,
+                null,
+                null
+              ],
+              "total": 16
+            }
+          ],
+          "columnTotals": [
+            16,
+            0,
+            0
+          ],
+          "total": 16
+        },
+        "pokes": [
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "M (arroz)",
+            "quantity": 8
+          },
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "M (quinoa)",
+            "quantity": 5
+          },
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "XL (quinoa)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (arroz)",
+            "quantity": 7
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (quinoa)",
+            "quantity": 4
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "XL (arroz)",
+            "quantity": 2
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "XL (quinoa)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+            "dose": "M (arroz)",
+            "quantity": 3
+          },
+          {
+            "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+            "dose": "M (quinoa)",
+            "quantity": 2
+          }
+        ],
+        "doseUnica": [
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "300g",
+            "quantity": 22
+          },
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "450g",
+            "quantity": 3
+          },
+          {
+            "dish": "Creme de Feijão Branco, Cenoura e Espinafres",
+            "dose": "Dose Única",
+            "quantity": 54
+          },
+          {
+            "dish": "New York Cheesecake de Brownie com Avelã",
+            "dose": "Dose Única",
+            "quantity": 14
+          },
+          {
+            "dish": "Pizza de Fiambre de Perú",
+            "dose": "Dose Única",
+            "quantity": 21
+          }
+        ],
+        "notes": []
+      },
+      {
+        "confDay": "3f",
+        "label": "Terça",
+        "confDate": "2026-07-14",
+        "totalMeals": 444,
+        "totalOrders": 62,
+        "peixeCarne": {
+          "doseColumns": [
+            "Low Carb",
+            "Bulk",
+            "Extra Bulk",
+            "Zero Carbs"
+          ],
+          "rows": [
+            {
+              "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+              "cells": [
+                37,
+                13,
+                16,
+                null
+              ],
+              "total": 66
+            },
+            {
+              "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+              "cells": [
+                48,
+                6,
+                13,
+                null
+              ],
+              "total": 67
+            },
+            {
+              "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+              "cells": [
+                22,
+                6,
+                4,
+                null
+              ],
+              "total": 32
+            },
+            {
+              "dish": "Jardineira de Novilho",
+              "cells": [
+                31,
+                6,
+                8,
+                null
+              ],
+              "total": 45
+            },
+            {
+              "dish": "Salmão com crosta de azeitona e chia",
+              "cells": [
+                52,
+                14,
+                17,
+                null
+              ],
+              "total": 83
+            },
+            {
+              "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+              "cells": [
+                35,
+                12,
+                7,
+                3
+              ],
+              "total": 57
+            }
+          ],
+          "columnTotals": [
+            225,
+            57,
+            65,
+            3
+          ],
+          "total": 350
+        },
+        "vegetariano": {
+          "doseColumns": [
+            "300g",
+            "400g",
+            "450g"
+          ],
+          "rows": [
+            {
+              "dish": "Moqueca de Tofu e Legumes",
+              "cells": [
+                14,
+                null,
+                5
+              ],
+              "total": 19
+            }
+          ],
+          "columnTotals": [
+            14,
+            0,
+            5
+          ],
+          "total": 19
+        },
+        "pokes": [
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "M (arroz)",
+            "quantity": 3
+          },
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "M (quinoa)",
+            "quantity": 2
+          },
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "XL (arroz)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (arroz)",
+            "quantity": 3
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (quinoa)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "XL (arroz)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+            "dose": "M (quinoa)",
+            "quantity": 4
+          },
+          {
+            "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+            "dose": "XL (quinoa)",
+            "quantity": 1
+          }
+        ],
+        "doseUnica": [
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "300g",
+            "quantity": 10
+          },
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "450g",
+            "quantity": 4
+          },
+          {
+            "dish": "Creme de Feijão Branco, Cenoura e Espinafres",
+            "dose": "Dose Única",
+            "quantity": 20
+          },
+          {
+            "dish": "New York Cheesecake de Brownie com Avelã",
+            "dose": "Dose Única",
+            "quantity": 13
+          },
+          {
+            "dish": "Pizza de Fiambre de Perú",
+            "dose": "Dose Única",
+            "quantity": 12
+          }
+        ],
+        "notes": []
+      },
+      {
+        "confDay": "sab",
+        "label": "Sábado",
+        "confDate": "2026-07-11",
+        "totalMeals": 153,
+        "totalOrders": 18,
+        "peixeCarne": {
+          "doseColumns": [
+            "Low Carb",
+            "Bulk",
+            "Extra Bulk",
+            "Zero Carbs"
+          ],
+          "rows": [
+            {
+              "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+              "cells": [
+                20,
+                null,
+                4,
+                null
+              ],
+              "total": 24
+            },
+            {
+              "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+              "cells": [
+                10,
+                null,
+                4,
+                null
+              ],
+              "total": 14
+            },
+            {
+              "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+              "cells": [
+                11,
+                null,
+                2,
+                null
+              ],
+              "total": 13
+            },
+            {
+              "dish": "Jardineira de Novilho",
+              "cells": [
+                12,
+                1,
+                1,
+                null
+              ],
+              "total": 14
+            },
+            {
+              "dish": "Salmão com crosta de azeitona e chia",
+              "cells": [
+                18,
+                1,
+                6,
+                null
+              ],
+              "total": 25
+            },
+            {
+              "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+              "cells": [
+                12,
+                2,
+                5,
+                3
+              ],
+              "total": 22
+            }
+          ],
+          "columnTotals": [
+            83,
+            4,
+            22,
+            3
+          ],
+          "total": 112
+        },
+        "vegetariano": {
+          "doseColumns": [
+            "300g",
+            "400g",
+            "450g"
+          ],
+          "rows": [
+            {
+              "dish": "Moqueca de Tofu e Legumes",
+              "cells": [
+                3,
+                null,
+                2
+              ],
+              "total": 5
+            }
+          ],
+          "columnTotals": [
+            3,
+            0,
+            2
+          ],
+          "total": 5
+        },
+        "pokes": [
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "M (arroz)",
+            "quantity": 5
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (arroz)",
+            "quantity": 4
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "XL (quinoa)",
+            "quantity": 1
+          }
+        ],
+        "doseUnica": [
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "300g",
+            "quantity": 7
+          },
+          {
+            "dish": "Creme de Feijão Branco, Cenoura e Espinafres",
+            "dose": "Dose Única",
+            "quantity": 8
+          },
+          {
+            "dish": "New York Cheesecake de Brownie com Avelã",
+            "dose": "Dose Única",
+            "quantity": 7
+          },
+          {
+            "dish": "Pizza de Fiambre de Perú",
+            "dose": "Dose Única",
+            "quantity": 4
+          }
+        ],
+        "notes": []
+      },
+      {
+        "confDay": "dom",
+        "label": "Domingo",
+        "confDate": "2026-07-12",
+        "totalMeals": 70,
+        "totalOrders": 8,
+        "peixeCarne": {
+          "doseColumns": [
+            "Low Carb",
+            "Bulk",
+            "Extra Bulk",
+            "Zero Carbs"
+          ],
+          "rows": [
+            {
+              "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+              "cells": [
+                4,
+                1,
+                5,
+                null
+              ],
+              "total": 10
+            },
+            {
+              "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+              "cells": [
+                3,
+                2,
+                5,
+                null
+              ],
+              "total": 10
+            },
+            {
+              "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+              "cells": [
+                null,
+                3,
+                2,
+                null
+              ],
+              "total": 5
+            },
+            {
+              "dish": "Jardineira de Novilho",
+              "cells": [
+                7,
+                null,
+                5,
+                null
+              ],
+              "total": 12
+            },
+            {
+              "dish": "Salmão com crosta de azeitona e chia",
+              "cells": [
+                2,
+                3,
+                3,
+                null
+              ],
+              "total": 8
+            },
+            {
+              "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+              "cells": [
+                3,
+                null,
+                3,
+                null
+              ],
+              "total": 6
+            }
+          ],
+          "columnTotals": [
+            19,
+            9,
+            23,
+            0
+          ],
+          "total": 51
+        },
+        "vegetariano": {
+          "doseColumns": [
+            "300g",
+            "400g",
+            "450g"
+          ],
+          "rows": [
+            {
+              "dish": "Moqueca de Tofu e Legumes",
+              "cells": [
+                4,
+                null,
+                1
+              ],
+              "total": 5
+            }
+          ],
+          "columnTotals": [
+            4,
+            0,
+            1
+          ],
+          "total": 5
+        },
+        "pokes": [
+          {
+            "dish": "Poke Bowl Frango com molho de amendoim",
+            "dose": "XL (arroz)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (arroz)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "M (quinoa)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "XL (arroz)",
+            "quantity": 1
+          },
+          {
+            "dish": "Poke Bowl Salmão com molho teriyaki",
+            "dose": "XL (quinoa)",
+            "quantity": 1
+          }
+        ],
+        "doseUnica": [
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "300g",
+            "quantity": 1
+          },
+          {
+            "dish": "Bolonhesa de Lentilhas e Legumes",
+            "dose": "450g",
+            "quantity": 2
+          },
+          {
+            "dish": "Creme de Feijão Branco, Cenoura e Espinafres",
+            "dose": "Dose Única",
+            "quantity": 3
+          },
+          {
+            "dish": "New York Cheesecake de Brownie com Avelã",
+            "dose": "Dose Única",
+            "quantity": 3
+          }
+        ],
+        "notes": []
+      }
+    ],
+    "totalMeals": 1243,
+    "totalOrders": 160,
+    "nonMeal": [
+      {
+        "dish": "Embalagens biodegradáveis",
+        "dose": "Dose Única",
+        "quantity": 56
+      },
+      {
+        "dish": "Subscrição de desconto mensal",
+        "dose": "15% OFF",
+        "quantity": 1
+      },
+      {
+        "dish": "Tip",
+        "dose": "Dose Única",
+        "quantity": 6
+      }
+    ],
+    "componentPlan": {
+      "days": [
+        {
+          "confDay": "2f",
+          "kg": {
+            "Proteína": 61.705,
+            "Hidratos": 56.755,
+            "Legumes": 53.075
+          },
+          "meals": 487
+        },
+        {
+          "confDay": "3f",
+          "kg": {
+            "Proteína": 53.91,
+            "Hidratos": 49.115,
+            "Legumes": 45.73
+          },
+          "meals": 399
+        },
+        {
+          "confDay": "sab",
+          "kg": {
+            "Proteína": 17.39,
+            "Hidratos": 15.61,
+            "Legumes": 15.08
+          },
+          "meals": 134
+        },
+        {
+          "confDay": "dom",
+          "kg": {
+            "Proteína": 10.065,
+            "Hidratos": 9.37,
+            "Legumes": 8.795
+          },
+          "meals": 64
+        }
+      ],
+      "totals": {
+        "Proteína": 143.07,
+        "Hidratos": 130.85,
+        "Legumes": 122.68
+      },
+      "skipped": [
+        {
+          "dose": "Dose Única",
+          "units": 159
+        }
+      ]
+    }
+  },
+  "compras": {
+    "suppliers": [],
+    "missing": {
+      "count": 37,
+      "unitsTotal": 1243,
+      "top": [
+        {
+          "dish": "Salmão com crosta de azeitona e chia",
+          "dose": "Low Carb",
+          "unitsSold": 130
+        },
+        {
+          "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+          "dose": "Low Carb",
+          "unitsSold": 125
+        },
+        {
+          "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+          "dose": "Low Carb",
+          "unitsSold": 114
+        },
+        {
+          "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+          "dose": "Low Carb",
+          "unitsSold": 100
+        },
+        {
+          "dish": "Jardineira de Novilho",
+          "dose": "Low Carb",
+          "unitsSold": 95
+        },
+        {
+          "dish": "Creme de Feijão Branco, Cenoura e Espinafres",
+          "dose": "Dose Única",
+          "unitsSold": 85
+        },
+        {
+          "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+          "dose": "Low Carb",
+          "unitsSold": 68
+        },
+        {
+          "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+          "dose": "Extra Bulk",
+          "unitsSold": 40
+        },
+        {
+          "dish": "Bolonhesa de Lentilhas e Legumes",
+          "dose": "300g",
+          "unitsSold": 40
+        },
+        {
+          "dish": "Moqueca de Tofu e Legumes",
+          "dose": "300g",
+          "unitsSold": 37
+        },
+        {
+          "dish": "New York Cheesecake de Brownie com Avelã",
+          "dose": "Dose Única",
+          "unitsSold": 37
+        },
+        {
+          "dish": "Pizza de Fiambre de Perú",
+          "dose": "Dose Única",
+          "unitsSold": 37
+        },
+        {
+          "dish": "Salmão com crosta de azeitona e chia",
+          "dose": "Extra Bulk",
+          "unitsSold": 34
+        },
+        {
+          "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+          "dose": "Extra Bulk",
+          "unitsSold": 29
+        },
+        {
+          "dish": "Salmão com crosta de azeitona e chia",
+          "dose": "Bulk",
+          "unitsSold": 29
+        },
+        {
+          "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+          "dose": "Bulk",
+          "unitsSold": 27
+        },
+        {
+          "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+          "dose": "Extra Bulk",
+          "unitsSold": 25
+        },
+        {
+          "dish": "Almôndegas gregas de frango com feta, orégãos e limão",
+          "dose": "Bulk",
+          "unitsSold": 24
+        },
+        {
+          "dish": "Jardineira de Novilho",
+          "dose": "Extra Bulk",
+          "unitsSold": 20
+        },
+        {
+          "dish": "Jardineira de Novilho",
+          "dose": "Bulk",
+          "unitsSold": 19
+        },
+        {
+          "dish": "Bolinhos de bacalhau e grão assados com molho tártaro de limão e alcaparras",
+          "dose": "Bulk",
+          "unitsSold": 17
+        },
+        {
+          "dish": "Poke Bowl Frango com molho de amendoim",
+          "dose": "M (arroz)",
+          "unitsSold": 16
+        },
+        {
+          "dish": "Poke Bowl Salmão com molho teriyaki",
+          "dose": "M (arroz)",
+          "unitsSold": 15
+        },
+        {
+          "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+          "dose": "Extra Bulk",
+          "unitsSold": 13
+        },
+        {
+          "dish": "Filete de Pescada com pesto de manjericão, espinafres e caju",
+          "dose": "Bulk",
+          "unitsSold": 10
+        },
+        {
+          "dish": "Bolonhesa de Lentilhas e Legumes",
+          "dose": "450g",
+          "unitsSold": 9
+        },
+        {
+          "dish": "Moqueca de Tofu e Legumes",
+          "dose": "450g",
+          "unitsSold": 8
+        },
+        {
+          "dish": "Poke Bowl Frango com molho de amendoim",
+          "dose": "M (quinoa)",
+          "unitsSold": 7
+        },
+        {
+          "dish": "Tiras de perú salteadas com molho de pimentos fumados",
+          "dose": "Zero Carbs",
+          "unitsSold": 7
+        },
+        {
+          "dish": "Poke Bowl Salmão com molho teriyaki",
+          "dose": "M (quinoa)",
+          "unitsSold": 6
+        },
+        {
+          "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+          "dose": "M (quinoa)",
+          "unitsSold": 6
+        },
+        {
+          "dish": "Poke Bowl Salmão com molho teriyaki",
+          "dose": "XL (arroz)",
+          "unitsSold": 4
+        },
+        {
+          "dish": "Poke Bowl Salmão com molho teriyaki",
+          "dose": "XL (quinoa)",
+          "unitsSold": 3
+        },
+        {
+          "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+          "dose": "M (arroz)",
+          "unitsSold": 3
+        },
+        {
+          "dish": "Poke Bowl Frango com molho de amendoim",
+          "dose": "XL (arroz)",
+          "unitsSold": 2
+        },
+        {
+          "dish": "Poke Bowl Frango com molho de amendoim",
+          "dose": "XL (quinoa)",
+          "unitsSold": 1
+        },
+        {
+          "dish": "Poke Bowl Tofu crocante com molho sweet chilli",
+          "dose": "XL (quinoa)",
+          "unitsSold": 1
+        }
+      ]
+    },
+    "stats": {
+      "fornecedores": 0,
+      "ingredientes": 0,
+      "alertas": 37
+    }
+  },
+  "estafetas": {
+    "deliveryDates": [
+      {
+        "date": "2026-07-12",
+        "dia": "Domingo",
+        "nRotas": 1,
+        "nParagens": 18
+      },
+      {
+        "date": "2026-07-13",
+        "dia": "Segunda",
+        "nRotas": 3,
+        "nParagens": 17
+      },
+      {
+        "date": "2026-07-14",
+        "dia": "Terça",
+        "nRotas": 2,
+        "nParagens": 56
+      }
+    ],
+    "routes": [
+      {
+        "courier": "Parceiro Lisboa",
+        "courierType": "partner",
+        "deliveryDay": "Domingo",
+        "deliveryDate": "2026-07-12",
+        "stops": [
+          {
+            "orderName": "#51043-LoV",
+            "client": "Cliente 039",
+            "phone": "900000039",
+            "address1": "Rua Exemplo 39",
+            "zip": "1070-015",
+            "city": "Lisboa",
+            "subtotal": 69.6,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 1
+          },
+          {
+            "orderName": "#50940-LoV",
+            "client": "Cliente 151",
+            "phone": "900000151",
+            "address1": "Rua Exemplo 151",
+            "zip": "1500-112",
+            "city": "Lisboa",
+            "subtotal": 55.55,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 2
+          },
+          {
+            "orderName": "#51078-LoV",
+            "client": "Cliente 001",
+            "phone": "900000001",
+            "address1": "Rua Exemplo 1",
+            "zip": "1500-459",
+            "city": "Lisboa",
+            "subtotal": 41.3,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 3
+          },
+          {
+            "orderName": "#51024-LoV",
+            "client": "Cliente 061",
+            "phone": "900000061",
+            "address1": "Rua Exemplo 61",
+            "zip": "1500-588",
+            "city": "Lisboa",
+            "subtotal": 0,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 4
+          },
+          {
+            "orderName": "#50919-LoV",
+            "client": "Cliente 176",
+            "phone": "900000176",
+            "address1": "Rua Exemplo 176",
+            "zip": "1500-611",
+            "city": "Lisboa",
+            "subtotal": 112.13,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 5
+          },
+          {
+            "orderName": "#51046-LoV",
+            "client": "Cliente 034",
+            "phone": "900000034",
+            "address1": "Rua Exemplo 34",
+            "zip": "1600-312",
+            "city": "Lisboa",
+            "subtotal": 37.09,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 6
+          }
+        ],
+        "totalStops": 18
+      },
+      {
+        "courier": "Parceiro Leiria",
+        "courierType": "partner",
+        "deliveryDay": "Segunda",
+        "deliveryDate": "2026-07-13",
+        "stops": [
+          {
+            "orderName": "#51049-LoV",
+            "client": "Cliente 032",
+            "phone": "900000032",
+            "address1": "Rua Exemplo 32",
+            "zip": "2410-037",
+            "city": "Leiria",
+            "subtotal": 25,
+            "note": "",
+            "window": "Leiria (Centro da cidade) 18-21h",
+            "sequence": 1
+          },
+          {
+            "orderName": "#50956-LoV",
+            "client": "Cliente 135",
+            "phone": "900000135",
+            "address1": "Rua Exemplo 135",
+            "zip": "2410-161",
+            "city": "Leiria",
+            "subtotal": 53.7,
+            "note": "",
+            "window": "Leiria (Centro da cidade) 18-21h",
+            "sequence": 2
+          },
+          {
+            "orderName": "#50979-LoV",
+            "client": "Cliente 112",
+            "phone": "900000112",
+            "address1": "Rua Exemplo 112",
+            "zip": "2410-457",
+            "city": "Leiria",
+            "subtotal": 40.35,
+            "note": "",
+            "window": "Leiria (Centro da cidade) 18-21h",
+            "sequence": 3
+          },
+          {
+            "orderName": "#51020-LoV",
+            "client": "Cliente 065",
+            "phone": "900000065",
+            "address1": "Rua Exemplo 65",
+            "zip": "2410-466",
+            "city": "Leiria",
+            "subtotal": 61.11,
+            "note": "",
+            "window": "Leiria (Centro da cidade) 18-21h",
+            "sequence": 4
+          },
+          {
+            "orderName": "#50897-LoV",
+            "client": "Cliente 199",
+            "phone": "900000199",
+            "address1": "Rua Exemplo 199",
+            "zip": "2410-849",
+            "city": "Leiria",
+            "subtotal": 57.44,
+            "note": "",
+            "window": "Leiria (Centro da cidade) 18-21h",
+            "sequence": 5
+          },
+          {
+            "orderName": "#51071-LoV",
+            "client": "Cliente 008",
+            "phone": "900000008",
+            "address1": "Rua Exemplo 8",
+            "zip": "2415-468",
+            "city": "Leiria",
+            "subtotal": 75.34,
+            "note": "",
+            "window": "Leiria (Centro da cidade) 18-21h",
+            "sequence": 6
+          }
+        ],
+        "totalStops": 7
+      },
+      {
+        "courier": "Parceiro Lisboa",
+        "courierType": "partner",
+        "deliveryDay": "Segunda",
+        "deliveryDate": "2026-07-13",
+        "stops": [
+          {
+            "orderName": "#51074-LoV",
+            "client": "Cliente 005",
+            "phone": "900000005",
+            "address1": "Rua Exemplo 5",
+            "zip": "1200-808",
+            "city": "Lisboa",
+            "subtotal": 107.27,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 1
+          },
+          {
+            "orderName": "#51027-LoV",
+            "client": "Cliente 057",
+            "phone": "900000057",
+            "address1": "Rua Exemplo 57",
+            "zip": "1250-048",
+            "city": "Lisboa",
+            "subtotal": 74.47,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 2
+          },
+          {
+            "orderName": "#50937-LoV",
+            "client": "Cliente 154",
+            "phone": "900000154",
+            "address1": "Rua Exemplo 154",
+            "zip": "1495-135",
+            "city": "Miraflores",
+            "subtotal": 75.68,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 3
+          },
+          {
+            "orderName": "#51061-LoV",
+            "client": "Cliente 020",
+            "phone": "900000020",
+            "address1": "Rua Exemplo 20",
+            "zip": "1800-294",
+            "city": "Lisboa",
+            "subtotal": 93.06,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 4
+          },
+          {
+            "orderName": "#50889-LoV",
+            "client": "Cliente 207",
+            "phone": "900000207",
+            "address1": "Rua Exemplo 207",
+            "zip": "1990-523",
+            "city": "Lisboa",
+            "subtotal": 54.91,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 5
+          },
+          {
+            "orderName": "#51070-LoV",
+            "client": "Cliente 009",
+            "phone": "900000009",
+            "address1": "Rua Exemplo 9",
+            "zip": "2675-645",
+            "city": "Odivelas",
+            "subtotal": 54.88,
+            "note": "",
+            "window": "Lisboa (Centro da cidade) 19-23h",
+            "sequence": 6
+          }
+        ],
+        "totalStops": 8
+      },
+      {
+        "courier": "Recolha em loja",
+        "courierType": "internal",
+        "deliveryDay": "Segunda",
+        "deliveryDate": "2026-07-13",
+        "stops": [
+          {
+            "orderName": "#50966-LoV",
+            "client": "Cliente 125",
+            "phone": "900000125",
+            "address1": "Rua Exemplo 125",
+            "zip": "2410-162",
+            "city": "Leiria",
+            "subtotal": 58.81,
+            "note": "",
+            "window": "07:00 PM - 07:30 PM"
+          },
+          {
+            "orderName": "#50944-LoV",
+            "client": "Cliente 147",
+            "phone": "900000147",
+            "address1": "Rua Exemplo 147",
+            "zip": "2410-162",
+            "city": "Leiria",
+            "subtotal": 58.4,
+            "note": "",
+            "window": "07:00 PM - 07:30 PM"
+          }
+        ],
+        "totalStops": 2
+      },
+      {
+        "courier": "Interno Coimbra",
+        "courierType": "internal",
+        "deliveryDay": "Terça",
+        "deliveryDate": "2026-07-14",
+        "stops": [
+          {
+            "orderName": "#51077-LoV",
+            "client": "Cliente 002",
+            "phone": "900000002",
+            "address1": "Rua Exemplo 2",
+            "zip": "3030-503",
+            "city": "Coimbra",
+            "subtotal": 56.36,
+            "note": "",
+            "window": "Coimbra (Centro da cidade) 18-23h"
+          },
+          {
+            "orderName": "#51068-LoV",
+            "client": "Cliente 012",
+            "phone": "900000012",
+            "address1": "Rua Exemplo 12",
+            "zip": "3030-327",
+            "city": "Coimbra",
+            "subtotal": 80.64,
+            "note": "",
+            "window": "Coimbra (Centro da cidade) 18-23h"
+          },
+          {
+            "orderName": "#51066-LoV",
+            "client": "Cliente 014",
+            "phone": "900000014",
+            "address1": "Rua Exemplo 14",
+            "zip": "3000-086",
+            "city": "Coimbra",
+            "subtotal": 50.8,
+            "note": "",
+            "window": "Coimbra (Centro da cidade) 18-23h"
+          },
+          {
+            "orderName": "#51058-LoV",
+            "client": "Cliente 023",
+            "phone": "900000023",
+            "address1": "Rua Exemplo 23",
+            "zip": "3040-390",
+            "city": "Coimbra",
+            "subtotal": 53.34,
+            "note": "",
+            "window": "Coimbra (Centro da cidade) 18-23h"
+          },
+          {
+            "orderName": "#51051-LoV",
+            "client": "Cliente 030",
+            "phone": "900000030",
+            "address1": "Rua Exemplo 30",
+            "zip": "3000-337",
+            "city": "Coimbra",
+            "subtotal": 36.95,
+            "note": "",
+            "window": "Coimbra (Centro da cidade) 18-23h"
+          },
+          {
+            "orderName": "#51050-LoV",
+            "client": "Cliente 031",
+            "phone": "900000031",
+            "address1": "Rua Exemplo 31",
+            "zip": "3040-321",
+            "city": "Coimbra",
+            "subtotal": 62,
+            "note": "",
+            "window": "Coimbra (Centro da cidade) 18-23h"
+          }
+        ],
+        "totalStops": 33
+      },
+      {
+        "courier": "Recolha em loja",
+        "courierType": "internal",
+        "deliveryDay": "Terça",
+        "deliveryDate": "2026-07-14",
+        "stops": [
+          {
+            "orderName": "#51076-LoV",
+            "client": "Cliente 003",
+            "phone": "900000003",
+            "address1": "Rua Exemplo 3",
+            "zip": "3030-243",
+            "city": "Coimbra",
+            "subtotal": 34.53,
+            "note": "",
+            "window": "07:00 PM - 10:00 PM"
+          },
+          {
+            "orderName": "#51075-LoV",
+            "client": "Cliente 004",
+            "phone": "900000004",
+            "address1": "Rua Exemplo 4",
+            "zip": "3030-243",
+            "city": "Coimbra",
+            "subtotal": 37.8,
+            "note": "",
+            "window": "07:00 PM - 10:00 PM"
+          },
+          {
+            "orderName": "#51073-LoV",
+            "client": "Cliente 006",
+            "phone": "900000006",
+            "address1": "Rua Exemplo 6",
+            "zip": "3030-243",
+            "city": "Coimbra",
+            "subtotal": 57.6,
+            "note": "",
+            "window": "07:00 PM - 10:00 PM"
+          },
+          {
+            "orderName": "#51065-LoV",
+            "client": "Cliente 016",
+            "phone": "900000016",
+            "address1": "Rua Exemplo 16",
+            "zip": "3030-243",
+            "city": "Coimbra",
+            "subtotal": 29.25,
+            "note": "",
+            "window": "07:00 PM - 10:00 PM"
+          },
+          {
+            "orderName": "#51052-LoV",
+            "client": "Cliente 029",
+            "phone": "900000029",
+            "address1": "Rua Exemplo 29",
+            "zip": "3030-243",
+            "city": "Coimbra",
+            "subtotal": 29.4,
+            "note": "",
+            "window": "07:00 PM - 10:00 PM"
+          },
+          {
+            "orderName": "#51037-LoV",
+            "client": "Cliente 045",
+            "phone": "900000045",
+            "address1": "Rua Exemplo 45",
+            "zip": "3030-173",
+            "city": "Coimbra",
+            "subtotal": 81.12,
+            "note": "",
+            "window": "07:00 PM - 10:00 PM"
+          }
+        ],
+        "totalStops": 23
+      }
+    ],
+    "dpd": {
+      "shipments": 69,
+      "totalWeightKg": 192.09,
+      "totalVolumes": 78,
+      "issues": [
+        "#50902-LoV: envio sem telefone",
+        "#50902-LoV: envio sem morada",
+        "#50902-LoV: envio sem código postal"
+      ],
+      "csvLines": [
+        "03290201;;Cliente 013;Rua Exemplo 13;4900-674;Viana do Castelo;PT;;900000013;cliente013@example.com;Cliente 013;2,8285;1;;#51067-LoV;;",
+        "03290201;;Cliente 017;Rua Exemplo 17;1050-073;Lisboa;PT;;900000017;cliente017@example.com;Cliente 017;1,5875;1;;#51064-LoV;;",
+        "03290201;;Cliente 018;Rua Exemplo 18;4620-215;Lodares;PT;;900000018;cliente018@example.com;Cliente 018;2,5025;1;;#51063-LoV;;",
+        "03290201;;Cliente 019;Rua Exemplo 19;1000-286;Lisboa;PT;;900000019;cliente019@example.com;Cliente 019;4,105;2;;#51062-LoV;;",
+        "03290201;;Cliente 021;Rua Exemplo 21;3080-847;Figueira da Foz;PT;;900000021;cliente021@example.com;Cliente 021;3,475;1;;#51060-LoV;;"
+      ]
+    }
+  }
+}

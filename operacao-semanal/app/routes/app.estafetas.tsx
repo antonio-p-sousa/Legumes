@@ -101,6 +101,20 @@ export default function Estafetas() {
             >
               Imprimir / PDF
             </s-button>
+            <s-button
+              variant="secondary"
+              href="/app/print/rotas-camara"
+              target="_blank"
+            >
+              Rotas de câmara (imprimir)
+            </s-button>
+            <s-button
+              variant="secondary"
+              href="/app/api/export/rotas-camara"
+              target="_blank"
+            >
+              Exportar câmara (xlsx)
+            </s-button>
             <s-button variant="secondary" disabled>
               Enviar rotas por email
             </s-button>

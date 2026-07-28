@@ -34,10 +34,20 @@ export interface PrintTableSpec {
   totals?: string[];
 }
 
+/** Coluna de uma secção com blocos lado a lado (ex.: rotas de câmara). */
+export interface PrintColumn {
+  heading: string;
+  table: PrintTableSpec;
+}
+
 export interface PrintSection {
   heading: string;
   subheading?: string;
+  /** Tabela única da secção (o caso normal). */
   table: PrintTableSpec;
+  /** Blocos lado a lado (flex). Quando presente e não-vazio, tem precedência
+   *  sobre `table` na renderização (ex.: rotas de câmara). */
+  columns?: PrintColumn[];
   /** true → a secção começa numa página nova (classe .break-before). */
   breakBefore?: boolean;
 }
@@ -48,6 +58,8 @@ export interface PrintPageInput {
   /** Nota informativa no topo (visível também na impressão). */
   note?: string;
   sections: PrintSection[];
+  /** true → página em orientação horizontal (@page size landscape). */
+  landscape?: boolean;
   /** Data de geração — injetável para testes determinísticos. */
   generatedAt?: Date;
 }
@@ -95,6 +107,10 @@ body {
 section.section { page-break-inside: avoid; break-inside: avoid; margin: 0 0 18px; }
 section.section h2 { font-size: 15px; margin: 0 0 2px; }
 .section-sub { margin: 0 0 6px; font-size: 12px; color: #555; }
+.cols { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.cols .col { flex: 1 1 240px; min-width: 220px; }
+.cols .col h3.col-head { font-size: 13px; margin: 0 0 3px; border-bottom: 1px solid #1c1c1c; padding-bottom: 2px; }
+.cols .col table { margin-top: 0; }
 table { width: 100%; border-collapse: collapse; margin-top: 4px; }
 thead { display: table-header-group; }
 th, td { border: 1px solid #8a8a8a; padding: 3px 6px; font-size: 12px; text-align: left; vertical-align: top; }
@@ -162,6 +178,29 @@ function renderTable(table: PrintTableSpec): string {
   return `<table>${thead}${tbody}${tfoot}</table>`;
 }
 
+/** Blocos lado a lado (flex) — cada coluna com o seu título e tabela. */
+function renderColumns(columns: PrintColumn[]): string {
+  if (columns.length === 0) {
+    return `<p class="empty">${EMPTY_SECTION_MESSAGE}</p>`;
+  }
+  const cols = columns
+    .map(
+      (col) =>
+        `<div class="col">` +
+        `<h3 class="col-head">${escapeHtml(col.heading)}</h3>` +
+        `${renderTable(col.table)}</div>`,
+    )
+    .join("");
+  return `<div class="cols">${cols}</div>`;
+}
+
+function renderSectionBody(section: PrintSection): string {
+  if (section.columns && section.columns.length > 0) {
+    return renderColumns(section.columns);
+  }
+  return renderTable(section.table);
+}
+
 function renderSection(section: PrintSection): string {
   const classes = section.breakBefore ? "section break-before" : "section";
   const subheading = section.subheading
@@ -169,7 +208,7 @@ function renderSection(section: PrintSection): string {
     : "";
   return (
     `<section class="${classes}">` +
-    `<h2>${escapeHtml(section.heading)}</h2>${subheading}${renderTable(section.table)}` +
+    `<h2>${escapeHtml(section.heading)}</h2>${subheading}${renderSectionBody(section)}` +
     `</section>`
   );
 }
@@ -193,13 +232,19 @@ export function renderPrintPage(input: PrintPageInput): string {
       ? `<p class="empty">${EMPTY_PAGE_MESSAGE}</p>`
       : input.sections.map(renderSection).join("\n");
 
+  // Override do @page para orientação horizontal — regra posterior vence a de
+  // PRINT_CSS (@page { size: A4 }), sem duplicar todo o bloco de estilos.
+  const landscapeStyle = input.landscape
+    ? `\n<style>@page { size: A4 landscape; }</style>`
+    : "";
+
   return `<!doctype html>
 <html lang="pt">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(input.title)}</title>
-<style>${PRINT_CSS}</style>
+<style>${PRINT_CSS}</style>${landscapeStyle}
 </head>
 <body>
 <button type="button" class="print-button" onclick="window.print()">Imprimir / Guardar como PDF</button>

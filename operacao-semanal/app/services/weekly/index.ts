@@ -32,6 +32,17 @@ export { buildPurchaseList } from "./purchases";
 export { buildRoutes } from "./routes";
 export { buildDpdCsv } from "./dpd";
 
+// Rotas de câmara: separação das refeições na câmara refrigerada por dia de
+// produção e bloco de destino (espelha o `00. Rotas.xlsx` do cliente).
+export { buildChamberDoc } from "./chamber";
+export type {
+  ChamberBlock,
+  ChamberClient,
+  ChamberDay,
+  ChamberDoc,
+  ChamberRow,
+} from "./chamber";
+
 // Modelo de COMPONENTES do empratamento (1.ª fase — kg por dose/componente,
 // sem fichas técnicas por ingrediente; ver components.ts).
 export {
