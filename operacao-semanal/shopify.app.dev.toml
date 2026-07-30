@@ -1,0 +1,27 @@
+# Config DEV-LOCALHOST — usar apenas com `shopify app dev --use-localhost`.
+# Igual à shopify.app.toml MAS sem [[webhooks.subscriptions]]: o Shopify rejeita
+# URIs de webhook em localhost ("Invalid value ... for uri"), e em localhost os
+# webhooks nunca seriam entregues de qualquer forma.
+#
+# Alternar:  shopify app config use dev    (ativa esta)
+#            shopify app config use        (voltar à principal antes do deploy!)
+# include_config_on_deploy=false de propósito: um deploy acidental a partir
+# desta config NÃO substitui a configuração de produção.
+
+client_id = "1bd145e2f012ab7e1bc38e10fed11f84"
+name = "Operacao Semanal"
+application_url = "https://shopify.dev/apps/default-app-home"
+embedded = true
+
+[access_scopes]
+scopes = "read_orders"
+
+[webhooks]
+api_version = "2026-10"
+
+[auth]
+redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
+
+[build]
+include_config_on_deploy = false
+automatically_update_urls_on_dev = true
