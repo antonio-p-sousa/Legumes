@@ -1,0 +1,9 @@
+# Diz ao Shopify CLI como arrancar o servidor da app no `shopify app dev`.
+# Sem este ficheiro o CLI não deteta processo web e a app fica no placeholder
+# default-app-home (visto a 30/07 na primeira execução na dev store).
+name = "app"
+roles = ["frontend", "backend"]
+
+[commands]
+predev = "npx prisma generate"
+dev = "npx react-router dev"
