@@ -83,7 +83,9 @@ de dados usa o **client credentials grant** (Client ID+Secret no `.env` → toke
 
 1. **Deploy** — Fly+Neon (**contas/billing**, decisão do António) → `shopify app deploy`
    com URL real → a app embebida abre no admin da loja. Guia: DEPLOY.md.
-2. **Piloto** — pode arrancar JÁ (a ligação live funciona): correr uma semana em
+2. **Piloto** — ARRANCOU 30/07: 1º pacote real (W30) gerado em Piloto\2026-W30 (OneDrive,
+   PII local). Achado: 3 datas de entrega anómalas → feature nova de flag + data modal
+   nas folhas (465 testes). Falta: docs manuais do Miguel p/ comparação. Era: correr uma semana em
    paralelo com o processo manual e comparar documentos. A **matriz do Miguel**
    continua necessária para configurar os confDays reais do calendário novo
    (a BD local tem os do calendário antigo + o slot novo).
