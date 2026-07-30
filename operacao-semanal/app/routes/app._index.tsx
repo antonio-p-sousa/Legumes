@@ -46,6 +46,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       janela: `${formatDataHoraPt(meta.windowStart)} → ${formatDataHoraPt(meta.windowEnd)}`,
       importadoHaMin: minutosDesde(meta.fetchedAt),
       ordersPosFecho: meta.ordersPosFecho,
+      ordersDataAnomala: meta.ordersDataAnomala,
     },
     configuracao: {
       zones,
@@ -153,6 +154,30 @@ export default function Semana() {
                 nos cálculos — foi a opção escolhida em{" "}
                 <Link to="/app/definicoes/geral">Definições — Geral</Link>{" "}
                 (incluir e assinalar as pós-fecho, em vez de as excluir).
+              </s-paragraph>
+            </s-banner>
+          )}
+
+          {semana.ordersDataAnomala > 0 && (
+            <s-banner
+              tone="warning"
+              heading={
+                semana.ordersDataAnomala === 1
+                  ? "1 encomenda com data de entrega fora do intervalo esperado"
+                  : `${semana.ordersDataAnomala} encomendas com data de entrega fora do intervalo esperado`
+              }
+            >
+              <s-paragraph>
+                {semana.ordersDataAnomala === 1
+                  ? "Esta encomenda tem uma data de entrega"
+                  : "Estas encomendas têm datas de entrega"}{" "}
+                fora do intervalo esperado para esta semana (data passada ou
+                demasiado distante) e{" "}
+                {semana.ordersDataAnomala === 1
+                  ? "foi incluída"
+                  : "foram incluídas"}{" "}
+                nos cálculos — verifica a data no Shopify antes de fechar a
+                semana (o site às vezes deixa escolher datas erradas).
               </s-paragraph>
             </s-banner>
           )}

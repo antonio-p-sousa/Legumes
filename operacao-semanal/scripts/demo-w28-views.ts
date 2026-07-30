@@ -38,6 +38,7 @@ const weekData: WeekData = {
     ordersSemAtributos: processed.filter((p) => p.issues.some((i) => i.startsWith("atributos-entrega"))).length,
     ordersZonaDesconhecida: processed.filter((p) => p.issues.some((i) => i.startsWith("zona-desconhecida"))).length,
     ordersPosFecho: processed.filter((p) => p.issues.includes("encomenda-pos-fecho")).length,
+    ordersDataAnomala: processed.filter((p) => p.issues.includes("data-entrega-anomala")).length,
   },
 };
 

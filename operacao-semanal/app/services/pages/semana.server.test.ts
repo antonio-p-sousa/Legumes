@@ -191,6 +191,7 @@ function makeWeekData(processed: ProcessedOrder[]): WeekData {
       ordersSemAtributos: 0,
       ordersZonaDesconhecida: 0,
       ordersPosFecho: 0,
+      ordersDataAnomala: 0,
     },
   };
 }

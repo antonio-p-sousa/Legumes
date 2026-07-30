@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   ISSUE_AFTER_CLOSE,
+  ISSUE_ANOMALOUS_DELIVERY,
   ISSUE_MISSING_DELIVERY_ATTRS,
   ISSUE_UNKNOWN_ZONE_PREFIX,
   ISSUE_ZONE_NO_COURIER,
@@ -383,5 +384,131 @@ describe("processOrders — markAfterClose (incluir e assinalar pós-fecho)", ()
       ISSUE_MISSING_DELIVERY_ATTRS,
       ISSUE_AFTER_CLOSE,
     ]);
+  });
+});
+
+describe("processOrders — expectedDeliveryWindow (datas de entrega anómalas)", () => {
+  // Entregas esperadas: do dia seguinte ao fecho (sáb 22/11) até fecho+14.
+  const JANELA = { from: "2025-11-22", to: "2025-12-05" };
+
+  test("data de entrega dentro da janela esperada não recebe a issue", () => {
+    // Arrange — entrega segunda 24/11, dentro de [22/11, 05/12].
+    const order = makeOrder();
+
+    // Act
+    const { processed } = processOrders([order], ZONES, undefined, {
+      expectedDeliveryWindow: JANELA,
+    });
+
+    // Assert
+    expect(processed[0].issues).not.toContain(ISSUE_ANOMALOUS_DELIVERY);
+  });
+
+  test("data de entrega ANTES da janela → issue, mas a encomenda entra nos cálculos", () => {
+    // Arrange — data passada (fenómeno w30: o site deixou escolher 20/07).
+    const anomala = makeOrder({
+      name: "#45200-LoV",
+      customAttributes: makeAttrs({ "Data de entrega": "20/11/2025" }),
+    });
+
+    // Act
+    const { processed } = processOrders([anomala], ZONES, undefined, {
+      expectedDeliveryWindow: JANELA,
+    });
+
+    // Assert — incluir-e-assinalar: confDay resolvido, issue presente.
+    expect(processed).toHaveLength(1);
+    expect(processed[0].confDay).toBe("2f");
+    expect(processed[0].issues).toContain(ISSUE_ANOMALOUS_DELIVERY);
+  });
+
+  test("data de entrega DEPOIS da janela → issue (data suspeita, >14 dias)", () => {
+    // Arrange
+    const anomala = makeOrder({
+      name: "#45201-LoV",
+      customAttributes: makeAttrs({ "Data de entrega": "10/12/2025" }),
+    });
+
+    // Act
+    const { processed } = processOrders([anomala], ZONES, undefined, {
+      expectedDeliveryWindow: JANELA,
+    });
+
+    // Assert
+    expect(processed[0].issues).toContain(ISSUE_ANOMALOUS_DELIVERY);
+  });
+
+  test("limites inclusivos: entrega exatamente em from ou em to → SEM issue", () => {
+    // Arrange
+    const noInicio = makeOrder({
+      name: "#1",
+      customAttributes: makeAttrs({ "Data de entrega": "22/11/2025" }),
+    });
+    const noFim = makeOrder({
+      name: "#2",
+      customAttributes: makeAttrs({ "Data de entrega": "05/12/2025" }),
+    });
+
+    // Act
+    const { processed } = processOrders([noInicio, noFim], ZONES, undefined, {
+      expectedDeliveryWindow: JANELA,
+    });
+
+    // Assert
+    expect(processed[0].issues).not.toContain(ISSUE_ANOMALOUS_DELIVERY);
+    expect(processed[1].issues).not.toContain(ISSUE_ANOMALOUS_DELIVERY);
+  });
+
+  test("encomenda sem delivery válido não rebenta nem recebe a issue anómala", () => {
+    // Arrange — atributos em falta → delivery null; não há data a verificar.
+    const semAtributos = makeOrder({ customAttributes: [] });
+
+    // Act
+    const { processed } = processOrders([semAtributos], ZONES, undefined, {
+      expectedDeliveryWindow: JANELA,
+    });
+
+    // Assert
+    expect(processed[0].issues).toEqual([ISSUE_MISSING_DELIVERY_ATTRS]);
+  });
+
+  test("acrescenta a issue mantendo as outras — incl. combinada com pós-fecho", () => {
+    // Arrange — criada depois do fecho E com data de entrega passada.
+    const posFechoAnomala = makeOrder({
+      name: "#45202-LoV",
+      createdAt: "2025-11-22T05:00:00Z",
+      customAttributes: makeAttrs({ "Data de entrega": "20/11/2025" }),
+    });
+
+    // Act
+    const { processed } = processOrders([posFechoAnomala], ZONES, undefined, {
+      markAfterClose: "2025-11-21T23:59:59Z",
+      expectedDeliveryWindow: JANELA,
+    });
+
+    // Assert — as duas marcações coexistem, cada uma por cópia imutável.
+    expect(processed[0].issues).toEqual([
+      ISSUE_AFTER_CLOSE,
+      ISSUE_ANOMALOUS_DELIVERY,
+    ]);
+  });
+
+  test("sem expectedDeliveryWindow nada muda — nenhuma encomenda é assinalada", () => {
+    // Arrange — a mesma data passada, sem passar a opção.
+    const anomala = makeOrder({
+      customAttributes: makeAttrs({ "Data de entrega": "20/11/2025" }),
+    });
+
+    // Act — comportamento clássico (goldens chamam com 2 args).
+    const semOptions = processOrders([anomala], ZONES);
+    const optionsVazias = processOrders([anomala], ZONES, undefined, {});
+
+    // Assert
+    expect(semOptions.processed[0].issues).not.toContain(
+      ISSUE_ANOMALOUS_DELIVERY,
+    );
+    expect(optionsVazias.processed[0].issues).not.toContain(
+      ISSUE_ANOMALOUS_DELIVERY,
+    );
   });
 });

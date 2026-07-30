@@ -14,6 +14,7 @@ import { getConfig } from "../definicoes/config.server";
 import {
   COMPONENT_NAMES,
   ISSUE_AFTER_CLOSE,
+  ISSUE_ANOMALOUS_DELIVERY,
   processOrders,
   type ComponentFactor,
   type ComponentName,
@@ -34,6 +35,8 @@ export interface WeekData {
     ordersZonaDesconhecida: number;
     /** Encomendas incluídas mas assinaladas por serem pós-fecho (§10). */
     ordersPosFecho: number;
+    /** Encomendas com data de entrega fora da janela esperada (§10). */
+    ordersDataAnomala: number;
   };
 }
 
@@ -175,8 +178,23 @@ export async function loadWeekData(
       ? officialWindow.windowEnd
       : undefined;
 
+  // Janela esperada das DATAS DE ENTREGA (só em modo live): as entregas
+  // acontecem DEPOIS do cut-off de sexta — qualquer data ≤ fecho é passada/
+  // errada, e >14 dias depois do fecho é suspeita. O site já deixou escolher
+  // datas fora do intervalo (w28: uma data de maio; w30: 20-21/07, dentro da
+  // própria janela de encomendas). Demo/CSV são snapshots históricos — a
+  // verificação marcaria tudo como falso-positivo, por isso não se passa.
+  const expectedDeliveryWindow =
+    week.source === "live"
+      ? {
+          from: isoDatePlusDays(officialWindow.windowEnd, 1),
+          to: isoDatePlusDays(officialWindow.windowEnd, EXPECTED_DELIVERY_SPAN_DAYS),
+        }
+      : undefined;
+
   const { processed } = processOrders(week.orders, zones, undefined, {
     markAfterClose,
+    expectedDeliveryWindow,
   });
 
   return {
@@ -199,8 +217,21 @@ export async function loadWeekData(
       ordersPosFecho: processed.filter((p) =>
         p.issues.includes(ISSUE_AFTER_CLOSE),
       ).length,
+      ordersDataAnomala: processed.filter((p) =>
+        p.issues.includes(ISSUE_ANOMALOUS_DELIVERY),
+      ).length,
     },
   };
+}
+
+/** Dias, depois do fecho oficial, até onde uma data de entrega é plausível. */
+const EXPECTED_DELIVERY_SPAN_DAYS = 14;
+
+/** Data ISO (yyyy-mm-dd) `days` dias depois do instante ISO dado, em UTC. */
+function isoDatePlusDays(isoInstant: string, days: number): string {
+  const date = new Date(isoInstant);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
 }
 
 /** Rótulos PT dos dias de confeção, partilhados pelas páginas de operação. */

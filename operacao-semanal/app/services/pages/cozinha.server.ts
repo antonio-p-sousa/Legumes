@@ -267,21 +267,34 @@ function confDateFromDelivery(deliveryDate: string, confDay: ConfDay): string {
   return confection.toISOString().slice(0, 10);
 }
 
-/** Primeira data de confeção (mín.) das encomendas do dia; null sem entregas. */
+/**
+ * Data de confeção MODAL (mais frequente) das encomendas do dia; empate → a
+ * mais antiga; null sem entregas. Usa a moda em vez do mínimo porque uma data
+ * de entrega anómala (passada/errada — o site já deixou escolher) não pode
+ * arrastar o título da folha do dia inteiro para trás.
+ */
 function resolveDayConfDate(
   dayOrders: ProcessedOrder[],
   confDay: ConfDay,
 ): string | null {
-  const dates = dayOrders
-    .filter((o) => o.delivery !== null)
-    .map((o) =>
-      confDateFromDelivery(
-        (o.delivery as NonNullable<ProcessedOrder["delivery"]>).deliveryDate,
-        confDay,
-      ),
-    )
-    .sort();
-  return dates[0] ?? null;
+  const counts = new Map<string, number>();
+  for (const order of dayOrders) {
+    if (order.delivery === null) continue;
+    const date = confDateFromDelivery(order.delivery.deliveryDate, confDay);
+    counts.set(date, (counts.get(date) ?? 0) + 1);
+  }
+
+  let modal: string | null = null;
+  let modalCount = 0;
+  for (const [date, count] of counts) {
+    const isMoreFrequent = count > modalCount;
+    const isOlderTie = count === modalCount && modal !== null && date < modal;
+    if (isMoreFrequent || isOlderTie) {
+      modal = date;
+      modalCount = count;
+    }
+  }
+  return modal;
 }
 
 // ── Helpers dos exports xlsx ─────────────────────────────────────────────────

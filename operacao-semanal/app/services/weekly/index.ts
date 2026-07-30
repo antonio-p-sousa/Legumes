@@ -20,6 +20,7 @@ export { filterOrderWindow, matchZone, resolveConfDay } from "./schedule";
 // Pipeline de entrada: OrderInput[] → ProcessedOrder[] (nunca descarta).
 export {
   ISSUE_AFTER_CLOSE,
+  ISSUE_ANOMALOUS_DELIVERY,
   ISSUE_MISSING_DELIVERY_ATTRS,
   ISSUE_UNKNOWN_ZONE_PREFIX,
   ISSUE_ZONE_NO_COURIER,

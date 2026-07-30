@@ -74,6 +74,7 @@ function makeWeekData(fixtures: OrderFixture[]): WeekData {
       ordersSemAtributos: 0,
       ordersZonaDesconhecida: 0,
       ordersPosFecho: 0,
+      ordersDataAnomala: 0,
     },
   };
 }
@@ -425,6 +426,57 @@ describe("buildCozinhaView", () => {
     expect(view.days[0].confDate).toBe("2025-11-24");
     expect(view.days[1].confDate).toBe("2025-11-26");
     expect(viewDpd.days[0].confDate).toBe("2025-11-24");
+  });
+
+  test("confDate usa a data MODAL — uma entrega anómala não arrasta o título do dia", () => {
+    // Arrange — maioria entrega segunda 27/07; 1 anómala com data passada
+    // 20/07 (fenómeno w30: o site deixou escolher uma data errada). Com o
+    // mínimo, a folha ganharia "Segunda 20-07" em vez de "Segunda 27-07".
+    const weekData = makeWeekData([
+      {
+        confDay: "2f",
+        deliveryDate: "2026-07-27",
+        lineItems: [{ name: "Jardineira de Novilho - Bulk", quantity: 1 }],
+      },
+      {
+        confDay: "2f",
+        deliveryDate: "2026-07-27",
+        lineItems: [{ name: "Tranche de Salmão - Low Carb", quantity: 1 }],
+      },
+      {
+        confDay: "2f",
+        deliveryDate: "2026-07-20", // anómala (passada)
+        lineItems: [{ name: "Jardineira de Novilho - Bulk", quantity: 1 }],
+      },
+    ]);
+
+    // Act
+    const view = buildCozinhaView(weekData, DISHES);
+
+    // Assert
+    expect(view.days[0].confDate).toBe("2026-07-27");
+  });
+
+  test("confDate em empate de frequências escolhe a data mais antiga", () => {
+    // Arrange — 1 entrega a 20/07 e 1 a 27/07 (empate 1-1).
+    const weekData = makeWeekData([
+      {
+        confDay: "2f",
+        deliveryDate: "2026-07-27",
+        lineItems: [{ name: "Jardineira de Novilho - Bulk", quantity: 1 }],
+      },
+      {
+        confDay: "2f",
+        deliveryDate: "2026-07-20",
+        lineItems: [{ name: "Tranche de Salmão - Low Carb", quantity: 1 }],
+      },
+    ]);
+
+    // Act
+    const view = buildCozinhaView(weekData, DISHES);
+
+    // Assert — empate → comportamento antigo (mínimo).
+    expect(view.days[0].confDate).toBe("2026-07-20");
   });
 
   test("com fatores, a vista inclui o componentPlan por dia e as doses únicas em skipped", () => {

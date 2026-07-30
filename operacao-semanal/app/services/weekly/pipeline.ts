@@ -31,6 +31,17 @@ export const ISSUE_ZONE_NO_COURIER = "zona-sem-estafeta:";
  */
 export const ISSUE_AFTER_CLOSE = "encomenda-pos-fecho";
 
+/**
+ * Issue emitida quando a DATA DE ENTREGA da encomenda cai fora da janela
+ * esperada de entregas (options.expectedDeliveryWindow). O site já deixou
+ * escolher datas impossíveis (w28: uma data de maio; w30: datas passadas,
+ * dentro da própria janela de encomendas). A encomenda ENTRA nos cálculos
+ * (incluir-e-assinalar, como a pós-fecho — precedente w28: o operador
+ * produziu-a na mesma), mas o operador tem de a ver — nunca em silêncio
+ * (ARCHITECTURE §10).
+ */
+export const ISSUE_ANOMALOUS_DELIVERY = "data-entrega-anomala";
+
 export interface PipelineResult {
   /** Uma entrada por encomenda dentro da janela — NUNCA se descarta nenhuma. */
   processed: ProcessedOrder[];
@@ -46,6 +57,13 @@ export interface ProcessOrdersOptions {
    * nenhuma marcação, i.e. comportamento clássico de excluir as pós-fecho.
    */
   markAfterClose?: string;
+  /**
+   * Janela esperada das DATAS DE ENTREGA, em ISO yyyy-mm-dd com limites
+   * INCLUSIVOS. Quando presente e a encomenda tem delivery válido, uma data
+   * de entrega < from ou > to recebe também a issue ISSUE_ANOMALOUS_DELIVERY
+   * (mantendo as restantes issues). Ausente → nenhuma verificação.
+   */
+  expectedDeliveryWindow?: { from: string; to: string };
 }
 
 /**
@@ -68,6 +86,11 @@ export interface ProcessOrdersOptions {
  * (além das que já tivessem) e continuam a entrar nos cálculos. Serve o modo
  * ignoreAfterClose = false (incluir-e-sinalizar); ausente, nada muda.
  *
+ * `options.expectedDeliveryWindow` (ISO yyyy-mm-dd, inclusivo) assinala as
+ * encomendas cuja data de ENTREGA cai fora da janela esperada com a issue
+ * ISSUE_ANOMALOUS_DELIVERY — mesmo modelo incluir-e-assinalar; ausente, nada
+ * muda.
+ *
  * Função pura: não muta `orders` nem `zones`.
  */
 export function processOrders(
@@ -86,12 +109,17 @@ export function processOrders(
     ? Date.parse(options.markAfterClose)
     : Number.NaN;
 
+  const deliveryWindow = options?.expectedDeliveryWindow;
+
   return {
     processed: inWindow.map((order) => {
       const result = processOrder(order, zones);
-      return isAfterClose(order, afterCloseMs)
+      const marked = isAfterClose(order, afterCloseMs)
         ? withAfterCloseIssue(result)
         : result;
+      return hasAnomalousDelivery(marked, deliveryWindow)
+        ? withAnomalousDeliveryIssue(marked)
+        : marked;
     }),
     excludedByWindow: excluded,
   };
@@ -107,6 +135,28 @@ function isAfterClose(order: OrderInput, afterCloseMs: number): boolean {
 /** Devolve uma cópia com ISSUE_AFTER_CLOSE acrescentada (sem mutar o original). */
 function withAfterCloseIssue(processed: ProcessedOrder): ProcessedOrder {
   return { ...processed, issues: [...processed.issues, ISSUE_AFTER_CLOSE] };
+}
+
+/**
+ * true quando há janela esperada, a encomenda tem delivery válido e a data de
+ * entrega cai fora dela (limites inclusivos). deliveryDate é sempre ISO
+ * yyyy-mm-dd (garantido pelo parse), logo a comparação lexicográfica é segura.
+ */
+function hasAnomalousDelivery(
+  processed: ProcessedOrder,
+  window: { from: string; to: string } | undefined,
+): boolean {
+  if (window === undefined || processed.delivery === null) return false;
+  const { deliveryDate } = processed.delivery;
+  return deliveryDate < window.from || deliveryDate > window.to;
+}
+
+/** Cópia com ISSUE_ANOMALOUS_DELIVERY acrescentada (sem mutar o original). */
+function withAnomalousDeliveryIssue(processed: ProcessedOrder): ProcessedOrder {
+  return {
+    ...processed,
+    issues: [...processed.issues, ISSUE_ANOMALOUS_DELIVERY],
+  };
 }
 
 function processOrder(order: OrderInput, zones: ZoneConfig[]): ProcessedOrder {
