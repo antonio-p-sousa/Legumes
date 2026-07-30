@@ -64,19 +64,30 @@
 
 ## ESTADO FINAL — trabalho Loop restante (29 jul 2026)
 
-**Trabalho Loop restante = só integração real + piloto, ambos à espera de
-credenciais/materiais.** Todo o trabalho interno sem dependências está feito, testado
-(445 testes, CI verde) e no GitHub. O que falta, exatamente:
+**ATUALIZAÇÃO 30/07 — A INTEGRAÇÃO REAL ACONTECEU.** 🎉
 
-1. **Integração real** — precisa do **token da custom app** (dono da loja cria; instruções
-   em `O_que_falta_legumes.docx`). Depois: `npm run fetch-live` → validar → deploy
-   (Fly+Neon, precisa de **contas/billing** — decisão do António).
-2. **Piloto** — precisa dos **materiais do Miguel** (matriz entrega↔confeção; opcional:
-   ficheiro w28_Registo). Pode arrancar já por import de CSV assim que houver a matriz
-   para configurar as zonas.
+O caminho legacy custom-app→token fechou a 1 jan 2026; em alternativa, a app
+**"Operacao Semanal" foi criada no Dev Dashboard** (org Legumes e outros Vícios),
+versão com `read_orders` lançada e **instalada na loja real** pelo António. A ligação
+de dados usa o **client credentials grant** (Client ID+Secret no `.env` → token de
+24h automático, com cache/renovação — implementado e testado, 452 testes).
+
+**Validado sobre a loja real (semana 2026-W30):**
+- `npm run fetch-live`: 177 encomendas, 979 line items, 1.482 unidades ✓
+- `npx tsx scripts/live-sanity.ts` (motor completo, só agregados): **170/177 válidas**,
+  0 zonas desconhecidas (acrescentado o slot pickup novo "07:00 PM - 10:00 PM"),
+  7 sem atributos (renovações de subscrição — padrão conhecido), 1.398 refeições
+  (2f=881 · 3f=502 · 4f=15) ≈ volume típico ✓
+
+**O que falta agora:**
+
+1. **Deploy** — Fly+Neon (**contas/billing**, decisão do António) → `shopify app deploy`
+   com URL real → a app embebida abre no admin da loja. Guia: DEPLOY.md.
+2. **Piloto** — pode arrancar JÁ (a ligação live funciona): correr uma semana em
+   paralelo com o processo manual e comparar documentos. A **matriz do Miguel**
+   continua necessária para configurar os confDays reais do calendário novo
+   (a BD local tem os do calendário antigo + o slot novo).
 3. **Decisões da Loop** — serviço de email (ativa o envio real) + provider Postgres.
-
-Nada disto é código à espera de ser escrito — é acessos, materiais e decisões.
 
 ## Decisões em aberto (Loop)
 
