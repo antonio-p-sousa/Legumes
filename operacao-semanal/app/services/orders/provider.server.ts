@@ -101,7 +101,21 @@ export async function fetchWeekOrders(
   if (!client) return loadFallbackOrders(prisma);
 
   try {
-    return await fetchLiveOrders(client, window ? { window } : undefined);
+    const live = await fetchLiveOrders(client, window ? { window } : undefined);
+    // Semana live VAZIA com import manual disponível → mostra o import, com
+    // rótulo explícito. Cobre a dev store (sem encomendas) e pausas de
+    // entregas em produção — melhor um snapshot identificado que uma página
+    // em branco; o badge "Import manual" e o rótulo dizem sempre a verdade.
+    if (live.orders.length === 0 && prisma) {
+      const imported = await loadLatestImport(prisma);
+      if (imported) {
+        return {
+          ...imported,
+          weekLabel: `${imported.weekLabel} — semana live sem encomendas`,
+        };
+      }
+    }
+    return live;
   } catch (error) {
     // Falha de API não pode deixar o operador sem página (ARCHITECTURE §10):
     // degrada para import/demo com aviso explícito no label.

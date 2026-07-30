@@ -59,6 +59,40 @@ describe("fetchWeekOrders — janela configurada (bug-1)", () => {
     expect(search).toContain(`created_at:<=${WINDOW.windowEnd}`);
   });
 
+  test("live VAZIO com import manual → devolve o import com rótulo explícito", async () => {
+    const { admin } = fakeAdmin(); // devolve 0 encomendas
+    const fakePrisma = {
+      weekRun: {
+        findFirst: async () => ({
+          id: "import-1",
+          weekLabel: "import-2026-W30",
+          generatedAt: new Date(),
+          ordersJson: JSON.stringify([
+            { id: "1", createdAt: "2026-07-20T10:00:00Z", noteAttributes: [], lineItems: [] },
+          ]),
+        }),
+      },
+    } as never;
+
+    const result = await fetchWeekOrders(admin, fakePrisma);
+
+    expect(result.source).toBe("csv");
+    expect(result.orders).toHaveLength(1);
+    expect(result.weekLabel).toContain("semana live sem encomendas");
+  });
+
+  test("live VAZIO sem import → devolve a semana live vazia (verdade)", async () => {
+    const { admin } = fakeAdmin();
+    const fakePrisma = {
+      weekRun: { findFirst: async () => null },
+    } as never;
+
+    const result = await fetchWeekOrders(admin, fakePrisma);
+
+    expect(result.source).toBe("live");
+    expect(result.orders).toHaveLength(0);
+  });
+
   test("sem admin nem token: cai na demo — snapshot não é filtrado", async () => {
     vi.stubEnv("SHOPIFY_SHOP", "");
     vi.stubEnv("SHOPIFY_ADMIN_TOKEN", "");
