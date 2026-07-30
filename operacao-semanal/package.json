@@ -20,7 +20,8 @@
     "vite": "vite",
     "typecheck": "react-router typegen && tsc --noEmit",
     "seed": "tsx prisma/seed.ts",
-    "fetch-live": "tsx scripts/fetch-live.ts"
+    "fetch-live": "tsx scripts/fetch-live.ts",
+    "pilot-pack": "tsx scripts/pilot-pack.ts"
   },
   "type": "module",
   "engines": {
