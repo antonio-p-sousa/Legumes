@@ -1,8 +1,10 @@
 /**
- * Valida a ligação à loja Shopify por TOKEN estático — o comando a correr no
- * minuto em que as credenciais chegarem:
+ * Valida a ligação à loja Shopify sem OAuth — o comando a correr no minuto em
+ * que as credenciais chegarem:
  *
- *   1. preencher SHOPIFY_SHOP e SHOPIFY_ADMIN_TOKEN no .env (ver .env.example)
+ *   1. preencher no .env (ver .env.example):
+ *      - Dev Dashboard (2026+): SHOPIFY_SHOP + SHOPIFY_API_KEY + SHOPIFY_API_SECRET
+ *      - legacy custom app:     SHOPIFY_SHOP + SHOPIFY_ADMIN_TOKEN
  *   2. npm run fetch-live
  *
  * Imprime um resumo SEM dados pessoais (só contagens) — prova que a ligação
@@ -28,7 +30,8 @@ async function main() {
   const admin = tokenAdminFromEnv();
   if (!admin) {
     console.error(
-      "✗ Falta SHOPIFY_SHOP e/ou SHOPIFY_ADMIN_TOKEN. Preencher no .env (ver .env.example).",
+      "✗ Falta SHOPIFY_SHOP + credenciais (SHOPIFY_API_KEY/SHOPIFY_API_SECRET " +
+        "ou SHOPIFY_ADMIN_TOKEN). Preencher no .env (ver .env.example).",
     );
     process.exit(1);
   }
