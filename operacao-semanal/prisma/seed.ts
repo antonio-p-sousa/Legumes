@@ -26,7 +26,10 @@ import {
   isMealItem,
   splitDishDose,
 } from "../app/services/weekly/index";
-import { COURIERS_W47, ZONES_W47 } from "../test/fixtures/zones-w47";
+import {
+  COURIERS_OFICIAL,
+  ZONES_OFICIAL,
+} from "../app/services/definicoes/zonas-oficial";
 
 /** Conta DPD da loja (ARCHITECTURE.md §4.6 — 1ª coluna do CSV DPD). */
 const DPD_ACCOUNT = "03290201";
@@ -119,7 +122,7 @@ export interface SeedSummary {
 
 export async function seed(prisma: PrismaClient): Promise<SeedSummary> {
   // 1. Couriers (upsert por name) — convergem para os valores do fixture.
-  for (const courier of COURIERS_W47) {
+  for (const courier of COURIERS_OFICIAL) {
     await prisma.courier.upsert({
       where: { name: courier.name },
       create: {
@@ -136,13 +139,13 @@ export async function seed(prisma: PrismaClient): Promise<SeedSummary> {
   }
 
   // 2. Zones (upsert por matchText), ligadas ao courier pelo nome.
-  for (const zone of ZONES_W47) {
+  for (const zone of ZONES_OFICIAL) {
     const courier = await prisma.courier.findUnique({
       where: { name: zone.courierName },
     });
     if (!courier) {
       throw new Error(
-        `Zona "${zone.matchText}" refere o courier "${zone.courierName}", que não existe — verifica COURIERS_W47.`,
+        `Zona "${zone.matchText}" refere o courier "${zone.courierName}", que não existe — verifica COURIERS_OFICIAL.`,
       );
     }
     await prisma.zone.upsert({

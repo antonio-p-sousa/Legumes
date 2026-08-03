@@ -41,6 +41,7 @@ export interface WeekData {
 }
 
 const CONF_DAY_RULES: ReadonlySet<string> = new Set([
+  "dom",
   "2f",
   "3f",
   "4f",

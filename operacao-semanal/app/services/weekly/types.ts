@@ -86,7 +86,7 @@ export interface DishDose {
  * "vespera" e "mesmo" são relativas à data de entrega, por isso acompanham
  * qualquer calendário (incluindo domingo) sem reconfiguração.
  */
-export type ConfDayRule = "2f" | "3f" | "4f" | "vespera" | "mesmo";
+export type ConfDayRule = "dom" | "2f" | "3f" | "4f" | "vespera" | "mesmo";
 
 /** Dia de confeção resolvido (segunda=2f ... domingo=dom, sábado=sab). */
 export type ConfDay = "2f" | "3f" | "4f" | "5f" | "6f" | "sab" | "dom";

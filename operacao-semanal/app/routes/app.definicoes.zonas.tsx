@@ -102,6 +102,7 @@ export const action = async ({
 };
 
 const CONF_DAY_BADGE_TONE: Record<ConfDayRule, "info" | "warning"> = {
+  dom: "info",
   "2f": "info",
   "3f": "info",
   "4f": "info",

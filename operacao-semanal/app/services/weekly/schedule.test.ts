@@ -107,6 +107,18 @@ describe("resolveConfDay", () => {
     expect(resolveConfDay(makeZone({ confDay: "4f" }), delivery)).toBe("4f");
   });
 
+  test("dia fixo 'dom' exprime a regra composta de Lisboa (matriz 03/08/2026)", () => {
+    // Matriz oficial: entrega DOMINGO → confeção no próprio dia (lógica 0);
+    // entrega SEGUNDA → confeção na véspera (lógica -1). Ambas caem no
+    // domingo, logo a zona configura-se com o dia fixo "dom".
+    const lisboa = makeZone({ confDay: "dom" });
+    const domingo = makeDelivery({ deliveryDate: "2026-08-02" }); // dom
+    const segunda = makeDelivery({ deliveryDate: "2026-08-03" }); // seg
+
+    expect(resolveConfDay(lisboa, domingo)).toBe("dom");
+    expect(resolveConfDay(lisboa, segunda)).toBe("dom");
+  });
+
   test("vespera com entrega terça 2025-11-25 confeciona na 2f (DPD recolhido na véspera)", () => {
     const dpd = makeZone({
       matchText: "Portugal Continental 08-15h",

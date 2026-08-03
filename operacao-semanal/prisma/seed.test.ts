@@ -11,7 +11,10 @@ import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { COURIERS_W47, ZONES_W47 } from "../test/fixtures/zones-w47";
+import {
+  COURIERS_OFICIAL,
+  ZONES_OFICIAL,
+} from "../app/services/definicoes/zonas-oficial";
 import { inferCategory, seed } from "./seed";
 import type { SeedSummary } from "./seed";
 
@@ -57,7 +60,7 @@ afterAll(async () => {
   rmSync(`${TEST_DB}-journal`, { force: true });
 });
 
-describe("seed — contagens exatas da w47", () => {
+describe("seed — contagens exatas da config oficial", () => {
   it("cria exatamente as zonas e couriers dos fixtures", async () => {
     // Arrange — seed corrido no beforeAll sobre BD limpa.
     // Act
@@ -67,8 +70,8 @@ describe("seed — contagens exatas da w47", () => {
     ]);
 
     // Assert
-    expect(zones).toBe(ZONES_W47.length);
-    expect(couriers).toBe(COURIERS_W47.length);
+    expect(zones).toBe(ZONES_OFICIAL.length);
+    expect(couriers).toBe(COURIERS_OFICIAL.length);
   });
 
   it("cria exatamente 19 pratos e 49 doses a partir das orders da w47", async () => {
@@ -124,8 +127,8 @@ describe("seed — idempotência", () => {
 
     // Assert — contagens idênticas à primeira execução.
     expect(secondRun).toEqual(firstRun);
-    expect(secondRun.zones).toBe(ZONES_W47.length);
-    expect(secondRun.couriers).toBe(COURIERS_W47.length);
+    expect(secondRun.zones).toBe(ZONES_OFICIAL.length);
+    expect(secondRun.couriers).toBe(COURIERS_OFICIAL.length);
     expect(secondRun.dishes).toBe(EXPECTED_DISHES);
     expect(secondRun.doses).toBe(EXPECTED_DOSES);
     expect(secondRun.componentFactors).toBe(EXPECTED_COMPONENT_FACTORS);
