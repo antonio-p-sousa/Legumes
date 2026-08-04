@@ -219,11 +219,16 @@ export default function FichasTecnicas() {
 
   return (
     <s-page heading="Fichas técnicas">
-      <s-banner tone="warning" heading="Fichas em falta afetam as compras">
+      <s-banner
+        tone="info"
+        heading="Fichas por ingrediente — 2.ª fase (opcional por agora)"
+      >
         <s-paragraph>
-          Pratos sem ficha aparecem na lista de compras como &quot;sem
-          ficha&quot; — as quantidades calculadas não incluem esses pratos.
-          Preenche a ficha de cada dose ativa antes de gerar a semana.
+          A semana gera-se normalmente sem fichas: a cozinha e as compras por
+          componentes (kg de Proteína/Hidratos/Legumes) não dependem delas. As
+          fichas por ingrediente alimentam a lista de compras DETALHADA — os
+          pratos sem ficha aparecem lá como &quot;sem ficha&quot; até as
+          receitas serem entregues e preenchidas aqui.
         </s-paragraph>
       </s-banner>
 
