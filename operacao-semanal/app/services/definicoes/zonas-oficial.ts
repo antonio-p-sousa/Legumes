@@ -11,10 +11,11 @@
  *   ter  Portugal Continental    → seg  (-1)  ┐ DPD recolhe na véspera →
  *   qua  Portugal Continental    → ter  (-1)  ┘ "vespera"
  *   ter  Coimbra 18-23h          → ter  (0)   → "mesmo"
- *   ter  Pickup Coimbra 07-10PM  → seg  (-1)  ┐ ATENÇÃO: a matriz põe os
- *   qua  Pickup Coimbra 07-10PM  → ter  (-1)  ┘ pickups na VÉSPERA — difere
- *                                               do observado na w28 (mesmo
- *                                               dia); a validar no piloto.
+ *   ter  Pickup Coimbra 07-10PM  → ter  (0)   ┐ ambos caem na terça →
+ *   qua  Pickup Coimbra 07-10PM  → ter  (-1)  ┘ zona = dia fixo "3f"
+ *   (CORRIGIDO 05/08 — WhatsApp do cliente: "o primeiro dia de pickup estava
+ *    errado, é confecionado no próprio dia" + matriz refeita. Fecha o ponto
+ *    de vigilância: a prática da w28 estava certa.)
  *
  * Este ficheiro alimenta o seed (instalações novas). A fixture zones-w47/w28
  * fica INTOCADA — documenta o processo empírico dessas semanas (golden tests).
@@ -58,27 +59,28 @@ export const ZONES_OFICIAL: ZoneConfig[] = [
     courierName: "Interno Coimbra",
     active: true,
   },
-  // Slot de pickup ATUAL (o único na matriz oficial).
+  // Slot de pickup ATUAL (o único na matriz oficial): dia fixo TERÇA — o de
+  // terça no próprio dia (0) e o de quarta na véspera (-1), ambos → 3f.
   {
     matchText: "07:00 PM - 10:00 PM",
     county: "Coimbra",
-    confDay: "vespera",
+    confDay: "3f",
     courierName: "Recolha em loja",
     active: true,
   },
   // Slots de pickup ANTIGOS — mantidos ativos para encomendas antigas/histórico,
-  // com a mesma regra oficial de pickup (véspera).
+  // com a mesma regra oficial de pickup (terça).
   {
     matchText: "07:00 PM - 07:30 PM",
     county: "Coimbra",
-    confDay: "vespera",
+    confDay: "3f",
     courierName: "Recolha em loja",
     active: true,
   },
   {
     matchText: "07:00 PM - 09:00 PM",
     county: "Coimbra",
-    confDay: "vespera",
+    confDay: "3f",
     courierName: "Recolha em loja",
     active: true,
   },
