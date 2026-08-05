@@ -72,7 +72,10 @@ function makeOrder(overrides: Partial<OrderInput> = {}): OrderInput {
     },
     subtotalPrice: 60,
     totalPrice: 64.45,
-    lineItems: [],
+    // Uma refeição por defeito: encomendas SEM refeições ganham a issue
+    // "envio sem refeições" (regra de 05/08/2026) e os testes que não são
+    // sobre isso não devem tropeçar nela.
+    lineItems: [{ name: "Lasanha Integral de Salmão - Low Carb", quantity: 1, price: 9.65 }],
     ...overrides,
   };
 }
@@ -426,5 +429,40 @@ describe("buildDpdCsv — neutraliza CSV/formula injection (OWASP)", () => {
     expect(fields[COL.nome].startsWith("'")).toBe(false);
     expect(fields[COL.contactoDestino]).toBe("Ana");
     expect(fields).toHaveLength(17);
+  });
+});
+
+describe("buildDpdCsv — envios sem refeições (regra de 05/08/2026, piloto W31)", () => {
+  test("encomenda só com subscrição é incluída MAS sinalizada para confirmação", () => {
+    const processed = makeProcessed({
+      order: makeOrder({
+        name: "#51453-LoV",
+        lineItems: [
+          { name: "Subscrição de desconto mensal - 15% OFF", quantity: 1, price: 0 },
+        ],
+      }),
+    });
+
+    const dpd = buildDpdCsv([processed], COURIERS, { account: "03290201" });
+
+    expect(dpd.shipments).toBe(1); // inclui — o operador decide
+    expect(dpd.issues).toContain(
+      "#51453-LoV: envio sem refeições (só subscrições/serviços) — confirmar se deve seguir",
+    );
+  });
+
+  test("encomenda com refeições (mesmo com extras não-refeição) NÃO ganha a issue", () => {
+    const processed = makeProcessed({
+      order: makeOrder({
+        lineItems: [
+          { name: "Embalagens biodegradáveis", quantity: 7, price: 0.3 },
+          { name: "Teriyaki de Frango e lima - Bulk", quantity: 2, price: 9.65 },
+        ],
+      }),
+    });
+
+    const dpd = buildDpdCsv([processed], COURIERS, { account: "03290201" });
+
+    expect(dpd.issues.filter((i) => i.includes("sem refeições"))).toHaveLength(0);
   });
 });

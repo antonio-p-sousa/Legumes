@@ -279,10 +279,15 @@ describe("golden w28 — DPD (buildDpdCsv)", () => {
   });
 
   test("só a #50902-LoV (subscrição sem morada) é sinalizada — incluída na mesma", () => {
+    // A 4.ª issue (envio sem refeições) foi acrescentada a 05/08/2026 após o
+    // piloto W31: o processo manual NÃO expede encomendas só-subscrição, por
+    // isso a app passa a pedir confirmação. Os DADOS golden ficam intactos —
+    // a encomenda continua incluída no CSV.
     expect(dpd.issues).toEqual([
       "#50902-LoV: envio sem telefone",
       "#50902-LoV: envio sem morada",
       "#50902-LoV: envio sem código postal",
+      "#50902-LoV: envio sem refeições (só subscrições/serviços) — confirmar se deve seguir",
     ]);
   });
 });

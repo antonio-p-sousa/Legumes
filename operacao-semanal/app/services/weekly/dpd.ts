@@ -1,4 +1,5 @@
 import type { CourierConfig, DpdResult, ProcessedOrder } from "./types";
+import { isMealItem } from "./types";
 
 /** Nº fixo de colunas do Template_DPD (regra 4.6). */
 const DPD_COLUMN_COUNT = 17;
@@ -60,6 +61,14 @@ export function buildDpdCsv(
     if (!mobile) issues.push(`${order.name}: envio sem telefone`);
     if (!street) issues.push(`${order.name}: envio sem morada`);
     if (!postalCode) issues.push(`${order.name}: envio sem código postal`);
+    // Encomendas só com subscrições/serviços não têm nada físico para expedir —
+    // o operador confirma e apaga a linha se for o caso (piloto W31: a #51453,
+    // subscrição de desconto, entrou no CSV mas o processo manual não a enviou).
+    if (!order.lineItems.some((li) => isMealItem(li.name))) {
+      issues.push(
+        `${order.name}: envio sem refeições (só subscrições/serviços) — confirmar se deve seguir`,
+      );
+    }
 
     const fields: string[] = [
       account, // 1. conta
