@@ -1,17 +1,20 @@
 /**
  * View-model do cockpit "Semana" (/app).
  *
- * `buildSemanaView` é pura: recebe o WeekData já processado (loadWeekData),
- * a configuração da app e as fichas técnicas carregadas pelo loader, e deriva
- * os KPIs da semana, os cartões de dia de confeção e a tabela de documentos.
- * Reutiliza o motor weekly (buildKitchenMap, buildRoutes, buildDpdCsv,
- * buildLabels, buildPurchaseList) — nunca refaz cálculos à mão.
+ * `buildSemanaView` é pura: recebe o WeekData já processado (loadWeekData) e
+ * a configuração da app, e deriva os KPIs da semana, os cartões de dia de
+ * confeção, os avisos (com os números das encomendas afetadas) e a checklist
+ * do ritual semanal do operador. Reutiliza o motor weekly (buildKitchenMap,
+ * buildRoutes, buildDpdCsv, buildLabels) — nunca refaz cálculos à mão.
  */
 import {
+  ISSUE_AFTER_CLOSE,
+  ISSUE_ANOMALOUS_DELIVERY,
+  ISSUE_MISSING_DELIVERY_ATTRS,
+  ISSUE_UNKNOWN_ZONE_PREFIX,
   buildDpdCsv,
   buildKitchenMap,
   buildLabels,
-  buildPurchaseList,
   buildRoutes,
 } from "../weekly";
 import type {
@@ -19,7 +22,6 @@ import type {
   CourierConfig,
   KitchenMap,
   ProcessedOrder,
-  RecipeConfig,
 } from "../weekly";
 import { CONF_DAY_PT, type WeekData } from "./common.server";
 
@@ -50,29 +52,59 @@ export interface SemanaDia {
   canais: string[];
 }
 
-export type DocumentoEstado = "success" | "warning";
+/** Um tipo de aviso do cockpit com as encomendas afetadas. */
+export interface SemanaAviso {
+  /** Nº de encomendas afetadas. */
+  count: number;
+  /** order.name das encomendas afetadas (ex.: "#45001-LoV"), na ordem da semana. */
+  encomendas: string[];
+  /**
+   * Lista pronta a mostrar no fim do parágrafo do banner ("#a, #b e mais N").
+   * Formatada no servidor porque o componente da página não pode importar
+   * helpers de um módulo .server em runtime de cliente.
+   */
+  lista: string;
+}
 
-export interface SemanaDocumento {
-  nome: string;
-  /** Tom do badge de estado. */
-  estado: DocumentoEstado;
-  /** Texto do badge de estado (ex.: "Pronto a exportar", "2 pratos sem ficha"). */
-  estadoLabel: string;
-  detalhe: string;
-  /** Resource route de export. */
+export interface SemanaAvisos {
+  /** Encomendas criadas depois do fecho da janela (incluídas e assinaladas). */
+  posFecho: SemanaAviso;
+  /** Encomendas com data de entrega fora do intervalo esperado. */
+  dataAnomala: SemanaAviso;
+  /** Encomendas sem o bloco de atributos de entrega. */
+  semAtributos: SemanaAviso;
+  /** Encomendas com texto de zona sem correspondência na configuração. */
+  semZona: SemanaAviso;
+  /** Encomendas distintas com pelo menos um dos avisos acima. */
+  total: number;
+}
+
+export interface ChecklistBotao {
+  label: string;
+  /** Resource route de print/export (abre em novo separador). */
   href: string;
+  disabled?: boolean;
+}
+
+export interface ChecklistPasso {
+  numero: number;
+  titulo: string;
+  /** Contagens derivadas do motor (ex.: "2 dias · 8 refeições"). */
+  detalhe: string;
+  /** Badge de estado — só o passo "Rever avisos" o usa. */
+  badge?: { tone: "success" | "warning"; label: string };
+  botoes: ChecklistBotao[];
 }
 
 export interface SemanaView {
   kpis: SemanaKpis;
   dias: SemanaDia[];
-  documentos: SemanaDocumento[];
+  avisos: SemanaAvisos;
+  checklist: ChecklistPasso[];
 }
 
 /** Subconjunto de AppConfig usado pelo cockpit (satisfeito pelo modelo Prisma). */
 export interface SemanaViewConfig {
-  /** Fração 0–1. */
-  purchaseMargin: number;
   dpdAccount: string | null;
 }
 
@@ -81,35 +113,38 @@ export interface SemanaViewConfig {
 /** Ordem de apresentação dos dias de confeção (2ª feira → domingo). */
 const DIA_ORDER: readonly ConfDay[] = ["2f", "3f", "4f", "5f", "6f", "sab", "dom"];
 
-export const EXPORT_HREFS = {
-  cozinha: "/app/api/export/cozinha",
-  etiquetas: "/app/api/export/etiquetas",
-  rotas: "/app/api/export/rotas",
-  dpd: "/app/api/export/dpd",
-  compras: "/app/api/export/compras",
+/** Resource routes de print/export usadas pela checklist da semana. */
+export const CHECKLIST_HREFS = {
+  cozinhaPrint: "/app/print/cozinha",
+  cozinhaXlsx: "/app/api/export/cozinha",
+  etiquetasPrint: "/app/print/etiquetas",
+  etiquetasXlsx: "/app/api/export/etiquetas",
+  rotasPrint: "/app/print/rotas",
+  rotasXlsx: "/app/api/export/rotas",
+  camaraPrint: "/app/print/rotas-camara",
+  camaraXlsx: "/app/api/export/rotas-camara",
+  dpdCsv: "/app/api/export/dpd",
 } as const;
 
-const ESTADO_PRONTO = "Pronto a exportar";
+/** Máximo de números de encomenda listados num banner (o resto vira "e mais N"). */
+export const MAX_ENCOMENDAS_LISTADAS = 10;
 
 // ── View principal ───────────────────────────────────────────────────────────
 
-/**
- * Deriva a vista do cockpit a partir da semana processada.
- * `recipes` vem de loadRecipes(prisma) — sem fichas, todos os pratos vendidos
- * contam como "sem ficha" (estado real de uma instalação nova).
- */
+/** Deriva a vista do cockpit a partir da semana processada. */
 export function buildSemanaView(
   weekData: WeekData,
   config: SemanaViewConfig,
-  recipes: RecipeConfig[],
 ): SemanaView {
   const { processed, couriers } = weekData;
   const kitchen = buildKitchenMap(processed);
+  const avisos = buildAvisos(processed);
 
   return {
     kpis: buildKpis(processed, kitchen),
     dias: buildDias(processed, kitchen, couriers),
-    documentos: buildDocumentos(processed, kitchen, couriers, config, recipes),
+    avisos,
+    checklist: buildChecklist(processed, kitchen, couriers, config, avisos),
   };
 }
 
@@ -200,67 +235,158 @@ function buildCanais(
     : canais;
 }
 
-// ── Documentos da semana ─────────────────────────────────────────────────────
+// ── Avisos da semana ─────────────────────────────────────────────────────────
 
-function buildDocumentos(
+/**
+ * Deriva os avisos do cockpit (com os números das encomendas afetadas) a
+ * partir das issues do pipeline. Pura e determinística — a ordem das listas é
+ * a ordem das encomendas na semana.
+ */
+export function buildAvisos(processed: ProcessedOrder[]): SemanaAvisos {
+  const posFecho = nomesComIssue(processed, (issues) =>
+    issues.includes(ISSUE_AFTER_CLOSE),
+  );
+  const dataAnomala = nomesComIssue(processed, (issues) =>
+    issues.includes(ISSUE_ANOMALOUS_DELIVERY),
+  );
+  const semAtributos = nomesComIssue(processed, (issues) =>
+    issues.includes(ISSUE_MISSING_DELIVERY_ATTRS),
+  );
+  const semZona = nomesComIssue(processed, (issues) =>
+    issues.some((issue) => issue.startsWith(ISSUE_UNKNOWN_ZONE_PREFIX)),
+  );
+
+  // Uma encomenda pode acumular avisos (ex.: pós-fecho + zona desconhecida);
+  // o total conta encomendas distintas, não somas de listas.
+  const total = new Set([
+    ...posFecho,
+    ...dataAnomala,
+    ...semAtributos,
+    ...semZona,
+  ]).size;
+
+  return {
+    posFecho: makeAviso(posFecho),
+    dataAnomala: makeAviso(dataAnomala),
+    semAtributos: makeAviso(semAtributos),
+    semZona: makeAviso(semZona),
+    total,
+  };
+}
+
+/**
+ * "#a, #b, … e mais N" — mostra até MAX_ENCOMENDAS_LISTADAS números e resume
+ * o resto, para os banners não crescerem sem limite em semanas grandes.
+ */
+export function formatListaEncomendas(nomes: string[]): string {
+  if (nomes.length <= MAX_ENCOMENDAS_LISTADAS) return nomes.join(", ");
+  const visiveis = nomes.slice(0, MAX_ENCOMENDAS_LISTADAS).join(", ");
+  return `${visiveis} e mais ${nomes.length - MAX_ENCOMENDAS_LISTADAS}`;
+}
+
+function nomesComIssue(
+  processed: ProcessedOrder[],
+  match: (issues: string[]) => boolean,
+): string[] {
+  return processed.filter((p) => match(p.issues)).map((p) => p.order.name);
+}
+
+function makeAviso(encomendas: string[]): SemanaAviso {
+  return {
+    count: encomendas.length,
+    encomendas,
+    lista: formatListaEncomendas(encomendas),
+  };
+}
+
+// ── Checklist da semana ──────────────────────────────────────────────────────
+
+/**
+ * Os passos do ritual semanal do operador, pela ordem do processo manual:
+ * rever avisos → cozinha → etiquetas → rotas + câmara → CSV DPD. Os detalhes
+ * e os estados disabled derivam apenas de dados já calculados pelo motor.
+ */
+function buildChecklist(
   processed: ProcessedOrder[],
   kitchen: KitchenMap,
   couriers: CourierConfig[],
   config: SemanaViewConfig,
-  recipes: RecipeConfig[],
-): SemanaDocumento[] {
+  avisos: SemanaAvisos,
+): ChecklistPasso[] {
   const labels = buildLabels(processed);
   const routes = buildRoutes(processed, couriers);
   const dpd = buildDpdCsv(processed, couriers, {
     account: config.dpdAccount ?? "",
   });
-  const purchases = buildPurchaseList(processed, recipes, config.purchaseMargin);
 
   const totalParagens = routes.reduce((sum, r) => sum + r.stops.length, 0);
-  const totalIngredientes = purchases.suppliers.reduce(
-    (sum, s) => sum + s.lines.length,
-    0,
-  );
-  const semFicha = purchases.missingRecipes.length;
+  const semRotas = routes.length === 0;
 
   return [
     {
-      nome: "Mapa de cozinha",
-      estado: "success",
-      estadoLabel: ESTADO_PRONTO,
+      numero: 1,
+      titulo: "Rever avisos",
+      detalhe:
+        avisos.total === 0
+          ? "Nenhuma encomenda precisa de atenção."
+          : "Os detalhes estão nos avisos no topo da página.",
+      badge:
+        avisos.total === 0
+          ? { tone: "success", label: "Sem avisos" }
+          : {
+              tone: "warning",
+              label: plural(avisos.total, "aviso por rever", "avisos por rever"),
+            },
+      botoes: [],
+    },
+    {
+      numero: 2,
+      titulo: "Cozinha — mapa de produção",
       detalhe: `${plural(kitchen.days.length, "dia", "dias")} · ${plural(kitchen.totalMeals, "refeição", "refeições")}`,
-      href: EXPORT_HREFS.cozinha,
+      botoes: [
+        { label: "Imprimir", href: CHECKLIST_HREFS.cozinhaPrint },
+        { label: "Exportar xlsx", href: CHECKLIST_HREFS.cozinhaXlsx },
+      ],
     },
     {
-      nome: "Etiquetas",
-      estado: "success",
-      estadoLabel: ESTADO_PRONTO,
+      numero: 3,
+      titulo: "Etiquetas",
       detalhe: plural(labels.length, "etiqueta", "etiquetas"),
-      href: EXPORT_HREFS.etiquetas,
+      botoes: [
+        { label: "Imprimir", href: CHECKLIST_HREFS.etiquetasPrint },
+        { label: "Exportar xlsx", href: CHECKLIST_HREFS.etiquetasXlsx },
+      ],
     },
     {
-      nome: "Rotas de estafetas",
-      estado: "success",
-      estadoLabel: ESTADO_PRONTO,
+      numero: 4,
+      titulo: "Rotas + câmara",
       detalhe: `${plural(routes.length, "rota", "rotas")} · ${plural(totalParagens, "paragem", "paragens")}`,
-      href: EXPORT_HREFS.rotas,
+      botoes: [
+        {
+          label: "Imprimir rotas",
+          href: CHECKLIST_HREFS.rotasPrint,
+          disabled: semRotas,
+        },
+        {
+          label: "Exportar rotas",
+          href: CHECKLIST_HREFS.rotasXlsx,
+          disabled: semRotas,
+        },
+        { label: "Imprimir câmara", href: CHECKLIST_HREFS.camaraPrint },
+        { label: "Exportar câmara", href: CHECKLIST_HREFS.camaraXlsx },
+      ],
     },
     {
-      nome: "CSV DPD",
-      estado: "success",
-      estadoLabel: ESTADO_PRONTO,
+      numero: 5,
+      titulo: "DPD — descarregar o CSV e carregá-lo no portal (como hoje)",
       detalhe: `${plural(dpd.shipments, "envio", "envios")} · ${Math.round(dpd.totalWeightKg)} kg`,
-      href: EXPORT_HREFS.dpd,
-    },
-    {
-      nome: "Compras",
-      estado: semFicha > 0 ? "warning" : "success",
-      estadoLabel:
-        semFicha > 0
-          ? plural(semFicha, "prato sem ficha", "pratos sem ficha")
-          : ESTADO_PRONTO,
-      detalhe: `${plural(purchases.suppliers.length, "fornecedor", "fornecedores")} · ${plural(totalIngredientes, "ingrediente", "ingredientes")}`,
-      href: EXPORT_HREFS.compras,
+      botoes: [
+        {
+          label: "Descarregar CSV",
+          href: CHECKLIST_HREFS.dpdCsv,
+          disabled: dpd.shipments === 0,
+        },
+      ],
     },
   ];
 }

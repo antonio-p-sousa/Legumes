@@ -57,7 +57,7 @@ function categoria(nome: string): string {
 const dishNames = [...new Set(processed.flatMap((p) => p.order.lineItems.map((li) => li.name.split(" - ")[0])))];
 const dishes = dishNames.map((baseName) => ({ baseName, category: categoria(baseName) }));
 
-const semana = buildSemanaView(weekData, { purchaseMargin: 0.08, dpdAccount: "03290201" }, []);
+const semana = buildSemanaView(weekData, { dpdAccount: "03290201" });
 const cozinha = buildCozinhaView(weekData, dishes, [...DEFAULT_COMPONENT_FACTORS]);
 const compras = buildComprasView(weekData, [], 0.08, []);
 const estafetas = buildEstafetasView(weekData, "03290201");

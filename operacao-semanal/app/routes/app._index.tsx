@@ -4,11 +4,12 @@ import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 import { getConfig } from "../services/definicoes/config.server";
-import { loadRecipes, loadWeekData } from "../services/pages/common.server";
+import { loadWeekData } from "../services/pages/common.server";
 import {
   buildSemanaView,
   formatDataHoraPt,
   minutosDesde,
+  type ChecklistPasso,
   type SemanaDia,
 } from "../services/pages/semana.server";
 
@@ -18,7 +19,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const [
     weekData,
     config,
-    recipes,
     zones,
     couriers,
     suppliers,
@@ -27,7 +27,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   ] = await Promise.all([
     loadWeekData(prisma, admin),
     getConfig(prisma),
-    loadRecipes(prisma),
     prisma.zone.count({ where: { active: true } }),
     prisma.courier.count(),
     prisma.supplier.count(),
@@ -35,7 +34,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     prisma.dose.count({ where: { ingredients: { some: {} } } }),
   ]);
 
-  const view = buildSemanaView(weekData, config, recipes);
+  const view = buildSemanaView(weekData, config);
   const { meta } = weekData;
 
   return {
@@ -45,8 +44,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       source: meta.source,
       janela: `${formatDataHoraPt(meta.windowStart)} → ${formatDataHoraPt(meta.windowEnd)}`,
       importadoHaMin: minutosDesde(meta.fetchedAt),
-      ordersPosFecho: meta.ordersPosFecho,
-      ordersDataAnomala: meta.ordersDataAnomala,
     },
     configuracao: {
       zones,
@@ -84,6 +81,43 @@ function KpiCard({
   );
 }
 
+/**
+ * Um passo da checklist semanal: número + título, badge de estado (só no
+ * passo "Rever avisos"), detalhe derivado do motor e os botões de print/
+ * export — o mesmo padrão de s-button secundário com href das rotas de
+ * export na página Estafetas.
+ */
+function ChecklistPassoCard({ passo }: { passo: ChecklistPasso }) {
+  return (
+    <s-box padding="base" border="base" borderRadius="base">
+      <s-stack gap="small">
+        <s-stack direction="inline" gap="small" alignItems="center">
+          <s-heading>{`${passo.numero}. ${passo.titulo}`}</s-heading>
+          {passo.badge !== undefined && (
+            <s-badge tone={passo.badge.tone}>{passo.badge.label}</s-badge>
+          )}
+        </s-stack>
+        <s-text color="subdued">{passo.detalhe}</s-text>
+        {passo.botoes.length > 0 && (
+          <s-stack direction="inline" gap="small">
+            {passo.botoes.map((botao) => (
+              <s-button
+                key={botao.href}
+                variant="secondary"
+                href={botao.href}
+                target="_blank"
+                disabled={botao.disabled}
+              >
+                {botao.label}
+              </s-button>
+            ))}
+          </s-stack>
+        )}
+      </s-stack>
+    </s-box>
+  );
+}
+
 function DiaCard({ dia }: { dia: SemanaDia }) {
   return (
     <s-box padding="base" border="base" borderRadius="base">
@@ -110,7 +144,7 @@ function DiaCard({ dia }: { dia: SemanaDia }) {
 
 export default function Semana() {
   const { view, semana, configuracao } = useLoaderData<typeof loader>();
-  const { kpis, dias, documentos } = view;
+  const { kpis, dias, avisos, checklist } = view;
 
   const temEncomendas = kpis.encomendas > 0;
   const configurado = configuracao.zones > 0 && configuracao.couriers > 0;
@@ -134,69 +168,90 @@ export default function Semana() {
             </s-text>
           </s-stack>
 
-          {semana.ordersPosFecho > 0 && (
+          {avisos.posFecho.count > 0 && (
             <s-banner
               tone="info"
               heading={
-                semana.ordersPosFecho === 1
+                avisos.posFecho.count === 1
                   ? "1 encomenda recebida depois do fecho"
-                  : `${semana.ordersPosFecho} encomendas recebidas depois do fecho`
+                  : `${avisos.posFecho.count} encomendas recebidas depois do fecho`
               }
             >
               <s-paragraph>
-                {semana.ordersPosFecho === 1
+                {avisos.posFecho.count === 1
                   ? "Esta encomenda entrou"
                   : "Estas encomendas entraram"}{" "}
                 na loja depois do fecho da janela e{" "}
-                {semana.ordersPosFecho === 1
+                {avisos.posFecho.count === 1
                   ? "foi incluída e assinalada"
                   : "foram incluídas e assinaladas"}{" "}
                 nos cálculos — foi a opção escolhida em{" "}
                 <Link to="/app/definicoes/geral">Definições — Geral</Link>{" "}
-                (incluir e assinalar as pós-fecho, em vez de as excluir).
+                (incluir e assinalar as pós-fecho, em vez de as excluir).{" "}
+                Encomendas: {avisos.posFecho.lista}.
               </s-paragraph>
             </s-banner>
           )}
 
-          {semana.ordersDataAnomala > 0 && (
+          {avisos.dataAnomala.count > 0 && (
             <s-banner
               tone="warning"
               heading={
-                semana.ordersDataAnomala === 1
+                avisos.dataAnomala.count === 1
                   ? "1 encomenda com data de entrega fora do intervalo esperado"
-                  : `${semana.ordersDataAnomala} encomendas com data de entrega fora do intervalo esperado`
+                  : `${avisos.dataAnomala.count} encomendas com data de entrega fora do intervalo esperado`
               }
             >
               <s-paragraph>
-                {semana.ordersDataAnomala === 1
+                {avisos.dataAnomala.count === 1
                   ? "Esta encomenda tem uma data de entrega"
                   : "Estas encomendas têm datas de entrega"}{" "}
                 fora do intervalo esperado para esta semana (data passada ou
                 demasiado distante) e{" "}
-                {semana.ordersDataAnomala === 1
+                {avisos.dataAnomala.count === 1
                   ? "foi incluída"
                   : "foram incluídas"}{" "}
                 nos cálculos — verifica a data no Shopify antes de fechar a
-                semana (o site às vezes deixa escolher datas erradas).
+                semana (o site às vezes deixa escolher datas erradas).{" "}
+                Encomendas: {avisos.dataAnomala.lista}.
               </s-paragraph>
             </s-banner>
           )}
 
-          {kpis.semZona > 0 && (
+          {avisos.semAtributos.count > 0 && (
             <s-banner
               tone="warning"
               heading={
-                kpis.semZona === 1
-                  ? "1 encomenda sem zona"
-                  : `${kpis.semZona} encomendas sem zona`
+                avisos.semAtributos.count === 1
+                  ? "1 encomenda sem atributos de entrega"
+                  : `${avisos.semAtributos.count} encomendas sem atributos de entrega`
               }
             >
               <s-paragraph>
-                Estas encomendas não têm zona correspondida (atributos de
-                entrega em falta ou texto de zona desconhecido) e ficam fora
-                dos cálculos de cozinha, rotas, compras e etiquetas até serem
-                resolvidas. Confirma os textos em{" "}
-                <Link to="/app/definicoes/zonas">Zonas &amp; dias</Link>.
+                Estas encomendas não trazem o bloco de atributos de entrega
+                (data, horário e zona) e ficam fora dos cálculos de cozinha,
+                rotas, compras e etiquetas até serem corrigidas no Shopify.{" "}
+                Encomendas: {avisos.semAtributos.lista}.
+              </s-paragraph>
+            </s-banner>
+          )}
+
+          {avisos.semZona.count > 0 && (
+            <s-banner
+              tone="warning"
+              heading={
+                avisos.semZona.count === 1
+                  ? "1 encomenda sem zona"
+                  : `${avisos.semZona.count} encomendas sem zona`
+              }
+            >
+              <s-paragraph>
+                Estas encomendas têm um texto de zona que não corresponde a
+                nenhuma zona configurada e ficam fora dos cálculos de cozinha,
+                rotas, compras e etiquetas até serem resolvidas. Confirma os
+                textos em{" "}
+                <Link to="/app/definicoes/zonas">Zonas &amp; dias</Link>.{" "}
+                Encomendas: {avisos.semZona.lista}.
               </s-paragraph>
             </s-banner>
           )}
@@ -246,31 +301,12 @@ export default function Semana() {
             </s-grid>
           </s-section>
 
-          <s-section heading="Documentos da semana">
-            <s-table>
-              <s-table-header-row>
-                <s-table-header>Documento</s-table-header>
-                <s-table-header>Estado</s-table-header>
-                <s-table-header>Detalhe</s-table-header>
-                <s-table-header>Exportar</s-table-header>
-              </s-table-header-row>
-              <s-table-body>
-                {documentos.map((doc) => (
-                  <s-table-row key={doc.href}>
-                    <s-table-cell>{doc.nome}</s-table-cell>
-                    <s-table-cell>
-                      <s-badge tone={doc.estado}>{doc.estadoLabel}</s-badge>
-                    </s-table-cell>
-                    <s-table-cell>{doc.detalhe}</s-table-cell>
-                    <s-table-cell>
-                      <s-link href={doc.href} target="_blank">
-                        Exportar
-                      </s-link>
-                    </s-table-cell>
-                  </s-table-row>
-                ))}
-              </s-table-body>
-            </s-table>
+          <s-section heading="Checklist da semana">
+            <s-stack gap="base">
+              {checklist.map((passo) => (
+                <ChecklistPassoCard key={passo.numero} passo={passo} />
+              ))}
+            </s-stack>
           </s-section>
         </>
       )}

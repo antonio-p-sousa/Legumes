@@ -1,8 +1,11 @@
 import { describe, expect, test } from "vitest";
 import {
-  EXPORT_HREFS,
+  CHECKLIST_HREFS,
+  MAX_ENCOMENDAS_LISTADAS,
+  buildAvisos,
   buildSemanaView,
   formatDataHoraPt,
+  formatListaEncomendas,
   minutosDesde,
   type SemanaViewConfig,
 } from "./semana.server";
@@ -12,7 +15,6 @@ import type {
   CourierConfig,
   OrderInput,
   ProcessedOrder,
-  RecipeConfig,
   ZoneConfig,
 } from "../weekly";
 
@@ -48,28 +50,7 @@ const COURIERS: CourierConfig[] = [
   { name: "DPD", type: "dpd", ordering: "manual" },
 ];
 
-const CONFIG: SemanaViewConfig = { purchaseMargin: 0.08, dpdAccount: "03290201" };
-
-/** Fichas técnicas de TODOS os pratos vendidos na fixture. */
-const RECIPES_COMPLETAS: RecipeConfig[] = [
-  {
-    dish: "Jardineira de Novilho",
-    dose: "Bulk",
-    ingredients: [
-      { name: "Novilho", qtyPerMeal: 0.2, unit: "kg", supplier: "Talho Central" },
-    ],
-  },
-  {
-    dish: "Tranche de Salmão",
-    dose: "Low Carb",
-    ingredients: [
-      { name: "Salmão", qtyPerMeal: 0.18, unit: "kg", supplier: "Peixaria Atlântico" },
-    ],
-  },
-];
-
-/** Só a ficha da Jardineira → "Tranche de Salmão - Low Carb" fica sem ficha. */
-const RECIPES_INCOMPLETAS: RecipeConfig[] = [RECIPES_COMPLETAS[0]];
+const CONFIG: SemanaViewConfig = { dpdAccount: "03290201" };
 
 function makeAttrs(
   overrides: Partial<Record<string, string>> = {},
@@ -196,9 +177,9 @@ function makeWeekData(processed: ProcessedOrder[]): WeekData {
   };
 }
 
-function makeFixtureView(recipes: RecipeConfig[] = RECIPES_COMPLETAS) {
-  const { processed } = processOrders(makeFixtureOrders(), ZONES);
-  return buildSemanaView(makeWeekData(processed), CONFIG, recipes);
+function makeFixtureView(orders: OrderInput[] = makeFixtureOrders()) {
+  const { processed } = processOrders(orders, ZONES);
+  return buildSemanaView(makeWeekData(processed), CONFIG);
 }
 
 // ── Testes ───────────────────────────────────────────────────────────────────
@@ -233,8 +214,8 @@ describe("buildSemanaView — kpis", () => {
     expect(kpis.clientes).toBe(5);
   });
 
-  test("semana sem encomendas devolve kpis a zero e sem dias", () => {
-    const view = buildSemanaView(makeWeekData([]), CONFIG, RECIPES_COMPLETAS);
+  test("semana sem encomendas devolve kpis a zero, sem dias e sem avisos", () => {
+    const view = buildSemanaView(makeWeekData([]), CONFIG);
 
     expect(view.kpis).toEqual({
       encomendas: 0,
@@ -245,7 +226,8 @@ describe("buildSemanaView — kpis", () => {
       clientes: 0,
     });
     expect(view.dias).toEqual([]);
-    expect(view.documentos).toHaveLength(5);
+    expect(view.avisos.total).toBe(0);
+    expect(view.checklist).toHaveLength(5);
   });
 });
 
@@ -275,65 +257,167 @@ describe("buildSemanaView — dias de confeção", () => {
   });
 });
 
-describe("buildSemanaView — documentos", () => {
-  test("devolve os 5 documentos com os hrefs de export corretos", () => {
-    const { documentos } = makeFixtureView();
+describe("buildAvisos", () => {
+  test("identifica sem atributos e zona desconhecida com os números das encomendas", () => {
+    const { processed } = processOrders(makeFixtureOrders(), ZONES);
+    const avisos = buildAvisos(processed);
 
-    expect(documentos.map((d) => [d.nome, d.href])).toEqual([
-      ["Mapa de cozinha", EXPORT_HREFS.cozinha],
-      ["Etiquetas", EXPORT_HREFS.etiquetas],
-      ["Rotas de estafetas", EXPORT_HREFS.rotas],
-      ["CSV DPD", EXPORT_HREFS.dpd],
-      ["Compras", EXPORT_HREFS.compras],
+    expect(avisos.semAtributos.count).toBe(1);
+    expect(avisos.semAtributos.encomendas).toEqual(["#45005-LoV"]);
+    expect(avisos.semAtributos.lista).toBe("#45005-LoV");
+    expect(avisos.semZona.count).toBe(1);
+    expect(avisos.semZona.encomendas).toEqual(["#45006-LoV"]);
+    expect(avisos.posFecho.count).toBe(0);
+    expect(avisos.dataAnomala.count).toBe(0);
+    expect(avisos.total).toBe(2);
+  });
+
+  test("assinala pós-fecho e data anómala e conta encomendas distintas no total", () => {
+    // Fecho a 17/11 → as 6 encomendas (criadas a 18/11) ficam pós-fecho;
+    // entregas esperadas só a partir de 25/11 → as datas 24/11 são anómalas
+    // (#1, #2 e #6; a #5 não tem delivery e fica de fora da verificação).
+    const { processed } = processOrders(makeFixtureOrders(), ZONES, undefined, {
+      markAfterClose: "2025-11-17T00:00:00Z",
+      expectedDeliveryWindow: { from: "2025-11-25", to: "2025-12-08" },
+    });
+    const avisos = buildAvisos(processed);
+
+    expect(avisos.posFecho.count).toBe(6);
+    expect(avisos.dataAnomala.encomendas).toEqual([
+      "#45001-LoV",
+      "#45002-LoV",
+      "#45006-LoV",
+    ]);
+    // Todas as encomendas têm pelo menos um aviso → total é 6, não a soma
+    // das listas (6 + 3 + 1 + 1).
+    expect(avisos.total).toBe(6);
+  });
+
+  test("semana sem issues devolve avisos vazios", () => {
+    const { processed } = processOrders(
+      makeFixtureOrders().slice(0, 4),
+      ZONES,
+    );
+    const avisos = buildAvisos(processed);
+
+    expect(avisos.total).toBe(0);
+    expect(avisos.posFecho.lista).toBe("");
+    expect(avisos.semZona.encomendas).toEqual([]);
+  });
+});
+
+describe("formatListaEncomendas", () => {
+  test("até 10 encomendas mostra todas separadas por vírgula", () => {
+    expect(formatListaEncomendas([])).toBe("");
+    expect(formatListaEncomendas(["#1-LoV", "#2-LoV"])).toBe("#1-LoV, #2-LoV");
+
+    const dez = Array.from({ length: 10 }, (_, i) => `#${i + 1}-LoV`);
+    expect(formatListaEncomendas(dez)).toBe(dez.join(", "));
+    expect(formatListaEncomendas(dez)).not.toContain("e mais");
+  });
+
+  test("acima de 10 mostra as primeiras 10 e resume o resto como 'e mais N'", () => {
+    const doze = Array.from({ length: 12 }, (_, i) => `#${i + 1}-LoV`);
+
+    expect(formatListaEncomendas(doze)).toBe(
+      `${doze.slice(0, MAX_ENCOMENDAS_LISTADAS).join(", ")} e mais 2`,
+    );
+  });
+});
+
+describe("buildSemanaView — checklist da semana", () => {
+  test("devolve os 5 passos pela ordem do processo manual", () => {
+    const { checklist } = makeFixtureView();
+
+    expect(checklist.map((p) => [p.numero, p.titulo])).toEqual([
+      [1, "Rever avisos"],
+      [2, "Cozinha — mapa de produção"],
+      [3, "Etiquetas"],
+      [4, "Rotas + câmara"],
+      [5, "DPD — descarregar o CSV e carregá-lo no portal (como hoje)"],
     ]);
   });
 
-  test("cozinha, etiquetas, rotas e DPD ficam 'Pronto a exportar' com detalhe derivado", () => {
-    const { documentos } = makeFixtureView();
-    const [cozinha, etiquetas, rotas, dpd] = documentos;
+  test("botões apontam para as resource routes reais de print/export", () => {
+    const { checklist } = makeFixtureView();
+    const [avisos, cozinha, etiquetas, rotas, dpd] = checklist;
 
-    expect(cozinha).toMatchObject({
-      estado: "success",
-      estadoLabel: "Pronto a exportar",
-      detalhe: "2 dias · 8 refeições",
+    expect(avisos.botoes).toEqual([]);
+    expect(cozinha.botoes.map((b) => b.href)).toEqual([
+      "/app/print/cozinha",
+      "/app/api/export/cozinha",
+    ]);
+    expect(etiquetas.botoes.map((b) => b.href)).toEqual([
+      "/app/print/etiquetas",
+      "/app/api/export/etiquetas",
+    ]);
+    expect(rotas.botoes.map((b) => [b.label, b.href])).toEqual([
+      ["Imprimir rotas", "/app/print/rotas"],
+      ["Exportar rotas", "/app/api/export/rotas"],
+      ["Imprimir câmara", "/app/print/rotas-camara"],
+      ["Exportar câmara", "/app/api/export/rotas-camara"],
+    ]);
+    expect(dpd.botoes.map((b) => b.href)).toEqual([CHECKLIST_HREFS.dpdCsv]);
+    expect(CHECKLIST_HREFS.dpdCsv).toBe("/app/api/export/dpd");
+  });
+
+  test("passo 'Rever avisos' fica verde quando não há problemas", () => {
+    const { checklist } = makeFixtureView(makeFixtureOrders().slice(0, 4));
+
+    expect(checklist[0].badge).toEqual({
+      tone: "success",
+      label: "Sem avisos",
     });
-    expect(etiquetas).toMatchObject({
-      estado: "success",
-      detalhe: "8 etiquetas",
+  });
+
+  test("passo 'Rever avisos' fica warning com a contagem quando há problemas", () => {
+    const { checklist } = makeFixtureView();
+
+    // #45005 sem atributos + #45006 com zona desconhecida.
+    expect(checklist[0].badge).toEqual({
+      tone: "warning",
+      label: "2 avisos por rever",
     });
+  });
+
+  test("detalhes dos passos derivam do motor (cozinha, etiquetas, rotas, DPD)", () => {
+    const { checklist } = makeFixtureView();
+    const [, cozinha, etiquetas, rotas, dpd] = checklist;
+
+    expect(cozinha.detalhe).toBe("2 dias · 8 refeições");
+    expect(etiquetas.detalhe).toBe("8 etiquetas");
     // Off Limits 24/11 (2 paragens) + Interno 25/11 (1 paragem); DPD fora das rotas.
-    expect(rotas).toMatchObject({
-      estado: "success",
-      detalhe: "2 rotas · 3 paragens",
-    });
+    expect(rotas.detalhe).toBe("2 rotas · 3 paragens");
     // 1 envio DPD com subtotal 40€ → 40/20 = 2 kg (peso sobre o SUBTOTAL,
     // confirmado pelo cliente a 20 jul 2026).
-    expect(dpd).toMatchObject({
-      estado: "success",
-      detalhe: "1 envio · 2 kg",
-    });
+    expect(dpd.detalhe).toBe("1 envio · 2 kg");
   });
 
-  test("compras fica warning com contagem quando há pratos vendidos sem ficha", () => {
-    const { documentos } = makeFixtureView(RECIPES_INCOMPLETAS);
-    const compras = documentos[4];
+  test("sem rotas nem envios DPD os botões respetivos ficam desativados", () => {
+    const { checklist } = buildSemanaView(makeWeekData([]), CONFIG);
+    const [, , , rotas, dpd] = checklist;
 
-    expect(compras.estado).toBe("warning");
-    expect(compras.estadoLabel).toBe("1 prato sem ficha");
+    expect(rotas.botoes.map((b) => [b.label, b.disabled === true])).toEqual([
+      ["Imprimir rotas", true],
+      ["Exportar rotas", true],
+      // As rotas de câmara imprimem-se mesmo sem rotas locais (padrão da
+      // página Estafetas).
+      ["Imprimir câmara", false],
+      ["Exportar câmara", false],
+    ]);
+    expect(dpd.botoes[0].disabled).toBe(true);
   });
 
-  test("compras fica success quando todos os pratos vendidos têm ficha", () => {
-    const { documentos } = makeFixtureView(RECIPES_COMPLETAS);
-    const compras = documentos[4];
+  test("com rotas e envios DPD todos os botões ficam ativos", () => {
+    const { checklist } = makeFixtureView();
 
-    expect(compras.estado).toBe("success");
-    expect(compras.estadoLabel).toBe("Pronto a exportar");
-    expect(compras.detalhe).toBe("2 fornecedores · 2 ingredientes");
+    const botoes = checklist.flatMap((p) => p.botoes);
+    expect(botoes.every((b) => b.disabled !== true)).toBe(true);
   });
 });
 
 describe("buildSemanaView — imutabilidade", () => {
-  test("não muta os inputs (weekData, config e fichas congelados)", () => {
+  test("não muta os inputs (weekData e config congelados)", () => {
     const { processed } = processOrders(makeFixtureOrders(), ZONES);
     const weekData = Object.freeze(
       makeWeekData(
@@ -341,11 +425,8 @@ describe("buildSemanaView — imutabilidade", () => {
       ),
     ) as WeekData;
     const config = Object.freeze({ ...CONFIG });
-    const recipes = Object.freeze(
-      RECIPES_COMPLETAS.map((r) => Object.freeze({ ...r })),
-    ) as unknown as RecipeConfig[];
 
-    expect(() => buildSemanaView(weekData, config, recipes)).not.toThrow();
+    expect(() => buildSemanaView(weekData, config)).not.toThrow();
   });
 });
 
